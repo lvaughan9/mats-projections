@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fellowship Program Staffing Model</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --accent-blue: #4a9eff;
+            --accent-purple: #a855f7;
+            --accent-green: #22c55e;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --border-color: #2a2a3a;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container { max-width: 1500px; margin: 0 auto; }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+        
+        .dashboard { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+        
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(180deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 2px;
+        }
+        
+        .chart-container { height: 320px; }
+        .chart-container-large { height: 400px; }
+        
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        
+        @media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
+        
+        .table-container { overflow-x: auto; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        
+        th, td {
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+        }
+        
+        tr:hover { background: rgba(74, 158, 255, 0.05); }
+        .highlight-row { background: rgba(168, 85, 247, 0.1) !important; }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .stat-value.blue { color: var(--accent-blue); }
+        .stat-value.purple { color: var(--accent-purple); }
+        .stat-value.green { color: var(--accent-green); }
+        .stat-value.orange { color: var(--accent-orange); }
+        .stat-value.red { color: var(--accent-red); }
+        .stat-value.pink { color: var(--accent-pink); }
+        .stat-value.cyan { color: var(--accent-cyan); }
+        
+        .stat-label { font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.25rem; }
+        
+        .params-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+        
+        .param-section {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+        
+        .param-section.london { border-left: 3px solid var(--accent-red); }
+        .param-section.berkeley { border-left: 3px solid var(--accent-blue); }
+        .param-section.global { border-left: 3px solid var(--accent-purple); }
+        
+        .param-section-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--accent-blue);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .param-section.london .param-section-title { color: var(--accent-red); }
+        .param-section.global .param-section-title { color: var(--accent-purple); }
+        
+        .param-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            gap: 0.5rem;
+        }
+        
+        .param-row:last-child { margin-bottom: 0; }
+        
+        .param-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+        
+        .param-input {
+            width: 70px;
+            padding: 0.4rem 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            text-align: right;
+        }
+        
+        .param-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+        }
+        
+        .param-input.date-input { width: 140px; text-align: center; }
+        .param-input.small { width: 55px; }
+        
+        .param-suffix {
+            color: var(--text-secondary);
+            margin-left: 0.2rem;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        
+        .input-group { display: flex; align-items: center; }
+        
+        .cohort-dates-grid {
+            display: grid;
+            grid-template-columns: 50px 1fr 1fr;
+            gap: 0.4rem 0.5rem;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        
+        .cohort-dates-grid .header {
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+        
+        .cohort-dates-grid .cohort-label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .reset-btn {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .reset-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+        
+        .cohort-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.75rem;
+            justify-content: center;
+        }
+        
+        .cohort-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .cohort-legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+        
+        .location-badge {
+            display: inline-block;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        .location-badge.london { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .location-badge.berkeley { background: rgba(74, 158, 255, 0.2); color: #4a9eff; }
+        
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+        }
+        
+        .tab:hover:not(.active) {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+        
+        .location-staffing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 900px) { .location-staffing-grid { grid-template-columns: 1fr; } }
+        
+        .delta-positive { color: var(--accent-green); }
+        .delta-negative { color: var(--accent-red); }
+        .delta-zero { color: var(--text-secondary); }
+        
+        .onboarding-date {
+            font-size: 0.75rem;
+            color: var(--accent-orange);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .role-badge {
+            display: inline-block;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .role-badge.rm { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
+        .role-badge.srm { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .role-badge.cm { background: rgba(236, 72, 153, 0.2); color: #ec4899; }
+        .role-badge.cpo { background: rgba(6, 182, 212, 0.2); color: #06b6d4; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fellowship Program Staffing Model</h1>
+            <p class="subtitle">Fellow projections, staffing needs, and location breakdown through April 2027</p>
+        </header>
+        
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-value blue" id="stat-peak-fellows">378</div>
+                <div class="stat-label">Peak Fellows</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value purple" id="stat-peak-managers">68</div>
+                <div class="stat-label">Peak Total Staff</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value green" id="stat-peak-rms">54</div>
+                <div class="stat-label">Peak RMs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value orange" id="stat-peak-srms">14</div>
+                <div class="stat-label">Peak SRMs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value pink" id="stat-peak-cms">0</div>
+                <div class="stat-label">Peak CMs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value cyan" id="stat-peak-cpos">0</div>
+                <div class="stat-label">Peak CPOs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value red" id="stat-peak-london">0</div>
+                <div class="stat-label">Peak London</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value blue" id="stat-peak-berkeley">0</div>
+                <div class="stat-label">Peak Berkeley</div>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Model Parameters</h2>
+                    <button class="reset-btn" onclick="resetToDefaults()">Reset to Defaults</button>
+                </div>
+                <div class="params-container">
+                    <div class="param-section global">
+                        <div class="param-section-title">⚙️ Global Settings</div>
+                        <div class="param-row">
+                            <span class="param-label">Rounding Cutoff</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-rounding-cutoff" value="0.4" min="0" max="1" step="0.1">
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Onboarding Lead Time</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-onboarding-weeks" value="3" min="0" max="12" step="1">
+                                <span class="param-suffix">weeks</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="param-section">
+                        <div class="param-section-title">Main Cohort Sizes (x.0)</div>
+                        <div class="param-row">
+                            <span class="param-label">Cohort 8.0</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-8.0" value="80" min="0" max="500">
+                                <span class="param-suffix">fellows</span>
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Cohort 9.0</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-9.0" value="90" min="0" max="500">
+                                <span class="param-suffix">fellows</span>
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Cohort 10.0</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-10.0" value="120" min="0" max="500">
+                                <span class="param-suffix">fellows</span>
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Cohort 11.0</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-11.0" value="100" min="0" max="500">
+                                <span class="param-suffix">fellows</span>
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Cohort 12.0</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-12.0" value="180" min="0" max="500">
+                                <span class="param-suffix">fellows</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="param-section">
+                        <div class="param-section-title">Extension Retention Rates</div>
+                        <div class="param-row">
+                            <span class="param-label">x.0 → x.1</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-ext1-rate" value="70" min="0" max="100">
+                                <span class="param-suffix">%</span>
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">x.1 → x.2</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-ext2-rate" value="70" min="0" max="100">
+                                <span class="param-suffix">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="param-section">
+                        <div class="param-section-title">Location Distribution</div>
+                        <div class="param-row">
+                            <span class="param-label">London % in Main (x.0)</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-london-main" value="10" min="0" max="100">
+                                <span class="param-suffix">%</span>
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">London % in Extensions</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-london-ext" value="60" min="0" max="100">
+                                <span class="param-suffix">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="param-section global">
+                        <div class="param-section-title">🌐 Global Role Ratios</div>
+                        <div class="param-row">
+                            <span class="param-label">Fellows per CM</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-fellows-per-cm" value="35" min="1" max="100" step="1">
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Fellows per CPO</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-fellows-per-cpo" value="100" min="1" max="500" step="1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="param-section london">
+                        <div class="param-section-title">🇬🇧 London Staffing Ratios</div>
+                        <div class="param-row">
+                            <span class="param-label">Fellows per RM</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-london-fellows-per-rm" value="7" min="1" max="20" step="0.5">
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">RMs per SRM</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-london-rms-per-srm" value="4" min="1" max="10" step="0.5">
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Fellows per SRM (direct)</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-london-fellows-per-srm" value="2" min="0" max="10" step="1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="param-section berkeley">
+                        <div class="param-section-title">🇺🇸 Berkeley Staffing Ratios</div>
+                        <div class="param-row">
+                            <span class="param-label">Fellows per RM</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-berkeley-fellows-per-rm" value="7" min="1" max="20" step="0.5">
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">RMs per SRM</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-berkeley-rms-per-srm" value="4" min="1" max="10" step="0.5">
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Fellows per SRM (direct)</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-berkeley-fellows-per-srm" value="2" min="0" max="10" step="1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="param-section">
+                        <div class="param-section-title">Cohort 8 Actuals</div>
+                        <div class="param-row">
+                            <span class="param-label">8.1 Actual</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-8.1-actual" value="50" min="0" max="500">
+                                <span class="param-suffix">fellows</span>
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">8.2 Actual</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-8.2-actual" value="30" min="0" max="500">
+                                <span class="param-suffix">fellows</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="param-section">
+                        <div class="param-section-title">Cohort 9 Actuals</div>
+                        <div class="param-row">
+                            <span class="param-label">9.1 Actual</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-9.1-actual" value="" min="0" max="500" placeholder="auto">
+                                <span class="param-suffix">fellows</span>
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">9.2 Actual</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input small" id="param-9.2-actual" value="" min="0" max="500" placeholder="auto">
+                                <span class="param-suffix">fellows</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Cohort Dates</h2>
+                </div>
+                <div class="params-container">
+                    <div class="param-section">
+                        <div class="param-section-title">Cohort 8</div>
+                        <div class="cohort-dates-grid">
+                            <span class="header"></span><span class="header">Start</span><span class="header">End</span>
+                            <span class="cohort-label">8.1</span>
+                            <input type="date" class="param-input date-input" id="date-8.1-start" value="2025-10-01">
+                            <input type="date" class="param-input date-input" id="date-8.1-end" value="2026-03-31">
+                            <span class="cohort-label">8.2</span>
+                            <input type="date" class="param-input date-input" id="date-8.2-start" value="2026-04-01">
+                            <input type="date" class="param-input date-input" id="date-8.2-end" value="2026-09-30">
+                        </div>
+                    </div>
+                    <div class="param-section">
+                        <div class="param-section-title">Cohort 9</div>
+                        <div class="cohort-dates-grid">
+                            <span class="header"></span><span class="header">Start</span><span class="header">End</span>
+                            <span class="cohort-label">9.0</span>
+                            <input type="date" class="param-input date-input" id="date-9.0-start" value="2026-01-05">
+                            <input type="date" class="param-input date-input" id="date-9.0-end" value="2026-03-27">
+                            <span class="cohort-label">9.1</span>
+                            <input type="date" class="param-input date-input" id="date-9.1-start" value="2026-03-28">
+                            <input type="date" class="param-input date-input" id="date-9.1-end" value="2026-09-26">
+                            <span class="cohort-label">9.2</span>
+                            <input type="date" class="param-input date-input" id="date-9.2-start" value="2026-09-27">
+                            <input type="date" class="param-input date-input" id="date-9.2-end" value="2027-03-28">
+                        </div>
+                    </div>
+                    <div class="param-section">
+                        <div class="param-section-title">Cohort 10</div>
+                        <div class="cohort-dates-grid">
+                            <span class="header"></span><span class="header">Start</span><span class="header">End</span>
+                            <span class="cohort-label">10.0</span>
+                            <input type="date" class="param-input date-input" id="date-10.0-start" value="2026-06-15">
+                            <input type="date" class="param-input date-input" id="date-10.0-end" value="2026-09-04">
+                            <span class="cohort-label">10.1</span>
+                            <input type="date" class="param-input date-input" id="date-10.1-start" value="2026-09-05">
+                            <input type="date" class="param-input date-input" id="date-10.1-end" value="2027-03-06">
+                            <span class="cohort-label">10.2</span>
+                            <input type="date" class="param-input date-input" id="date-10.2-start" value="2027-03-07">
+                            <input type="date" class="param-input date-input" id="date-10.2-end" value="2027-09-05">
+                        </div>
+                    </div>
+                    <div class="param-section">
+                        <div class="param-section-title">Cohort 11</div>
+                        <div class="cohort-dates-grid">
+                            <span class="header"></span><span class="header">Start</span><span class="header">End</span>
+                            <span class="cohort-label">11.0</span>
+                            <input type="date" class="param-input date-input" id="date-11.0-start" value="2026-09-28">
+                            <input type="date" class="param-input date-input" id="date-11.0-end" value="2026-12-18">
+                            <span class="cohort-label">11.1</span>
+                            <input type="date" class="param-input date-input" id="date-11.1-start" value="2026-12-19">
+                            <input type="date" class="param-input date-input" id="date-11.1-end" value="2027-06-19">
+                            <span class="cohort-label">11.2</span>
+                            <input type="date" class="param-input date-input" id="date-11.2-start" value="2027-06-20">
+                            <input type="date" class="param-input date-input" id="date-11.2-end" value="2027-12-19">
+                        </div>
+                    </div>
+                    <div class="param-section">
+                        <div class="param-section-title">Cohort 12</div>
+                        <div class="cohort-dates-grid">
+                            <span class="header"></span><span class="header">Start</span><span class="header">End</span>
+                            <span class="cohort-label">12.0</span>
+                            <input type="date" class="param-input date-input" id="date-12.0-start" value="2027-02-01">
+                            <input type="date" class="param-input date-input" id="date-12.0-end" value="2027-04-23">
+                            <span class="cohort-label">12.1</span>
+                            <input type="date" class="param-input date-input" id="date-12.1-start" value="2027-04-24">
+                            <input type="date" class="param-input date-input" id="date-12.1-end" value="2027-10-23">
+                            <span class="cohort-label">12.2</span>
+                            <input type="date" class="param-input date-input" id="date-12.2-start" value="2027-10-24">
+                            <input type="date" class="param-input date-input" id="date-12.2-end" value="2028-04-23">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Onboarding Schedule</h2>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
+                    New hires needed each month with onboarding start dates (based on <span id="onboarding-lead-display">3</span>-week lead time)
+                </p>
+                <div class="table-container">
+                    <table id="onboarding-table">
+                        <thead>
+                            <tr>
+                                <th>Month Needed</th>
+                                <th>Onboarding Starts</th>
+                                <th>New RMs</th>
+                                <th>New SRMs</th>
+                                <th>New CMs</th>
+                                <th>New CPOs</th>
+                                <th>Total New Hires</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Fellow Count Over Time by Cohort</h2>
+                </div>
+                <div class="chart-container-large" id="timeline-chart"></div>
+                <div class="cohort-legend" id="cohort-legend"></div>
+            </div>
+            
+            <div class="charts-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Fellows by Location</h2>
+                    </div>
+                    <div class="chart-container" id="location-chart"></div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Total Staffing Requirements</h2>
+                    </div>
+                    <div class="chart-container" id="staffing-chart"></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Staffing by Location</h2>
+                </div>
+                <div class="location-staffing-grid">
+                    <div>
+                        <h3 style="font-size: 0.9rem; color: var(--accent-red); margin-bottom: 0.75rem;">🇬🇧 London Staffing</h3>
+                        <div class="chart-container" id="london-staffing-chart"></div>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 0.9rem; color: var(--accent-blue); margin-bottom: 0.75rem;">🇺🇸 Berkeley Staffing</h3>
+                        <div class="chart-container" id="berkeley-staffing-chart"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Monthly Detail</h2>
+                </div>
+                <div class="tabs">
+                    <div class="tab active" onclick="showTab('staffing')">All Staffing</div>
+                    <div class="tab" onclick="showTab('location')">By Location</div>
+                    <div class="tab" onclick="showTab('location-staffing')">Staffing by Location</div>
+                </div>
+                <div class="table-container" id="table-staffing">
+                    <table id="staffing-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Fellows</th>
+                                <th>RMs</th>
+                                <th>SRMs</th>
+                                <th>CMs</th>
+                                <th>CPOs</th>
+                                <th>Total Staff</th>
+                                <th>Active Cohorts</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="table-container" id="table-location" style="display: none;">
+                    <table id="location-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Total</th>
+                                <th>London</th>
+                                <th>Berkeley</th>
+                                <th>London %</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="table-container" id="table-location-staffing" style="display: none;">
+                    <table id="location-staffing-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>London Fellows</th>
+                                <th>London RMs</th>
+                                <th>London SRMs</th>
+                                <th>Berkeley Fellows</th>
+                                <th>Berkeley RMs</th>
+                                <th>Berkeley SRMs</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Cohort Retention Summary</h2>
+                </div>
+                <div class="table-container">
+                    <table id="retention-table">
+                        <thead>
+                            <tr>
+                                <th>Cohort</th>
+                                <th>Main (x.0)</th>
+                                <th>→ Ext 1 (x.1)</th>
+                                <th>→ Ext 2 (x.2)</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const months = [
+            "Jan 2026", "Feb 2026", "Mar 2026", "Apr 2026", "May 2026", "Jun 2026",
+            "Jul 2026", "Aug 2026", "Sep 2026", "Oct 2026", "Nov 2026", "Dec 2026",
+            "Jan 2027", "Feb 2027", "Mar 2027", "Apr 2027"
+        ];
+        
+        const monthDates = {
+            "Jan 2026": new Date(2026, 0, 15), "Feb 2026": new Date(2026, 1, 15),
+            "Mar 2026": new Date(2026, 2, 15), "Apr 2026": new Date(2026, 3, 15),
+            "May 2026": new Date(2026, 4, 15), "Jun 2026": new Date(2026, 5, 15),
+            "Jul 2026": new Date(2026, 6, 15), "Aug 2026": new Date(2026, 7, 15),
+            "Sep 2026": new Date(2026, 8, 15), "Oct 2026": new Date(2026, 9, 15),
+            "Nov 2026": new Date(2026, 10, 15), "Dec 2026": new Date(2026, 11, 15),
+            "Jan 2027": new Date(2027, 0, 15), "Feb 2027": new Date(2027, 1, 15),
+            "Mar 2027": new Date(2027, 2, 15), "Apr 2027": new Date(2027, 3, 15)
+        };
+        
+        const monthStarts = {
+            "Jan 2026": new Date(2026, 0, 1), "Feb 2026": new Date(2026, 1, 1),
+            "Mar 2026": new Date(2026, 2, 1), "Apr 2026": new Date(2026, 3, 1),
+            "May 2026": new Date(2026, 4, 1), "Jun 2026": new Date(2026, 5, 1),
+            "Jul 2026": new Date(2026, 6, 1), "Aug 2026": new Date(2026, 7, 1),
+            "Sep 2026": new Date(2026, 8, 1), "Oct 2026": new Date(2026, 9, 1),
+            "Nov 2026": new Date(2026, 10, 1), "Dec 2026": new Date(2026, 11, 1),
+            "Jan 2027": new Date(2027, 0, 1), "Feb 2027": new Date(2027, 1, 1),
+            "Mar 2027": new Date(2027, 2, 1), "Apr 2027": new Date(2027, 3, 1)
+        };
+        
+        const cohortColors = {
+            "8.1": "#7b6ef7", "8.2": "#22c55e",
+            "9.0": "#60b8ff", "9.1": "#9d8bf9", "9.2": "#4ade80",
+            "10.0": "#3b82f6", "10.1": "#a855f7", "10.2": "#16a34a",
+            "11.0": "#2563eb", "11.1": "#9333ea", "11.2": "#15803d",
+            "12.0": "#1d4ed8", "12.1": "#7c3aed", "12.2": "#166534"
+        };
+        
+        const allCohortIds = ["8.1", "8.2", "9.0", "9.1", "9.2", "10.0", "10.1", "10.2", "11.0", "11.1", "11.2", "12.0", "12.1", "12.2"];
+        
+        function sortCohorts(a, b) {
+            const [aMajor, aMinor] = a.split('.').map(Number);
+            const [bMajor, bMinor] = b.split('.').map(Number);
+            if (aMajor !== bMajor) return aMajor - bMajor;
+            return aMinor - bMinor;
+        }
+        
+        // Custom rounding function based on cutoff
+        function customRound(value, cutoff) {
+            const decimal = value - Math.floor(value);
+            if (decimal < cutoff) {
+                return Math.floor(value);
+            } else {
+                return Math.ceil(value);
+            }
+        }
+        
+        function getSchedule() {
+            const schedule = {};
+            allCohortIds.forEach(id => {
+                const startEl = document.getElementById(`date-${id}-start`);
+                const endEl = document.getElementById(`date-${id}-end`);
+                if (startEl && endEl) {
+                    schedule[id] = { start: startEl.value, end: endEl.value };
+                }
+            });
+            return schedule;
+        }
+        
+        function getParams() {
+            return {
+                roundingCutoff: parseFloat(document.getElementById('param-rounding-cutoff').value) || 0.4,
+                onboardingWeeks: parseInt(document.getElementById('param-onboarding-weeks').value) || 3,
+                cohort8_0: parseInt(document.getElementById('param-8.0').value) || 0,
+                cohort9_0: parseInt(document.getElementById('param-9.0').value) || 0,
+                cohort10_0: parseInt(document.getElementById('param-10.0').value) || 0,
+                cohort11_0: parseInt(document.getElementById('param-11.0').value) || 0,
+                cohort12_0: parseInt(document.getElementById('param-12.0').value) || 0,
+                ext1Rate: (parseInt(document.getElementById('param-ext1-rate').value) || 0) / 100,
+                ext2Rate: (parseInt(document.getElementById('param-ext2-rate').value) || 0) / 100,
+                cohort8_1_actual: parseInt(document.getElementById('param-8.1-actual').value) || 0,
+                cohort8_2_actual: parseInt(document.getElementById('param-8.2-actual').value) || 0,
+                cohort9_1_actual: document.getElementById('param-9.1-actual').value ? parseInt(document.getElementById('param-9.1-actual').value) : null,
+                cohort9_2_actual: document.getElementById('param-9.2-actual').value ? parseInt(document.getElementById('param-9.2-actual').value) : null,
+                londonFellowsPerRM: parseFloat(document.getElementById('param-london-fellows-per-rm').value) || 7,
+                londonRMsPerSRM: parseFloat(document.getElementById('param-london-rms-per-srm').value) || 4,
+                londonFellowsPerSRM: parseFloat(document.getElementById('param-london-fellows-per-srm').value) || 0,
+                berkeleyFellowsPerRM: parseFloat(document.getElementById('param-berkeley-fellows-per-rm').value) || 7,
+                berkeleyRMsPerSRM: parseFloat(document.getElementById('param-berkeley-rms-per-srm').value) || 4,
+                berkeleyFellowsPerSRM: parseFloat(document.getElementById('param-berkeley-fellows-per-srm').value) || 0,
+                fellowsPerCM: parseFloat(document.getElementById('param-fellows-per-cm').value) || 35,
+                fellowsPerCPO: parseFloat(document.getElementById('param-fellows-per-cpo').value) || 100,
+                londonMainPct: (parseInt(document.getElementById('param-london-main').value) || 0) / 100,
+                londonExtPct: (parseInt(document.getElementById('param-london-ext').value) || 0) / 100
+            };
+        }
+        
+        function calculateCohortSizes(params) {
+            const sizes = {
+                "8.0": params.cohort8_0,
+                "8.1": params.cohort8_1_actual,
+                "8.2": params.cohort8_2_actual,
+                "9.0": params.cohort9_0,
+                "9.1": params.cohort9_1_actual !== null ? params.cohort9_1_actual : Math.round(params.cohort9_0 * params.ext1Rate),
+                "9.2": null,
+                "10.0": params.cohort10_0,
+                "10.1": Math.round(params.cohort10_0 * params.ext1Rate),
+                "10.2": Math.round(params.cohort10_0 * params.ext1Rate * params.ext2Rate),
+                "11.0": params.cohort11_0,
+                "11.1": Math.round(params.cohort11_0 * params.ext1Rate),
+                "11.2": Math.round(params.cohort11_0 * params.ext1Rate * params.ext2Rate),
+                "12.0": params.cohort12_0,
+                "12.1": Math.round(params.cohort12_0 * params.ext1Rate),
+                "12.2": Math.round(params.cohort12_0 * params.ext1Rate * params.ext2Rate)
+            };
+            sizes["9.2"] = params.cohort9_2_actual !== null ? params.cohort9_2_actual : Math.round(sizes["9.1"] * params.ext2Rate);
+            return sizes;
+        }
+        
+        function isActive(cohort, date, schedule) {
+            const s = schedule[cohort];
+            if (!s || !s.start || !s.end) return false;
+            const start = new Date(s.start);
+            const end = new Date(s.end);
+            return date >= start && date <= end;
+        }
+        
+        function getCohortType(cohort) {
+            if (cohort.endsWith('.0')) return 'main';
+            return 'ext';
+        }
+        
+        function calculateStaffing(totalFellows, fellowsPerRM, rmsPerSRM, fellowsPerSRM, cutoff) {
+            if (totalFellows === 0) return { rms: 0, srms: 0 };
+            
+            let rms = customRound(totalFellows / fellowsPerRM, cutoff);
+            let srms = customRound(rms / rmsPerSRM, cutoff);
+            
+            if (fellowsPerSRM > 0) {
+                for (let i = 0; i < 10; i++) {
+                    const fellowsHandledBySRMs = srms * fellowsPerSRM;
+                    const fellowsForRMs = Math.max(0, totalFellows - fellowsHandledBySRMs);
+                    const newRMs = fellowsForRMs > 0 ? customRound(fellowsForRMs / fellowsPerRM, cutoff) : 0;
+                    const newSRMs = totalFellows > 0 ? Math.max(1, customRound(newRMs / rmsPerSRM, cutoff)) : 0;
+                    
+                    if (newRMs === rms && newSRMs === srms) break;
+                    rms = newRMs;
+                    srms = newSRMs;
+                }
+            }
+            
+            // Ensure at least 1 of each if we have fellows
+            if (totalFellows > 0 && rms === 0) rms = 1;
+            if (totalFellows > 0 && srms === 0) srms = 1;
+            
+            return { rms, srms };
+        }
+        
+        function calculateMonthlyData(params, schedule) {
+            const sizes = calculateCohortSizes(params);
+            const cutoff = params.roundingCutoff;
+            
+            return months.map(month => {
+                const date = monthDates[month];
+                const activeCohorts = {};
+                let londonTotal = 0, berkeleyTotal = 0;
+                
+                allCohortIds.forEach(cohort => {
+                    if (isActive(cohort, date, schedule) && sizes[cohort] > 0) {
+                        const count = sizes[cohort];
+                        activeCohorts[cohort] = count;
+                        
+                        const type = getCohortType(cohort);
+                        const londonPct = type === 'main' ? params.londonMainPct : params.londonExtPct;
+                        londonTotal += Math.round(count * londonPct);
+                        berkeleyTotal += Math.round(count * (1 - londonPct));
+                    }
+                });
+                
+                const totalFellows = Object.values(activeCohorts).reduce((a, b) => a + b, 0);
+                
+                const londonStaffing = calculateStaffing(londonTotal, params.londonFellowsPerRM, params.londonRMsPerSRM, params.londonFellowsPerSRM, cutoff);
+                const berkeleyStaffing = calculateStaffing(berkeleyTotal, params.berkeleyFellowsPerRM, params.berkeleyRMsPerSRM, params.berkeleyFellowsPerSRM, cutoff);
+                
+                const totalRMs = londonStaffing.rms + berkeleyStaffing.rms;
+                const totalSRMs = londonStaffing.srms + berkeleyStaffing.srms;
+                
+                // Calculate CMs and CPOs based on total fellows
+                const cms = totalFellows > 0 ? customRound(totalFellows / params.fellowsPerCM, cutoff) : 0;
+                const cpos = totalFellows > 0 ? customRound(totalFellows / params.fellowsPerCPO, cutoff) : 0;
+                
+                return {
+                    month,
+                    fellows: totalFellows,
+                    rms: totalRMs,
+                    srms: totalSRMs,
+                    cms: Math.max(cms, totalFellows > 0 ? 1 : 0),
+                    cpos: Math.max(cpos, totalFellows > 0 ? 1 : 0),
+                    london: londonTotal,
+                    berkeley: berkeleyTotal,
+                    londonRMs: londonStaffing.rms,
+                    londonSRMs: londonStaffing.srms,
+                    berkeleyRMs: berkeleyStaffing.rms,
+                    berkeleySRMs: berkeleyStaffing.srms,
+                    cohorts: activeCohorts
+                };
+            });
+        }
+        
+        function calculateOnboardingData(monthlyData, onboardingWeeks) {
+            const onboardingData = [];
+            
+            for (let i = 0; i < monthlyData.length; i++) {
+                const current = monthlyData[i];
+                const prev = i > 0 ? monthlyData[i - 1] : { rms: 0, srms: 0, cms: 0, cpos: 0 };
+                
+                const deltaRMs = Math.max(0, current.rms - prev.rms);
+                const deltaSRMs = Math.max(0, current.srms - prev.srms);
+                const deltaCMs = Math.max(0, current.cms - prev.cms);
+                const deltaCPOs = Math.max(0, current.cpos - prev.cpos);
+                const totalNew = deltaRMs + deltaSRMs + deltaCMs + deltaCPOs;
+                
+                // Calculate onboarding start date
+                const monthStart = monthStarts[current.month];
+                const onboardingStart = new Date(monthStart);
+                onboardingStart.setDate(onboardingStart.getDate() - (onboardingWeeks * 7));
+                
+                onboardingData.push({
+                    month: current.month,
+                    onboardingStart,
+                    deltaRMs,
+                    deltaSRMs,
+                    deltaCMs,
+                    deltaCPOs,
+                    totalNew
+                });
+            }
+            
+            return onboardingData;
+        }
+        
+        function calculateStats(monthlyData) {
+            let peakFellows = 0, peakRMs = 0, peakSRMs = 0, peakManagers = 0;
+            let peakCMs = 0, peakCPOs = 0, peakLondon = 0, peakBerkeley = 0;
+            
+            monthlyData.forEach(m => {
+                if (m.fellows > peakFellows) peakFellows = m.fellows;
+                if (m.rms > peakRMs) peakRMs = m.rms;
+                if (m.srms > peakSRMs) peakSRMs = m.srms;
+                const totalStaff = m.rms + m.srms + m.cms + m.cpos;
+                if (totalStaff > peakManagers) peakManagers = totalStaff;
+                if (m.cms > peakCMs) peakCMs = m.cms;
+                if (m.cpos > peakCPOs) peakCPOs = m.cpos;
+                if (m.london > peakLondon) peakLondon = m.london;
+                if (m.berkeley > peakBerkeley) peakBerkeley = m.berkeley;
+            });
+            
+            return { peakFellows, peakRMs, peakSRMs, peakManagers, peakCMs, peakCPOs, peakLondon, peakBerkeley };
+        }
+        
+        function formatDate(date) {
+            const options = { month: 'short', day: 'numeric', year: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+        
+        function updateAll() {
+            const params = getParams();
+            const schedule = getSchedule();
+            const monthlyData = calculateMonthlyData(params, schedule);
+            const onboardingData = calculateOnboardingData(monthlyData, params.onboardingWeeks);
+            const stats = calculateStats(monthlyData);
+            const sizes = calculateCohortSizes(params);
+            
+            document.getElementById('onboarding-lead-display').textContent = params.onboardingWeeks;
+            
+            document.getElementById('stat-peak-fellows').textContent = stats.peakFellows;
+            document.getElementById('stat-peak-managers').textContent = stats.peakManagers;
+            document.getElementById('stat-peak-rms').textContent = stats.peakRMs;
+            document.getElementById('stat-peak-srms').textContent = stats.peakSRMs;
+            document.getElementById('stat-peak-cms').textContent = stats.peakCMs;
+            document.getElementById('stat-peak-cpos').textContent = stats.peakCPOs;
+            document.getElementById('stat-peak-london').textContent = stats.peakLondon;
+            document.getElementById('stat-peak-berkeley').textContent = stats.peakBerkeley;
+            
+            renderOnboardingTable(onboardingData);
+            renderTimelineChart(monthlyData);
+            renderLocationChart(monthlyData);
+            renderStaffingChart(monthlyData);
+            renderLocationStaffingCharts(monthlyData);
+            renderStaffingTable(monthlyData, stats.peakFellows);
+            renderLocationTable(monthlyData);
+            renderLocationStaffingTable(monthlyData);
+            renderRetentionTable(sizes, params);
+        }
+        
+        function renderOnboardingTable(onboardingData) {
+            const tbody = document.querySelector('#onboarding-table tbody');
+            tbody.innerHTML = '';
+            
+            onboardingData.forEach(row => {
+                if (row.totalNew === 0) return; // Skip months with no new hires
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${row.month}</strong></td>
+                    <td class="onboarding-date">${formatDate(row.onboardingStart)}</td>
+                    <td>${row.deltaRMs > 0 ? `<span class="delta-positive">+${row.deltaRMs}</span>` : '<span class="delta-zero">—</span>'}</td>
+                    <td>${row.deltaSRMs > 0 ? `<span class="delta-positive">+${row.deltaSRMs}</span>` : '<span class="delta-zero">—</span>'}</td>
+                    <td>${row.deltaCMs > 0 ? `<span class="delta-positive">+${row.deltaCMs}</span>` : '<span class="delta-zero">—</span>'}</td>
+                    <td>${row.deltaCPOs > 0 ? `<span class="delta-positive">+${row.deltaCPOs}</span>` : '<span class="delta-zero">—</span>'}</td>
+                    <td><strong class="delta-positive">+${row.totalNew}</strong></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            if (tbody.children.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="7" style="text-align: center; color: var(--text-secondary);">No new hires needed in this period</td>';
+                tbody.appendChild(tr);
+            }
+        }
+        
+        function renderTimelineChart(monthlyData) {
+            const container = document.getElementById('timeline-chart');
+            container.innerHTML = '';
+            document.getElementById('cohort-legend').innerHTML = '';
+            
+            const width = container.clientWidth;
+            const height = 400;
+            const margin = { top: 20, right: 30, bottom: 60, left: 50 };
+            
+            const svg = d3.select('#timeline-chart').append('svg').attr('width', width).attr('height', height);
+            
+            const activeCohorts = new Set();
+            monthlyData.forEach(m => Object.keys(m.cohorts).forEach(c => activeCohorts.add(c)));
+            const cohortList = Array.from(activeCohorts).sort(sortCohorts);
+            
+            const stackData = monthlyData.map(d => {
+                const row = { month: d.month };
+                cohortList.forEach(c => { row[c] = d.cohorts[c] || 0; });
+                return row;
+            });
+            
+            const stack = d3.stack().keys(cohortList).order(d3.stackOrderNone).offset(d3.stackOffsetNone);
+            const series = stack(stackData);
+            
+            const maxY = d3.max(monthlyData, d => d.fellows) * 1.1 || 100;
+            
+            const x = d3.scaleBand().domain(months).range([margin.left, width - margin.right]).padding(0.2);
+            const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
+            
+            svg.append('g').selectAll('g').data(series).join('g')
+                .attr('fill', d => cohortColors[d.key] || '#888')
+                .selectAll('rect').data(d => d).join('rect')
+                .attr('x', d => x(d.data.month)).attr('y', d => y(d[1]))
+                .attr('height', d => y(d[0]) - y(d[1])).attr('width', x.bandwidth()).attr('rx', 2);
+            
+            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
+                .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
+            
+            svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(6))
+                .selectAll('text').style('fill', '#8888a0');
+            
+            const legendContainer = document.getElementById('cohort-legend');
+            cohortList.forEach(cohort => {
+                const item = document.createElement('div');
+                item.className = 'cohort-legend-item';
+                item.innerHTML = `<div class="cohort-legend-dot" style="background: ${cohortColors[cohort] || '#888'};"></div><span>${cohort}</span>`;
+                legendContainer.appendChild(item);
+            });
+        }
+        
+        function renderLocationChart(monthlyData) {
+            const container = document.getElementById('location-chart');
+            container.innerHTML = '';
+            
+            const width = container.clientWidth;
+            const height = 320;
+            const margin = { top: 20, right: 30, bottom: 60, left: 50 };
+            
+            const svg = d3.select('#location-chart').append('svg').attr('width', width).attr('height', height);
+            
+            const maxY = d3.max(monthlyData, d => d.fellows) * 1.1 || 100;
+            
+            const x = d3.scaleBand().domain(months).range([margin.left, width - margin.right]).padding(0.2);
+            const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
+            
+            const stackData = monthlyData.map(d => ({ month: d.month, London: d.london, Berkeley: d.berkeley }));
+            const stack = d3.stack().keys(['Berkeley', 'London']);
+            const series = stack(stackData);
+            
+            const colors = { Berkeley: '#4a9eff', London: '#ef4444' };
+            
+            svg.append('g').selectAll('g').data(series).join('g')
+                .attr('fill', d => colors[d.key])
+                .selectAll('rect').data(d => d).join('rect')
+                .attr('x', d => x(d.data.month)).attr('y', d => y(d[1]))
+                .attr('height', d => y(d[0]) - y(d[1])).attr('width', x.bandwidth()).attr('rx', 2);
+            
+            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
+                .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
+            
+            svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(6))
+                .selectAll('text').style('fill', '#8888a0');
+            
+            const legend = svg.append('g').attr('transform', `translate(${width - 100}, 10)`);
+            legend.append('rect').attr('x', 0).attr('y', 0).attr('width', 12).attr('height', 12).attr('fill', '#4a9eff').attr('rx', 2);
+            legend.append('text').attr('x', 16).attr('y', 10).text('Berkeley').style('fill', '#f0f0f5').style('font-size', '11px');
+            legend.append('rect').attr('x', 0).attr('y', 18).attr('width', 12).attr('height', 12).attr('fill', '#ef4444').attr('rx', 2);
+            legend.append('text').attr('x', 16).attr('y', 28).text('London').style('fill', '#f0f0f5').style('font-size', '11px');
+        }
+        
+        function renderStaffingChart(monthlyData) {
+            const container = document.getElementById('staffing-chart');
+            container.innerHTML = '';
+            
+            const width = container.clientWidth;
+            const height = 320;
+            const margin = { top: 20, right: 80, bottom: 60, left: 50 };
+            
+            const svg = d3.select('#staffing-chart').append('svg').attr('width', width).attr('height', height);
+            
+            const maxY = d3.max(monthlyData, d => Math.max(d.rms, d.srms, d.cms, d.cpos)) * 1.2 || 60;
+            
+            const x = d3.scalePoint().domain(months).range([margin.left, width - margin.right]);
+            const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
+            
+            const rmLine = d3.line().x(d => x(d.month)).y(d => y(d.rms)).curve(d3.curveMonotoneX);
+            const srmLine = d3.line().x(d => x(d.month)).y(d => y(d.srms)).curve(d3.curveMonotoneX);
+            const cmLine = d3.line().x(d => x(d.month)).y(d => y(d.cms)).curve(d3.curveMonotoneX);
+            const cpoLine = d3.line().x(d => x(d.month)).y(d => y(d.cpos)).curve(d3.curveMonotoneX);
+            
+            svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#a855f7').attr('stroke-width', 2.5).attr('d', rmLine);
+            svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#22c55e').attr('stroke-width', 2.5).attr('d', srmLine);
+            svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#ec4899').attr('stroke-width', 2.5).attr('d', cmLine);
+            svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#06b6d4').attr('stroke-width', 2.5).attr('d', cpoLine);
+            
+            svg.selectAll('.rm-dot').data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d.rms)).attr('r', 3).attr('fill', '#a855f7');
+            svg.selectAll('.srm-dot').data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d.srms)).attr('r', 3).attr('fill', '#22c55e');
+            svg.selectAll('.cm-dot').data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d.cms)).attr('r', 3).attr('fill', '#ec4899');
+            svg.selectAll('.cpo-dot').data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d.cpos)).attr('r', 3).attr('fill', '#06b6d4');
+            
+            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
+                .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
+            
+            svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(6))
+                .selectAll('text').style('fill', '#8888a0');
+            
+            const legend = svg.append('g').attr('transform', `translate(${width - 70}, 10)`);
+            const items = [
+                { color: '#a855f7', label: 'RMs' },
+                { color: '#22c55e', label: 'SRMs' },
+                { color: '#ec4899', label: 'CMs' },
+                { color: '#06b6d4', label: 'CPOs' }
+            ];
+            items.forEach((item, i) => {
+                legend.append('circle').attr('cx', 0).attr('cy', i * 16).attr('r', 4).attr('fill', item.color);
+                legend.append('text').attr('x', 8).attr('y', i * 16 + 4).text(item.label).style('fill', '#f0f0f5').style('font-size', '11px');
+            });
+        }
+        
+        function renderLocationStaffingCharts(monthlyData) {
+            const londonContainer = document.getElementById('london-staffing-chart');
+            londonContainer.innerHTML = '';
+            
+            const width = londonContainer.clientWidth;
+            const height = 320;
+            const margin = { top: 20, right: 70, bottom: 60, left: 50 };
+            
+            const maxYLondon = Math.max(d3.max(monthlyData, d => d.londonRMs) * 1.3, 10) || 30;
+            
+            const svgLondon = d3.select('#london-staffing-chart').append('svg').attr('width', width).attr('height', height);
+            
+            const xLondon = d3.scalePoint().domain(months).range([margin.left, width - margin.right]);
+            const yLondon = d3.scaleLinear().domain([0, maxYLondon]).range([height - margin.bottom, margin.top]);
+            
+            const londonRMLine = d3.line().x(d => xLondon(d.month)).y(d => yLondon(d.londonRMs)).curve(d3.curveMonotoneX);
+            const londonSRMLine = d3.line().x(d => xLondon(d.month)).y(d => yLondon(d.londonSRMs)).curve(d3.curveMonotoneX);
+            
+            svgLondon.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#f87171').attr('stroke-width', 2.5).attr('d', londonRMLine);
+            svgLondon.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#fbbf24').attr('stroke-width', 2.5).attr('d', londonSRMLine);
+            
+            svgLondon.selectAll('.rm-dot').data(monthlyData).join('circle').attr('cx', d => xLondon(d.month)).attr('cy', d => yLondon(d.londonRMs)).attr('r', 3).attr('fill', '#f87171');
+            svgLondon.selectAll('.srm-dot').data(monthlyData).join('circle').attr('cx', d => xLondon(d.month)).attr('cy', d => yLondon(d.londonSRMs)).attr('r', 3).attr('fill', '#fbbf24');
+            
+            svgLondon.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(xLondon))
+                .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
+            
+            svgLondon.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(yLondon).ticks(6))
+                .selectAll('text').style('fill', '#8888a0');
+            
+            const legendLondon = svgLondon.append('g').attr('transform', `translate(${width - 60}, 10)`);
+            legendLondon.append('circle').attr('cx', 0).attr('cy', 0).attr('r', 4).attr('fill', '#f87171');
+            legendLondon.append('text').attr('x', 8).attr('y', 4).text('RMs').style('fill', '#f0f0f5').style('font-size', '11px');
+            legendLondon.append('circle').attr('cx', 0).attr('cy', 16).attr('r', 4).attr('fill', '#fbbf24');
+            legendLondon.append('text').attr('x', 8).attr('y', 20).text('SRMs').style('fill', '#f0f0f5').style('font-size', '11px');
+            
+            const berkeleyContainer = document.getElementById('berkeley-staffing-chart');
+            berkeleyContainer.innerHTML = '';
+            
+            const maxYBerkeley = Math.max(d3.max(monthlyData, d => d.berkeleyRMs) * 1.3, 10) || 30;
+            
+            const svgBerkeley = d3.select('#berkeley-staffing-chart').append('svg').attr('width', width).attr('height', height);
+            
+            const xBerkeley = d3.scalePoint().domain(months).range([margin.left, width - margin.right]);
+            const yBerkeley = d3.scaleLinear().domain([0, maxYBerkeley]).range([height - margin.bottom, margin.top]);
+            
+            const berkeleyRMLine = d3.line().x(d => xBerkeley(d.month)).y(d => yBerkeley(d.berkeleyRMs)).curve(d3.curveMonotoneX);
+            const berkeleySRMLine = d3.line().x(d => xBerkeley(d.month)).y(d => yBerkeley(d.berkeleySRMs)).curve(d3.curveMonotoneX);
+            
+            svgBerkeley.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#60a5fa').attr('stroke-width', 2.5).attr('d', berkeleyRMLine);
+            svgBerkeley.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#34d399').attr('stroke-width', 2.5).attr('d', berkeleySRMLine);
+            
+            svgBerkeley.selectAll('.rm-dot').data(monthlyData).join('circle').attr('cx', d => xBerkeley(d.month)).attr('cy', d => yBerkeley(d.berkeleyRMs)).attr('r', 3).attr('fill', '#60a5fa');
+            svgBerkeley.selectAll('.srm-dot').data(monthlyData).join('circle').attr('cx', d => xBerkeley(d.month)).attr('cy', d => yBerkeley(d.berkeleySRMs)).attr('r', 3).attr('fill', '#34d399');
+            
+            svgBerkeley.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(xBerkeley))
+                .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
+            
+            svgBerkeley.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(yBerkeley).ticks(6))
+                .selectAll('text').style('fill', '#8888a0');
+            
+            const legendBerkeley = svgBerkeley.append('g').attr('transform', `translate(${width - 60}, 10)`);
+            legendBerkeley.append('circle').attr('cx', 0).attr('cy', 0).attr('r', 4).attr('fill', '#60a5fa');
+            legendBerkeley.append('text').attr('x', 8).attr('y', 4).text('RMs').style('fill', '#f0f0f5').style('font-size', '11px');
+            legendBerkeley.append('circle').attr('cx', 0).attr('cy', 16).attr('r', 4).attr('fill', '#34d399');
+            legendBerkeley.append('text').attr('x', 8).attr('y', 20).text('SRMs').style('fill', '#f0f0f5').style('font-size', '11px');
+        }
+        
+        function renderStaffingTable(monthlyData, peakFellows) {
+            const tbody = document.querySelector('#staffing-table tbody');
+            tbody.innerHTML = '';
+            
+            monthlyData.forEach(row => {
+                const isPeak = row.fellows === peakFellows && peakFellows > 0;
+                const tr = document.createElement('tr');
+                if (isPeak) tr.className = 'highlight-row';
+                const totalStaff = row.rms + row.srms + row.cms + row.cpos;
+                const cohortStr = Object.entries(row.cohorts).sort((a,b) => sortCohorts(a[0], b[0])).map(([k,v]) => `${k}(${v})`).join(", ");
+                tr.innerHTML = `
+                    <td><strong>${row.month}</strong></td>
+                    <td>${row.fellows}</td>
+                    <td>${row.rms}</td>
+                    <td>${row.srms}</td>
+                    <td>${row.cms}</td>
+                    <td>${row.cpos}</td>
+                    <td><strong>${totalStaff}</strong></td>
+                    <td style="font-size: 0.75rem; color: var(--text-secondary);">${cohortStr || '—'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        function renderLocationTable(monthlyData) {
+            const tbody = document.querySelector('#location-table tbody');
+            tbody.innerHTML = '';
+            
+            monthlyData.forEach(row => {
+                const londonPct = row.fellows > 0 ? Math.round(row.london / row.fellows * 100) : 0;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${row.month}</strong></td>
+                    <td>${row.fellows}</td>
+                    <td><span class="location-badge london">${row.london}</span></td>
+                    <td><span class="location-badge berkeley">${row.berkeley}</span></td>
+                    <td>${londonPct}%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        function renderLocationStaffingTable(monthlyData) {
+            const tbody = document.querySelector('#location-staffing-table tbody');
+            tbody.innerHTML = '';
+            
+            monthlyData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${row.month}</strong></td>
+                    <td><span class="location-badge london">${row.london}</span></td>
+                    <td>${row.londonRMs}</td>
+                    <td>${row.londonSRMs}</td>
+                    <td><span class="location-badge berkeley">${row.berkeley}</span></td>
+                    <td>${row.berkeleyRMs}</td>
+                    <td>${row.berkeleySRMs}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        function renderRetentionTable(sizes, params) {
+            const tbody = document.querySelector('#retention-table tbody');
+            tbody.innerHTML = '';
+            
+            [8, 9, 10, 11, 12].forEach(num => {
+                const x0 = sizes[`${num}.0`];
+                const x1 = sizes[`${num}.1`];
+                const x2 = sizes[`${num}.2`];
+                
+                const x1Pct = x0 > 0 ? Math.round(x1 / x0 * 100) : 0;
+                const x2Pct = x1 > 0 ? Math.round(x2 / x1 * 100) : 0;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${num}</strong></td>
+                    <td>${x0}</td>
+                    <td style="color: #a855f7;">${x1} (${x1Pct}%)</td>
+                    <td style="color: #22c55e;">${x2} (${x2Pct}%)</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('table-staffing').style.display = tab === 'staffing' ? 'block' : 'none';
+            document.getElementById('table-location').style.display = tab === 'location' ? 'block' : 'none';
+            document.getElementById('table-location-staffing').style.display = tab === 'location-staffing' ? 'block' : 'none';
+        }
+        
+        function resetToDefaults() {
+            document.getElementById('param-rounding-cutoff').value = 0.4;
+            document.getElementById('param-onboarding-weeks').value = 3;
+            document.getElementById('param-8.0').value = 80;
+            document.getElementById('param-9.0').value = 90;
+            document.getElementById('param-10.0').value = 120;
+            document.getElementById('param-11.0').value = 100;
+            document.getElementById('param-12.0').value = 180;
+            document.getElementById('param-ext1-rate').value = 70;
+            document.getElementById('param-ext2-rate').value = 70;
+            document.getElementById('param-8.1-actual').value = 50;
+            document.getElementById('param-8.2-actual').value = 30;
+            document.getElementById('param-9.1-actual').value = '';
+            document.getElementById('param-9.2-actual').value = '';
+            document.getElementById('param-london-fellows-per-rm').value = 7;
+            document.getElementById('param-london-rms-per-srm').value = 4;
+            document.getElementById('param-london-fellows-per-srm').value = 2;
+            document.getElementById('param-berkeley-fellows-per-rm').value = 7;
+            document.getElementById('param-berkeley-rms-per-srm').value = 4;
+            document.getElementById('param-berkeley-fellows-per-srm').value = 2;
+            document.getElementById('param-fellows-per-cm').value = 35;
+            document.getElementById('param-fellows-per-cpo').value = 100;
+            document.getElementById('param-london-main').value = 10;
+            document.getElementById('param-london-ext').value = 60;
+            
+            document.getElementById('date-8.1-start').value = '2025-10-01';
+            document.getElementById('date-8.1-end').value = '2026-03-31';
+            document.getElementById('date-8.2-start').value = '2026-04-01';
+            document.getElementById('date-8.2-end').value = '2026-09-30';
+            document.getElementById('date-9.0-start').value = '2026-01-05';
+            document.getElementById('date-9.0-end').value = '2026-03-27';
+            document.getElementById('date-9.1-start').value = '2026-03-28';
+            document.getElementById('date-9.1-end').value = '2026-09-26';
+            document.getElementById('date-9.2-start').value = '2026-09-27';
+            document.getElementById('date-9.2-end').value = '2027-03-28';
+            document.getElementById('date-10.0-start').value = '2026-06-15';
+            document.getElementById('date-10.0-end').value = '2026-09-04';
+            document.getElementById('date-10.1-start').value = '2026-09-05';
+            document.getElementById('date-10.1-end').value = '2027-03-06';
+            document.getElementById('date-10.2-start').value = '2027-03-07';
+            document.getElementById('date-10.2-end').value = '2027-09-05';
+            document.getElementById('date-11.0-start').value = '2026-09-28';
+            document.getElementById('date-11.0-end').value = '2026-12-18';
+            document.getElementById('date-11.1-start').value = '2026-12-19';
+            document.getElementById('date-11.1-end').value = '2027-06-19';
+            document.getElementById('date-11.2-start').value = '2027-06-20';
+            document.getElementById('date-11.2-end').value = '2027-12-19';
+            document.getElementById('date-12.0-start').value = '2027-02-01';
+            document.getElementById('date-12.0-end').value = '2027-04-23';
+            document.getElementById('date-12.1-start').value = '2027-04-24';
+            document.getElementById('date-12.1-end').value = '2027-10-23';
+            document.getElementById('date-12.2-start').value = '2027-10-24';
+            document.getElementById('date-12.2-end').value = '2028-04-23';
+            
+            updateAll();
+        }
+        
+        document.querySelectorAll('.param-input').forEach(input => {
+            input.addEventListener('input', updateAll);
+            input.addEventListener('change', updateAll);
+        });
+        
+        updateAll();
+        window.addEventListener('resize', updateAll);
+    </script>
+</body>
+</html>
