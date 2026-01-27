@@ -327,7 +327,6 @@
         @media (max-width: 900px) { .location-staffing-grid { grid-template-columns: 1fr; } }
         
         .delta-positive { color: var(--accent-green); }
-        .delta-negative { color: var(--accent-red); }
         .delta-zero { color: var(--text-secondary); }
         
         .onboarding-date {
@@ -336,18 +335,11 @@
             font-family: 'JetBrains Mono', monospace;
         }
         
-        .role-badge {
-            display: inline-block;
-            padding: 0.15rem 0.4rem;
-            border-radius: 3px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            text-transform: uppercase;
+        .hired-count {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
         }
-        .role-badge.rm { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
-        .role-badge.srm { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-        .role-badge.cm { background: rgba(236, 72, 153, 0.2); color: #ec4899; }
-        .role-badge.cpo { background: rgba(6, 182, 212, 0.2); color: #06b6d4; }
     </style>
 </head>
 <body>
@@ -485,7 +477,7 @@
                         <div class="param-row">
                             <span class="param-label">London % in Extensions</span>
                             <div class="input-group">
-                                <input type="number" class="param-input small" id="param-london-ext" value="60" min="0" max="100">
+                                <input type="number" class="param-input small" id="param-london-ext" value="75" min="0" max="100">
                                 <span class="param-suffix">%</span>
                             </div>
                         </div>
@@ -674,7 +666,7 @@
                     <h2 class="card-title">Onboarding Schedule</h2>
                 </div>
                 <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
-                    New hires needed each month with onboarding start dates (based on <span id="onboarding-lead-display">3</span>-week lead time)
+                    New hires needed each month with onboarding start dates (based on <span id="onboarding-lead-display">3</span>-week lead time). Staff are retained when needs decrease.
                 </p>
                 <div class="table-container">
                     <table id="onboarding-table">
@@ -686,7 +678,8 @@
                                 <th>New SRMs</th>
                                 <th>New CMs</th>
                                 <th>New CPOs</th>
-                                <th>Total New Hires</th>
+                                <th>Total New</th>
+                                <th>Cumulative Hired</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -859,14 +852,9 @@
             return aMinor - bMinor;
         }
         
-        // Custom rounding function based on cutoff
         function customRound(value, cutoff) {
             const decimal = value - Math.floor(value);
-            if (decimal < cutoff) {
-                return Math.floor(value);
-            } else {
-                return Math.ceil(value);
-            }
+            return decimal < cutoff ? Math.floor(value) : Math.ceil(value);
         }
         
         function getSchedule() {
@@ -940,8 +928,7 @@
         }
         
         function getCohortType(cohort) {
-            if (cohort.endsWith('.0')) return 'main';
-            return 'ext';
+            return cohort.endsWith('.0') ? 'main' : 'ext';
         }
         
         function calculateStaffing(totalFellows, fellowsPerRM, rmsPerSRM, fellowsPerSRM, cutoff) {
@@ -963,7 +950,6 @@
                 }
             }
             
-            // Ensure at least 1 of each if we have fellows
             if (totalFellows > 0 && rms === 0) rms = 1;
             if (totalFellows > 0 && srms === 0) srms = 1;
             
@@ -999,23 +985,14 @@
                 const totalRMs = londonStaffing.rms + berkeleyStaffing.rms;
                 const totalSRMs = londonStaffing.srms + berkeleyStaffing.srms;
                 
-                // Calculate CMs and CPOs based on total fellows
-                const cms = totalFellows > 0 ? customRound(totalFellows / params.fellowsPerCM, cutoff) : 0;
-                const cpos = totalFellows > 0 ? customRound(totalFellows / params.fellowsPerCPO, cutoff) : 0;
+                const cms = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerCM, cutoff)) : 0;
+                const cpos = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerCPO, cutoff)) : 0;
                 
                 return {
-                    month,
-                    fellows: totalFellows,
-                    rms: totalRMs,
-                    srms: totalSRMs,
-                    cms: Math.max(cms, totalFellows > 0 ? 1 : 0),
-                    cpos: Math.max(cpos, totalFellows > 0 ? 1 : 0),
-                    london: londonTotal,
-                    berkeley: berkeleyTotal,
-                    londonRMs: londonStaffing.rms,
-                    londonSRMs: londonStaffing.srms,
-                    berkeleyRMs: berkeleyStaffing.rms,
-                    berkeleySRMs: berkeleyStaffing.srms,
+                    month, fellows: totalFellows, rms: totalRMs, srms: totalSRMs, cms, cpos,
+                    london: londonTotal, berkeley: berkeleyTotal,
+                    londonRMs: londonStaffing.rms, londonSRMs: londonStaffing.srms,
+                    berkeleyRMs: berkeleyStaffing.rms, berkeleySRMs: berkeleyStaffing.srms,
                     cohorts: activeCohorts
                 };
             });
@@ -1024,29 +1001,34 @@
         function calculateOnboardingData(monthlyData, onboardingWeeks) {
             const onboardingData = [];
             
+            // Track high water mark for each role (no firing assumption)
+            let maxRMs = 0, maxSRMs = 0, maxCMs = 0, maxCPOs = 0;
+            
             for (let i = 0; i < monthlyData.length; i++) {
                 const current = monthlyData[i];
-                const prev = i > 0 ? monthlyData[i - 1] : { rms: 0, srms: 0, cms: 0, cpos: 0 };
                 
-                const deltaRMs = Math.max(0, current.rms - prev.rms);
-                const deltaSRMs = Math.max(0, current.srms - prev.srms);
-                const deltaCMs = Math.max(0, current.cms - prev.cms);
-                const deltaCPOs = Math.max(0, current.cpos - prev.cpos);
+                // Only hire when we exceed previous maximum
+                const deltaRMs = Math.max(0, current.rms - maxRMs);
+                const deltaSRMs = Math.max(0, current.srms - maxSRMs);
+                const deltaCMs = Math.max(0, current.cms - maxCMs);
+                const deltaCPOs = Math.max(0, current.cpos - maxCPOs);
                 const totalNew = deltaRMs + deltaSRMs + deltaCMs + deltaCPOs;
                 
-                // Calculate onboarding start date
+                // Update high water marks
+                maxRMs = Math.max(maxRMs, current.rms);
+                maxSRMs = Math.max(maxSRMs, current.srms);
+                maxCMs = Math.max(maxCMs, current.cms);
+                maxCPOs = Math.max(maxCPOs, current.cpos);
+                
+                const totalHired = maxRMs + maxSRMs + maxCMs + maxCPOs;
+                
                 const monthStart = monthStarts[current.month];
                 const onboardingStart = new Date(monthStart);
                 onboardingStart.setDate(onboardingStart.getDate() - (onboardingWeeks * 7));
                 
                 onboardingData.push({
-                    month: current.month,
-                    onboardingStart,
-                    deltaRMs,
-                    deltaSRMs,
-                    deltaCMs,
-                    deltaCPOs,
-                    totalNew
+                    month: current.month, onboardingStart,
+                    deltaRMs, deltaSRMs, deltaCMs, deltaCPOs, totalNew, totalHired
                 });
             }
             
@@ -1073,8 +1055,7 @@
         }
         
         function formatDate(date) {
-            const options = { month: 'short', day: 'numeric', year: 'numeric' };
-            return date.toLocaleDateString('en-US', options);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
         
         function updateAll() {
@@ -1112,9 +1093,9 @@
             tbody.innerHTML = '';
             
             onboardingData.forEach(row => {
-                if (row.totalNew === 0) return; // Skip months with no new hires
-                
                 const tr = document.createElement('tr');
+                const hasNewHires = row.totalNew > 0;
+                
                 tr.innerHTML = `
                     <td><strong>${row.month}</strong></td>
                     <td class="onboarding-date">${formatDate(row.onboardingStart)}</td>
@@ -1122,16 +1103,11 @@
                     <td>${row.deltaSRMs > 0 ? `<span class="delta-positive">+${row.deltaSRMs}</span>` : '<span class="delta-zero">—</span>'}</td>
                     <td>${row.deltaCMs > 0 ? `<span class="delta-positive">+${row.deltaCMs}</span>` : '<span class="delta-zero">—</span>'}</td>
                     <td>${row.deltaCPOs > 0 ? `<span class="delta-positive">+${row.deltaCPOs}</span>` : '<span class="delta-zero">—</span>'}</td>
-                    <td><strong class="delta-positive">+${row.totalNew}</strong></td>
+                    <td>${hasNewHires ? `<strong class="delta-positive">+${row.totalNew}</strong>` : '<span class="delta-zero">—</span>'}</td>
+                    <td class="hired-count">${row.totalHired}</td>
                 `;
                 tbody.appendChild(tr);
             });
-            
-            if (tbody.children.length === 0) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = '<td colspan="7" style="text-align: center; color: var(--text-secondary);">No new hires needed in this period</td>';
-                tbody.appendChild(tr);
-            }
         }
         
         function renderTimelineChart(monthlyData) {
@@ -1239,20 +1215,18 @@
             const x = d3.scalePoint().domain(months).range([margin.left, width - margin.right]);
             const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
             
-            const rmLine = d3.line().x(d => x(d.month)).y(d => y(d.rms)).curve(d3.curveMonotoneX);
-            const srmLine = d3.line().x(d => x(d.month)).y(d => y(d.srms)).curve(d3.curveMonotoneX);
-            const cmLine = d3.line().x(d => x(d.month)).y(d => y(d.cms)).curve(d3.curveMonotoneX);
-            const cpoLine = d3.line().x(d => x(d.month)).y(d => y(d.cpos)).curve(d3.curveMonotoneX);
+            const lines = [
+                { key: 'rms', color: '#a855f7' },
+                { key: 'srms', color: '#22c55e' },
+                { key: 'cms', color: '#ec4899' },
+                { key: 'cpos', color: '#06b6d4' }
+            ];
             
-            svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#a855f7').attr('stroke-width', 2.5).attr('d', rmLine);
-            svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#22c55e').attr('stroke-width', 2.5).attr('d', srmLine);
-            svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#ec4899').attr('stroke-width', 2.5).attr('d', cmLine);
-            svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#06b6d4').attr('stroke-width', 2.5).attr('d', cpoLine);
-            
-            svg.selectAll('.rm-dot').data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d.rms)).attr('r', 3).attr('fill', '#a855f7');
-            svg.selectAll('.srm-dot').data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d.srms)).attr('r', 3).attr('fill', '#22c55e');
-            svg.selectAll('.cm-dot').data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d.cms)).attr('r', 3).attr('fill', '#ec4899');
-            svg.selectAll('.cpo-dot').data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d.cpos)).attr('r', 3).attr('fill', '#06b6d4');
+            lines.forEach(l => {
+                const line = d3.line().x(d => x(d.month)).y(d => y(d[l.key])).curve(d3.curveMonotoneX);
+                svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', l.color).attr('stroke-width', 2.5).attr('d', line);
+                svg.selectAll(`.${l.key}-dot`).data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d[l.key])).attr('r', 3).attr('fill', l.color);
+            });
             
             svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
                 .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
@@ -1261,12 +1235,7 @@
                 .selectAll('text').style('fill', '#8888a0');
             
             const legend = svg.append('g').attr('transform', `translate(${width - 70}, 10)`);
-            const items = [
-                { color: '#a855f7', label: 'RMs' },
-                { color: '#22c55e', label: 'SRMs' },
-                { color: '#ec4899', label: 'CMs' },
-                { color: '#06b6d4', label: 'CPOs' }
-            ];
+            const items = [{ color: '#a855f7', label: 'RMs' }, { color: '#22c55e', label: 'SRMs' }, { color: '#ec4899', label: 'CMs' }, { color: '#06b6d4', label: 'CPOs' }];
             items.forEach((item, i) => {
                 legend.append('circle').attr('cx', 0).attr('cy', i * 16).attr('r', 4).attr('fill', item.color);
                 legend.append('text').attr('x', 8).attr('y', i * 16 + 4).text(item.label).style('fill', '#f0f0f5').style('font-size', '11px');
@@ -1274,71 +1243,45 @@
         }
         
         function renderLocationStaffingCharts(monthlyData) {
-            const londonContainer = document.getElementById('london-staffing-chart');
-            londonContainer.innerHTML = '';
-            
-            const width = londonContainer.clientWidth;
-            const height = 320;
-            const margin = { top: 20, right: 70, bottom: 60, left: 50 };
-            
-            const maxYLondon = Math.max(d3.max(monthlyData, d => d.londonRMs) * 1.3, 10) || 30;
-            
-            const svgLondon = d3.select('#london-staffing-chart').append('svg').attr('width', width).attr('height', height);
-            
-            const xLondon = d3.scalePoint().domain(months).range([margin.left, width - margin.right]);
-            const yLondon = d3.scaleLinear().domain([0, maxYLondon]).range([height - margin.bottom, margin.top]);
-            
-            const londonRMLine = d3.line().x(d => xLondon(d.month)).y(d => yLondon(d.londonRMs)).curve(d3.curveMonotoneX);
-            const londonSRMLine = d3.line().x(d => xLondon(d.month)).y(d => yLondon(d.londonSRMs)).curve(d3.curveMonotoneX);
-            
-            svgLondon.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#f87171').attr('stroke-width', 2.5).attr('d', londonRMLine);
-            svgLondon.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#fbbf24').attr('stroke-width', 2.5).attr('d', londonSRMLine);
-            
-            svgLondon.selectAll('.rm-dot').data(monthlyData).join('circle').attr('cx', d => xLondon(d.month)).attr('cy', d => yLondon(d.londonRMs)).attr('r', 3).attr('fill', '#f87171');
-            svgLondon.selectAll('.srm-dot').data(monthlyData).join('circle').attr('cx', d => xLondon(d.month)).attr('cy', d => yLondon(d.londonSRMs)).attr('r', 3).attr('fill', '#fbbf24');
-            
-            svgLondon.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(xLondon))
-                .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
-            
-            svgLondon.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(yLondon).ticks(6))
-                .selectAll('text').style('fill', '#8888a0');
-            
-            const legendLondon = svgLondon.append('g').attr('transform', `translate(${width - 60}, 10)`);
-            legendLondon.append('circle').attr('cx', 0).attr('cy', 0).attr('r', 4).attr('fill', '#f87171');
-            legendLondon.append('text').attr('x', 8).attr('y', 4).text('RMs').style('fill', '#f0f0f5').style('font-size', '11px');
-            legendLondon.append('circle').attr('cx', 0).attr('cy', 16).attr('r', 4).attr('fill', '#fbbf24');
-            legendLondon.append('text').attr('x', 8).attr('y', 20).text('SRMs').style('fill', '#f0f0f5').style('font-size', '11px');
-            
-            const berkeleyContainer = document.getElementById('berkeley-staffing-chart');
-            berkeleyContainer.innerHTML = '';
-            
-            const maxYBerkeley = Math.max(d3.max(monthlyData, d => d.berkeleyRMs) * 1.3, 10) || 30;
-            
-            const svgBerkeley = d3.select('#berkeley-staffing-chart').append('svg').attr('width', width).attr('height', height);
-            
-            const xBerkeley = d3.scalePoint().domain(months).range([margin.left, width - margin.right]);
-            const yBerkeley = d3.scaleLinear().domain([0, maxYBerkeley]).range([height - margin.bottom, margin.top]);
-            
-            const berkeleyRMLine = d3.line().x(d => xBerkeley(d.month)).y(d => yBerkeley(d.berkeleyRMs)).curve(d3.curveMonotoneX);
-            const berkeleySRMLine = d3.line().x(d => xBerkeley(d.month)).y(d => yBerkeley(d.berkeleySRMs)).curve(d3.curveMonotoneX);
-            
-            svgBerkeley.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#60a5fa').attr('stroke-width', 2.5).attr('d', berkeleyRMLine);
-            svgBerkeley.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', '#34d399').attr('stroke-width', 2.5).attr('d', berkeleySRMLine);
-            
-            svgBerkeley.selectAll('.rm-dot').data(monthlyData).join('circle').attr('cx', d => xBerkeley(d.month)).attr('cy', d => yBerkeley(d.berkeleyRMs)).attr('r', 3).attr('fill', '#60a5fa');
-            svgBerkeley.selectAll('.srm-dot').data(monthlyData).join('circle').attr('cx', d => xBerkeley(d.month)).attr('cy', d => yBerkeley(d.berkeleySRMs)).attr('r', 3).attr('fill', '#34d399');
-            
-            svgBerkeley.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(xBerkeley))
-                .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
-            
-            svgBerkeley.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(yBerkeley).ticks(6))
-                .selectAll('text').style('fill', '#8888a0');
-            
-            const legendBerkeley = svgBerkeley.append('g').attr('transform', `translate(${width - 60}, 10)`);
-            legendBerkeley.append('circle').attr('cx', 0).attr('cy', 0).attr('r', 4).attr('fill', '#60a5fa');
-            legendBerkeley.append('text').attr('x', 8).attr('y', 4).text('RMs').style('fill', '#f0f0f5').style('font-size', '11px');
-            legendBerkeley.append('circle').attr('cx', 0).attr('cy', 16).attr('r', 4).attr('fill', '#34d399');
-            legendBerkeley.append('text').attr('x', 8).attr('y', 20).text('SRMs').style('fill', '#f0f0f5').style('font-size', '11px');
+            ['london', 'berkeley'].forEach(loc => {
+                const container = document.getElementById(`${loc}-staffing-chart`);
+                container.innerHTML = '';
+                
+                const width = container.clientWidth;
+                const height = 320;
+                const margin = { top: 20, right: 70, bottom: 60, left: 50 };
+                
+                const rmKey = `${loc}RMs`, srmKey = `${loc}SRMs`;
+                const maxY = Math.max(d3.max(monthlyData, d => d[rmKey]) * 1.3, 10) || 30;
+                
+                const svg = d3.select(`#${loc}-staffing-chart`).append('svg').attr('width', width).attr('height', height);
+                
+                const x = d3.scalePoint().domain(months).range([margin.left, width - margin.right]);
+                const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
+                
+                const colors = loc === 'london' ? ['#f87171', '#fbbf24'] : ['#60a5fa', '#34d399'];
+                
+                const rmLine = d3.line().x(d => x(d.month)).y(d => y(d[rmKey])).curve(d3.curveMonotoneX);
+                const srmLine = d3.line().x(d => x(d.month)).y(d => y(d[srmKey])).curve(d3.curveMonotoneX);
+                
+                svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', colors[0]).attr('stroke-width', 2.5).attr('d', rmLine);
+                svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', colors[1]).attr('stroke-width', 2.5).attr('d', srmLine);
+                
+                svg.selectAll('.rm-dot').data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d[rmKey])).attr('r', 3).attr('fill', colors[0]);
+                svg.selectAll('.srm-dot').data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d[srmKey])).attr('r', 3).attr('fill', colors[1]);
+                
+                svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
+                    .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
+                
+                svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(6))
+                    .selectAll('text').style('fill', '#8888a0');
+                
+                const legend = svg.append('g').attr('transform', `translate(${width - 60}, 10)`);
+                legend.append('circle').attr('cx', 0).attr('cy', 0).attr('r', 4).attr('fill', colors[0]);
+                legend.append('text').attr('x', 8).attr('y', 4).text('RMs').style('fill', '#f0f0f5').style('font-size', '11px');
+                legend.append('circle').attr('cx', 0).attr('cy', 16).attr('r', 4).attr('fill', colors[1]);
+                legend.append('text').attr('x', 8).attr('y', 20).text('SRMs').style('fill', '#f0f0f5').style('font-size', '11px');
+            });
         }
         
         function renderStaffingTable(monthlyData, peakFellows) {
@@ -1456,36 +1399,20 @@
             document.getElementById('param-fellows-per-cm').value = 35;
             document.getElementById('param-fellows-per-cpo').value = 100;
             document.getElementById('param-london-main').value = 10;
-            document.getElementById('param-london-ext').value = 60;
+            document.getElementById('param-london-ext').value = 75;
             
-            document.getElementById('date-8.1-start').value = '2025-10-01';
-            document.getElementById('date-8.1-end').value = '2026-03-31';
-            document.getElementById('date-8.2-start').value = '2026-04-01';
-            document.getElementById('date-8.2-end').value = '2026-09-30';
-            document.getElementById('date-9.0-start').value = '2026-01-05';
-            document.getElementById('date-9.0-end').value = '2026-03-27';
-            document.getElementById('date-9.1-start').value = '2026-03-28';
-            document.getElementById('date-9.1-end').value = '2026-09-26';
-            document.getElementById('date-9.2-start').value = '2026-09-27';
-            document.getElementById('date-9.2-end').value = '2027-03-28';
-            document.getElementById('date-10.0-start').value = '2026-06-15';
-            document.getElementById('date-10.0-end').value = '2026-09-04';
-            document.getElementById('date-10.1-start').value = '2026-09-05';
-            document.getElementById('date-10.1-end').value = '2027-03-06';
-            document.getElementById('date-10.2-start').value = '2027-03-07';
-            document.getElementById('date-10.2-end').value = '2027-09-05';
-            document.getElementById('date-11.0-start').value = '2026-09-28';
-            document.getElementById('date-11.0-end').value = '2026-12-18';
-            document.getElementById('date-11.1-start').value = '2026-12-19';
-            document.getElementById('date-11.1-end').value = '2027-06-19';
-            document.getElementById('date-11.2-start').value = '2027-06-20';
-            document.getElementById('date-11.2-end').value = '2027-12-19';
-            document.getElementById('date-12.0-start').value = '2027-02-01';
-            document.getElementById('date-12.0-end').value = '2027-04-23';
-            document.getElementById('date-12.1-start').value = '2027-04-24';
-            document.getElementById('date-12.1-end').value = '2027-10-23';
-            document.getElementById('date-12.2-start').value = '2027-10-24';
-            document.getElementById('date-12.2-end').value = '2028-04-23';
+            const dates = {
+                '8.1': ['2025-10-01', '2026-03-31'], '8.2': ['2026-04-01', '2026-09-30'],
+                '9.0': ['2026-01-05', '2026-03-27'], '9.1': ['2026-03-28', '2026-09-26'], '9.2': ['2026-09-27', '2027-03-28'],
+                '10.0': ['2026-06-15', '2026-09-04'], '10.1': ['2026-09-05', '2027-03-06'], '10.2': ['2027-03-07', '2027-09-05'],
+                '11.0': ['2026-09-28', '2026-12-18'], '11.1': ['2026-12-19', '2027-06-19'], '11.2': ['2027-06-20', '2027-12-19'],
+                '12.0': ['2027-02-01', '2027-04-23'], '12.1': ['2027-04-24', '2027-10-23'], '12.2': ['2027-10-24', '2028-04-23']
+            };
+            
+            Object.entries(dates).forEach(([id, [start, end]]) => {
+                document.getElementById(`date-${id}-start`).value = start;
+                document.getElementById(`date-${id}-end`).value = end;
+            });
             
             updateAll();
         }
