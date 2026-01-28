@@ -93,7 +93,7 @@
         
         .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         
-        @media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 1100px) { .charts-grid { grid-template-columns: 1fr; } }
         
         .table-container { overflow-x: auto; }
         
@@ -119,9 +119,17 @@
         
         .stat-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(8, 1fr);
             gap: 1rem;
             margin-bottom: 1.5rem;
+        }
+        
+        @media (max-width: 1200px) {
+            .stat-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        
+        @media (max-width: 600px) {
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
         }
         
         .stat-card {
@@ -211,7 +219,7 @@
         }
         
         .param-input.date-input { width: 140px; text-align: center; }
-        .param-input.small { width: 55px; }
+        .param-input.small { width: 65px; }
         
         .param-suffix {
             color: var(--text-secondary);
@@ -324,7 +332,7 @@
             gap: 1.5rem;
         }
         
-        @media (max-width: 900px) { .location-staffing-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 1100px) { .location-staffing-grid { grid-template-columns: 1fr; } }
         
         .delta-positive { color: var(--accent-green); }
         .delta-zero { color: var(--text-secondary); }
@@ -339,6 +347,43 @@
             font-size: 0.75rem;
             color: var(--text-secondary);
             font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: rgba(26, 26, 36, 0.95);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            white-space: nowrap;
+        }
+        
+        .tooltip-label {
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .tooltip-value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        @media (max-width: 1200px) {
+            .params-container {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
@@ -806,6 +851,8 @@
         </div>
     </div>
     
+    <div class="tooltip" id="tooltip" style="display: none;"></div>
+    
     <script>
         const months = [
             "Jan 2026", "Feb 2026", "Mar 2026", "Apr 2026", "May 2026", "Jun 2026",
@@ -1058,6 +1105,21 @@
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
         
+        const tooltip = document.getElementById('tooltip');
+        
+        function showTooltip(event, content) {
+            tooltip.innerHTML = content;
+            tooltip.style.display = 'block';
+            const x = event.pageX + 10;
+            const y = event.pageY - 10;
+            tooltip.style.left = x + 'px';
+            tooltip.style.top = y + 'px';
+        }
+        
+        function hideTooltip() {
+            tooltip.style.display = 'none';
+        }
+        
         function updateAll() {
             const params = getParams();
             const schedule = getSchedule();
@@ -1093,8 +1155,10 @@
             tbody.innerHTML = '';
             
             onboardingData.forEach(row => {
+                // Skip rows with no new hires
+                if (row.totalNew === 0) return;
+                
                 const tr = document.createElement('tr');
-                const hasNewHires = row.totalNew > 0;
                 
                 tr.innerHTML = `
                     <td><strong>${row.month}</strong></td>
@@ -1103,11 +1167,17 @@
                     <td>${row.deltaSRMs > 0 ? `<span class="delta-positive">+${row.deltaSRMs}</span>` : '<span class="delta-zero">—</span>'}</td>
                     <td>${row.deltaCMs > 0 ? `<span class="delta-positive">+${row.deltaCMs}</span>` : '<span class="delta-zero">—</span>'}</td>
                     <td>${row.deltaCPOs > 0 ? `<span class="delta-positive">+${row.deltaCPOs}</span>` : '<span class="delta-zero">—</span>'}</td>
-                    <td>${hasNewHires ? `<strong class="delta-positive">+${row.totalNew}</strong>` : '<span class="delta-zero">—</span>'}</td>
+                    <td><strong class="delta-positive">+${row.totalNew}</strong></td>
                     <td class="hired-count">${row.totalHired}</td>
                 `;
                 tbody.appendChild(tr);
             });
+            
+            if (tbody.children.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="8" style="text-align: center; color: var(--text-secondary);">No new hires needed</td>';
+                tbody.appendChild(tr);
+            }
         }
         
         function renderTimelineChart(monthlyData) {
@@ -1141,9 +1211,22 @@
             
             svg.append('g').selectAll('g').data(series).join('g')
                 .attr('fill', d => cohortColors[d.key] || '#888')
-                .selectAll('rect').data(d => d).join('rect')
-                .attr('x', d => x(d.data.month)).attr('y', d => y(d[1]))
-                .attr('height', d => y(d[0]) - y(d[1])).attr('width', x.bandwidth()).attr('rx', 2);
+                .each(function(seriesData) {
+                    const cohortKey = seriesData.key;
+                    d3.select(this).selectAll('rect').data(seriesData).join('rect')
+                        .attr('x', d => x(d.data.month)).attr('y', d => y(d[1]))
+                        .attr('height', d => y(d[0]) - y(d[1])).attr('width', x.bandwidth()).attr('rx', 2)
+                        .style('cursor', 'pointer')
+                        .on('mouseover', function(event, d) {
+                            const value = d.data[cohortKey] || 0;
+                            if (value > 0) {
+                                d3.select(this).attr('opacity', 0.8);
+                                showTooltip(event, `<div class="tooltip-label">${d.data.month} · Cohort ${cohortKey}</div><div class="tooltip-value">${value} fellows</div>`);
+                            }
+                        })
+                        .on('mousemove', function(event) { showTooltip(event, tooltip.innerHTML); })
+                        .on('mouseout', function() { d3.select(this).attr('opacity', 1); hideTooltip(); });
+                });
             
             svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
                 .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
@@ -1183,9 +1266,22 @@
             
             svg.append('g').selectAll('g').data(series).join('g')
                 .attr('fill', d => colors[d.key])
-                .selectAll('rect').data(d => d).join('rect')
-                .attr('x', d => x(d.data.month)).attr('y', d => y(d[1]))
-                .attr('height', d => y(d[0]) - y(d[1])).attr('width', x.bandwidth()).attr('rx', 2);
+                .each(function(seriesData) {
+                    const locKey = seriesData.key;
+                    d3.select(this).selectAll('rect').data(seriesData).join('rect')
+                        .attr('x', d => x(d.data.month)).attr('y', d => y(d[1]))
+                        .attr('height', d => y(d[0]) - y(d[1])).attr('width', x.bandwidth()).attr('rx', 2)
+                        .style('cursor', 'pointer')
+                        .on('mouseover', function(event, d) {
+                            const value = d.data[locKey] || 0;
+                            if (value > 0) {
+                                d3.select(this).attr('opacity', 0.8);
+                                showTooltip(event, `<div class="tooltip-label">${d.data.month} · ${locKey}</div><div class="tooltip-value">${value} fellows</div>`);
+                            }
+                        })
+                        .on('mousemove', function(event) { showTooltip(event, tooltip.innerHTML); })
+                        .on('mouseout', function() { d3.select(this).attr('opacity', 1); hideTooltip(); });
+                });
             
             svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
                 .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
@@ -1225,7 +1321,16 @@
             lines.forEach(l => {
                 const line = d3.line().x(d => x(d.month)).y(d => y(d[l.key])).curve(d3.curveMonotoneX);
                 svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', l.color).attr('stroke-width', 2.5).attr('d', line);
-                svg.selectAll(`.${l.key}-dot`).data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d[l.key])).attr('r', 3).attr('fill', l.color);
+                svg.selectAll(`.${l.key}-dot`).data(monthlyData).join('circle')
+                    .attr('cx', d => x(d.month)).attr('cy', d => y(d[l.key])).attr('r', 4).attr('fill', l.color)
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(event, d) {
+                        d3.select(this).attr('r', 6);
+                        const labels = { rms: 'RMs', srms: 'SRMs', cms: 'CMs', cpos: 'CPOs' };
+                        showTooltip(event, `<div class="tooltip-label">${d.month}</div><div class="tooltip-value">${d[l.key]} ${labels[l.key]}</div>`);
+                    })
+                    .on('mousemove', function(event) { showTooltip(event, tooltip.innerHTML); })
+                    .on('mouseout', function() { d3.select(this).attr('r', 4); hideTooltip(); });
             });
             
             svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
@@ -1267,8 +1372,27 @@
                 svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', colors[0]).attr('stroke-width', 2.5).attr('d', rmLine);
                 svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', colors[1]).attr('stroke-width', 2.5).attr('d', srmLine);
                 
-                svg.selectAll('.rm-dot').data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d[rmKey])).attr('r', 3).attr('fill', colors[0]);
-                svg.selectAll('.srm-dot').data(monthlyData).join('circle').attr('cx', d => x(d.month)).attr('cy', d => y(d[srmKey])).attr('r', 3).attr('fill', colors[1]);
+                const locName = loc === 'london' ? 'London' : 'Berkeley';
+                
+                svg.selectAll('.rm-dot').data(monthlyData).join('circle')
+                    .attr('cx', d => x(d.month)).attr('cy', d => y(d[rmKey])).attr('r', 4).attr('fill', colors[0])
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(event, d) {
+                        d3.select(this).attr('r', 6);
+                        showTooltip(event, `<div class="tooltip-label">${d.month} · ${locName}</div><div class="tooltip-value">${d[rmKey]} RMs</div>`);
+                    })
+                    .on('mousemove', function(event) { showTooltip(event, tooltip.innerHTML); })
+                    .on('mouseout', function() { d3.select(this).attr('r', 4); hideTooltip(); });
+                    
+                svg.selectAll('.srm-dot').data(monthlyData).join('circle')
+                    .attr('cx', d => x(d.month)).attr('cy', d => y(d[srmKey])).attr('r', 4).attr('fill', colors[1])
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(event, d) {
+                        d3.select(this).attr('r', 6);
+                        showTooltip(event, `<div class="tooltip-label">${d.month} · ${locName}</div><div class="tooltip-value">${d[srmKey]} SRMs</div>`);
+                    })
+                    .on('mousemove', function(event) { showTooltip(event, tooltip.innerHTML); })
+                    .on('mouseout', function() { d3.select(this).attr('r', 4); hideTooltip(); });
                 
                 svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
                     .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
