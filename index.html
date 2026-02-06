@@ -1313,16 +1313,22 @@
                 const londonAdditional = Math.round(additional * londonPct);
                 const berkeleyAdditional = additional - londonAdditional;
                 
-                const londonStaffTotal = leadsLondon + londonStaff.rms + londonStaff.srms + londonCMs + londonCPOs + londonOps + londonPMs + londonCAs + londonRCEs + londonRecruiters + londonAdditional;
-                const berkeleyStaffTotal = leadsBerkeley + berkeleyStaff.rms + berkeleyStaff.srms + berkeleyCMs + berkeleyCPOs + berkeleyOps + berkeleyPMs + berkeleyCAs + berkeleyRCEs + berkeleyRecruiters + berkeleyAdditional;
+                // Use filtered RM/SRM values for location totals
+                const londonRMsFiltered = filters.rm ? londonStaff.rms : 0;
+                const londonSRMsFiltered = filters.rm ? londonStaff.srms : 0;
+                const berkeleyRMsFiltered = filters.rm ? berkeleyStaff.rms : 0;
+                const berkeleySRMsFiltered = filters.rm ? berkeleyStaff.srms : 0;
+                
+                const londonStaffTotal = leadsLondon + londonRMsFiltered + londonSRMsFiltered + londonCMs + londonCPOs + londonOps + londonPMs + londonCAs + londonRCEs + londonRecruiters + londonAdditional;
+                const berkeleyStaffTotal = leadsBerkeley + berkeleyRMsFiltered + berkeleySRMsFiltered + berkeleyCMs + berkeleyCPOs + berkeleyOps + berkeleyPMs + berkeleyCAs + berkeleyRCEs + berkeleyRecruiters + berkeleyAdditional;
                 
                 const totalStaff = leads + rms + srms + cms + cpos + ops + pms + cas + rces + recruiters + additional;
                 
                 return {
                     month, fellows: totalFellows, london: londonTotal, berkeley: berkeleyTotal,
                     rms, srms, cms, cpos, ops, pms, cas, rces, recruiters, additional, leads, leadsBerkeley, leadsLondon, totalStaff,
-                    londonRMs: londonStaff.rms, londonSRMs: londonStaff.srms,
-                    berkeleyRMs: berkeleyStaff.rms, berkeleySRMs: berkeleyStaff.srms,
+                    londonRMs: londonRMsFiltered, londonSRMs: londonSRMsFiltered,
+                    berkeleyRMs: berkeleyRMsFiltered, berkeleySRMs: berkeleySRMsFiltered,
                     londonStaffTotal, berkeleyStaffTotal,
                     cohorts: activeCohorts
                 };
