@@ -604,7 +604,7 @@
                         </div>
                         <div class="param-row">
                             <span class="param-label">RMs</span>
-                            <input type="number" class="param-input" id="param-current-berkeley-rms" value="13" min="0">
+                            <input type="number" class="param-input" id="param-current-berkeley-rms" value="10" min="0">
                         </div>
                         <div class="param-row">
                             <span class="param-label">CMs</span>
@@ -680,27 +680,27 @@
                         </div>
                         <div class="param-row">
                             <span class="param-label">10.0</span>
-                            <input type="number" class="param-input" id="param-10.0" value="120" min="0" max="500">
+                            <input type="number" class="param-input" id="param-10.0" value="100" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">11.0</span>
-                            <input type="number" class="param-input" id="param-11.0" value="100" min="0" max="500">
+                            <input type="number" class="param-input" id="param-11.0" value="80" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">12.0</span>
-                            <input type="number" class="param-input" id="param-12.0" value="180" min="0" max="500">
+                            <input type="number" class="param-input" id="param-12.0" value="100" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">13.0</span>
-                            <input type="number" class="param-input" id="param-13.0" value="200" min="0" max="500">
+                            <input type="number" class="param-input" id="param-13.0" value="240" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">14.0</span>
-                            <input type="number" class="param-input" id="param-14.0" value="220" min="0" max="500">
+                            <input type="number" class="param-input" id="param-14.0" value="120" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">15.0</span>
-                            <input type="number" class="param-input" id="param-15.0" value="250" min="0" max="500">
+                            <input type="number" class="param-input" id="param-15.0" value="240" min="0" max="500">
                         </div>
                     </div>
                     
@@ -750,7 +750,7 @@
                     <div class="param-section residency">
                         <div class="param-section-title">🔬 Residency Program</div>
                         <div class="param-row">
-                            <span class="param-label">Residents</span>
+                            <span class="param-label">Initial Residents</span>
                             <input type="number" class="param-input" id="param-residency-count" value="30" min="0" max="200">
                         </div>
                         <div class="param-row">
@@ -760,10 +760,20 @@
                         <div class="param-row">
                             <span class="param-label">Length</span>
                             <div class="input-group">
-                                <input type="number" class="param-input" id="param-residency-months" value="12" min="1" max="24">
+                                <input type="number" class="param-input" id="param-residency-months" value="24" min="1" max="36">
                                 <span class="param-suffix">mo</span>
                             </div>
                         </div>
+                        <div class="param-row">
+                            <span class="param-label">YoY Growth</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input" id="param-residency-growth" value="2" min="1" max="5" step="0.1">
+                                <span class="param-suffix">×</span>
+                            </div>
+                        </div>
+                        <p style="font-size:0.65rem;color:var(--text-secondary);margin-top:0.5rem;line-height:1.2;">
+                            Residents increase every 6 months based on YoY growth rate.
+                        </p>
                     </div>
                     
                     <div class="param-section global">
@@ -1289,12 +1299,12 @@
                 // Cohort sizes - use getIntOrDefault so empty = default, but 0 = 0
                 cohort8_0: getIntOrDefault('param-8.0', 80),
                 cohort9_0: getIntOrDefault('param-9.0', 90),
-                cohort10_0: getIntOrDefault('param-10.0', 120),
-                cohort11_0: getIntOrDefault('param-11.0', 100),
-                cohort12_0: getIntOrDefault('param-12.0', 180),
-                cohort13_0: getIntOrDefault('param-13.0', 200),
-                cohort14_0: getIntOrDefault('param-14.0', 220),
-                cohort15_0: getIntOrDefault('param-15.0', 250),
+                cohort10_0: getIntOrDefault('param-10.0', 100),
+                cohort11_0: getIntOrDefault('param-11.0', 80),
+                cohort12_0: getIntOrDefault('param-12.0', 100),
+                cohort13_0: getIntOrDefault('param-13.0', 240),
+                cohort14_0: getIntOrDefault('param-14.0', 120),
+                cohort15_0: getIntOrDefault('param-15.0', 240),
                 ext1Rate: (getIntOrDefault('param-ext1-rate', 70)) / 100,
                 ext2Rate: (getIntOrDefault('param-ext2-rate', 50)) / 100,
                 cohort8_1_actual: getInt('param-8.1-actual', 50),
@@ -1306,7 +1316,8 @@
                 londonResidencyPct: (getInt('param-london-residency', 50) ?? 0) / 100,
                 residencyCount: getInt('param-residency-count', 30),
                 residencyStart: document.getElementById('param-residency-start').value,
-                residencyMonths: getInt('param-residency-months', 12),
+                residencyMonths: getInt('param-residency-months', 24),
+                residencyGrowth: parseFloat(document.getElementById('param-residency-growth')?.value) || 2,
                 fellowsPerCM: get('param-fellows-per-cm', 35),
                 fellowsPerCPO: get('param-fellows-per-cpo', 100),
                 fellowsPerOps: get('param-fellows-per-ops', 20),
@@ -1324,7 +1335,7 @@
                 berkeleyFellowsPerSRM: get('param-berkeley-fellows-per-srm', 3),
                 // Current staff counts
                 currentBerkeleySRMs: getInt('param-current-berkeley-srms', 4),
-                currentBerkeleyRMs: getInt('param-current-berkeley-rms', 13),
+                currentBerkeleyRMs: getInt('param-current-berkeley-rms', 10),
                 currentBerkeleyCMs: getInt('param-current-berkeley-cms', 2),
                 currentBerkeleyCPOs: getInt('param-current-berkeley-cpos', 1),
                 currentBerkeleyOps: getInt('param-current-berkeley-ops', 5),
@@ -1461,10 +1472,8 @@
                 const date = monthDates[months[monthIdx]];
                 let total = 0;
                 
-                // Residency
-                if (isResidencyActive(date, params)) {
-                    total += params.residencyCount;
-                }
+                // Residency - with growth
+                total += getResidencyCount(date, params);
                 
                 // Fixed cohorts
                 Object.entries(fixedSizes).forEach(([id, size]) => {
@@ -1592,6 +1601,25 @@
             return date >= start && date <= end;
         }
         
+        // Calculate residency count for a given date, with growth every 6 months
+        function getResidencyCount(date, params) {
+            if (!isResidencyActive(date, params)) return 0;
+            
+            const start = new Date(params.residencyStart);
+            const monthsElapsed = (date.getFullYear() - start.getFullYear()) * 12 + (date.getMonth() - start.getMonth());
+            
+            // Growth periods: every 6 months
+            const growthPeriods = Math.floor(monthsElapsed / 6);
+            
+            // YoY growth = params.residencyGrowth, so 6-month growth = sqrt(YoY)
+            const sixMonthGrowth = Math.sqrt(params.residencyGrowth);
+            
+            // Calculate current count
+            const currentCount = Math.round(params.residencyCount * Math.pow(sixMonthGrowth, growthPeriods));
+            
+            return currentCount;
+        }
+        
         function calculateStaffing(totalFellows, fellowsPerRM, rmsPerSRM, fellowsPerSRM, cutoff) {
             if (totalFellows === 0) return { rms: 0, srms: 0 };
             let rms = customRound(totalFellows / fellowsPerRM, cutoff);
@@ -1645,11 +1673,12 @@
                     }
                 });
                 
-                // Residency
-                if (filters.residency && isResidencyActive(date, params) && params.residencyCount > 0) {
-                    activeCohorts['Residency'] = params.residencyCount;
-                    const londonRes = Math.round(params.residencyCount * params.londonResidencyPct);
-                    const berkeleyRes = params.residencyCount - londonRes;
+                // Residency - with growth over time
+                const residencyCount = getResidencyCount(date, params);
+                if (filters.residency && residencyCount > 0) {
+                    activeCohorts['Residency'] = residencyCount;
+                    const londonRes = Math.round(residencyCount * params.londonResidencyPct);
+                    const berkeleyRes = residencyCount - londonRes;
                     if (filters.london) londonResidents = londonRes;
                     if (filters.berkeley) berkeleyResidents = berkeleyRes;
                 }
@@ -1930,7 +1959,8 @@
             
             const maxY = d3.max(monthlyData, d => d.fellows) * 1.1 || 100;
             
-            const x = d3.scaleBand().domain(months).range([margin.left, width - margin.right]).padding(0.15);
+            const chartMonths = monthlyData.map(d => d.month);
+            const x = d3.scaleBand().domain(chartMonths).range([margin.left, width - margin.right]).padding(0.15);
             const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
             
             svg.append('g').selectAll('g').data(series).join('g')
@@ -1977,7 +2007,8 @@
             const svg = d3.select('#location-chart').append('svg').attr('width', width).attr('height', height);
             
             const maxY = d3.max(monthlyData, d => d.fellows) * 1.1 || 100;
-            const x = d3.scaleBand().domain(months).range([margin.left, width - margin.right]).padding(0.15);
+            const chartMonths = monthlyData.map(d => d.month);
+            const x = d3.scaleBand().domain(chartMonths).range([margin.left, width - margin.right]).padding(0.15);
             const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
             
             const stackData = monthlyData.map(d => ({ month: d.month, Berkeley: d.berkeley, London: d.london }));
@@ -2034,7 +2065,8 @@
             }
             
             const maxY = d3.max(monthlyData, d => Math.max(...lines.map(l => d[l.key] || 0))) * 1.2 || 20;
-            const x = d3.scalePoint().domain(months).range([margin.left, width - margin.right]);
+            const chartMonths = monthlyData.map(d => d.month);
+            const x = d3.scalePoint().domain(chartMonths).range([margin.left, width - margin.right]);
             const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
             
             lines.forEach(l => {
@@ -2145,8 +2177,13 @@
                 lines.push({ key: 'staffBudget', color: '#f59e0b', label: 'Budget', dashed: true });
             }
             
-            const maxY = d3.max(monthlyData, d => Math.max(d.totalStaff, d.staffBudget || 0)) * 1.15 || 50;
-            const x = d3.scalePoint().domain(months).range([margin.left, width - margin.right]);
+            // Only include staffBudget in max calculation if constraint is enabled (otherwise it's Infinity)
+            const maxY = d3.max(monthlyData, d => {
+                const budget = params.growthEnabled && isFinite(d.staffBudget) ? d.staffBudget : 0;
+                return Math.max(d.totalStaff, budget);
+            }) * 1.15 || 50;
+            const chartMonths = monthlyData.map(d => d.month);
+            const x = d3.scalePoint().domain(chartMonths).range([margin.left, width - margin.right]);
             const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
             
             lines.forEach(l => {
@@ -2224,7 +2261,7 @@
             document.getElementById('param-leads-london-2027').value = 2;
             // Current staff - Berkeley
             document.getElementById('param-current-berkeley-srms').value = 4;
-            document.getElementById('param-current-berkeley-rms').value = 13;
+            document.getElementById('param-current-berkeley-rms').value = 10;
             document.getElementById('param-current-berkeley-cms').value = 2;
             document.getElementById('param-current-berkeley-cpos').value = 1;
             document.getElementById('param-current-berkeley-ops').value = 5;
@@ -2243,12 +2280,12 @@
             // Cohorts
             document.getElementById('param-8.0').value = 80;
             document.getElementById('param-9.0').value = 90;
-            document.getElementById('param-10.0').value = 120;
-            document.getElementById('param-11.0').value = 100;
-            document.getElementById('param-12.0').value = 180;
-            document.getElementById('param-13.0').value = 200;
-            document.getElementById('param-14.0').value = 220;
-            document.getElementById('param-15.0').value = 250;
+            document.getElementById('param-10.0').value = 100;
+            document.getElementById('param-11.0').value = 80;
+            document.getElementById('param-12.0').value = 100;
+            document.getElementById('param-13.0').value = 240;
+            document.getElementById('param-14.0').value = 120;
+            document.getElementById('param-15.0').value = 240;
             document.getElementById('param-ext1-rate').value = 70;
             document.getElementById('param-ext2-rate').value = 50;
             document.getElementById('param-8.1-actual').value = 50;
@@ -2260,7 +2297,8 @@
             document.getElementById('param-london-residency').value = 50;
             document.getElementById('param-residency-count').value = 30;
             document.getElementById('param-residency-start').value = '2026-07-01';
-            document.getElementById('param-residency-months').value = 12;
+            document.getElementById('param-residency-months').value = 24;
+            document.getElementById('param-residency-growth').value = 2;
             document.getElementById('param-fellows-per-cm').value = 35;
             document.getElementById('param-fellows-per-cpo').value = 100;
             document.getElementById('param-fellows-per-ops').value = 20;
