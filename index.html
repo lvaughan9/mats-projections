@@ -692,11 +692,11 @@
                         </div>
                         <div class="param-row">
                             <span class="param-label">11.0</span>
-                            <input type="number" class="param-input" id="param-11.0" value="80" min="0" max="500">
+                            <input type="number" class="param-input" id="param-11.0" value="120" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">12.0</span>
-                            <input type="number" class="param-input" id="param-12.0" value="120" min="0" max="500">
+                            <input type="number" class="param-input" id="param-12.0" value="140" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">13.0</span>
@@ -735,14 +735,14 @@
                         <div class="param-row">
                             <span class="param-label">London Main</span>
                             <div class="input-group">
-                                <input type="number" class="param-input" id="param-london-main" value="10" min="0" max="100">
+                                <input type="number" class="param-input" id="param-london-main" value="20" min="0" max="100">
                                 <span class="param-suffix">%</span>
                             </div>
                         </div>
                         <div class="param-row">
                             <span class="param-label">London Ext</span>
                             <div class="input-group">
-                                <input type="number" class="param-input" id="param-london-ext" value="50" min="0" max="100">
+                                <input type="number" class="param-input" id="param-london-ext" value="70" min="0" max="100">
                                 <span class="param-suffix">%</span>
                             </div>
                         </div>
@@ -782,6 +782,54 @@
                         <p style="font-size:0.65rem;color:var(--text-secondary);margin-top:0.5rem;line-height:1.2;">
                             Residents increase every 6 months based on YoY growth rate.
                         </p>
+                    </div>
+                    
+                    <div class="param-section" style="border-left: 3px solid #f59e0b;">
+                        <div class="param-section-title" style="color: #f59e0b;">🏢 Berkeley Office Space</div>
+                        <div class="param-row">
+                            <span class="param-label">Sq Ft / Person</span>
+                            <input type="number" class="param-input" id="param-sqft-per-person" value="200" min="50" max="500">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Floor 2 (sq ft)</span>
+                            <input type="number" class="param-input" id="param-floor2-sqft" value="20000" min="0" max="100000" step="1000">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Floor 2 Available</span>
+                            <input type="date" class="param-input date-input" id="param-floor2-date" value="2026-04-01">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Floor 1 (sq ft)</span>
+                            <input type="number" class="param-input" id="param-floor1-sqft" value="13500" min="0" max="100000" step="500">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Floor 1 Available</span>
+                            <input type="date" class="param-input date-input" id="param-floor1-date" value="2026-08-01">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Floor 3 (sq ft)</span>
+                            <input type="number" class="param-input" id="param-floor3-sqft" value="20000" min="0" max="100000" step="1000">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Floor 3 Lead Time</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input" id="param-floor3-leadtime" value="9" min="1" max="24">
+                                <span class="param-suffix">mo</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px solid var(--border-color);">
+                            <div class="param-row">
+                                <span class="param-label">Remote %</span>
+                                <div class="input-group">
+                                    <input type="number" class="param-input" id="param-office-remote-pct" value="10" min="0" max="100">
+                                    <span class="param-suffix">%</span>
+                                </div>
+                            </div>
+                            <div class="param-row">
+                                <span class="param-label">Visitors</span>
+                                <input type="number" class="param-input" id="param-office-visitors" value="10" min="0" max="100">
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="param-section global">
@@ -1087,6 +1135,15 @@
                 <div class="chart-container" id="team-growth-chart"></div>
             </div>
             
+            <div class="card" style="border-left: 3px solid #f59e0b;">
+                <div class="card-header">
+                    <h2 class="card-title">🏢 Berkeley Office Space</h2>
+                    <div id="office-status-summary" style="font-size: 0.8rem; color: var(--text-secondary);"></div>
+                </div>
+                <div class="chart-container" id="office-space-chart"></div>
+                <div id="office-space-info" style="padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; margin-top: 1rem;"></div>
+            </div>
+            
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title">Monthly Detail</h2>
@@ -1243,6 +1300,29 @@
             return 'ext2';
         }
         
+        // Get season and year label for a cohort (e.g., "10.0 Summer 26")
+        function getCohortSeasonLabel(cohortId, schedule) {
+            if (cohortId === 'Residency') return 'Residency';
+            
+            const s = schedule[cohortId];
+            if (!s || !s.start) return cohortId;
+            
+            const startDate = new Date(s.start);
+            const month = startDate.getMonth(); // 0-11
+            const year = startDate.getFullYear().toString().slice(-2); // "26", "27", etc.
+            
+            let season;
+            if (month >= 5 && month <= 7) { // June, July, August
+                season = 'Sum';
+            } else if (month >= 8 && month <= 10) { // Sept, Oct, Nov
+                season = 'Aut';
+            } else { // Dec, Jan, Feb, Mar, Apr, May -> Winter (for Dec-Feb) or treat as Winter for our purposes
+                season = 'Win';
+            }
+            
+            return `${cohortId} ${season}'${year}`;
+        }
+        
         function customRound(value, cutoff) {
             if (value === 0) return 0;
             const decimal = value - Math.floor(value);
@@ -1322,8 +1402,8 @@
                 cohort8_0: getIntOrDefault('param-8.0', 80),
                 cohort9_0: getIntOrDefault('param-9.0', 90),
                 cohort10_0: getIntOrDefault('param-10.0', 120),
-                cohort11_0: getIntOrDefault('param-11.0', 80),
-                cohort12_0: getIntOrDefault('param-12.0', 120),
+                cohort11_0: getIntOrDefault('param-11.0', 120),
+                cohort12_0: getIntOrDefault('param-12.0', 140),
                 cohort13_0: getIntOrDefault('param-13.0', 200),
                 cohort14_0: getIntOrDefault('param-14.0', 140),
                 cohort15_0: getIntOrDefault('param-15.0', 220),
@@ -1333,13 +1413,23 @@
                 cohort8_2_actual: getInt('param-8.2-actual', 30),
                 cohort9_1_actual: getInt('param-9.1-actual', null),
                 cohort9_2_actual: getInt('param-9.2-actual', null),
-                londonMainPct: (getInt('param-london-main', 10) ?? 0) / 100,
-                londonExtPct: (getInt('param-london-ext', 50) ?? 0) / 100,
+                londonMainPct: (getInt('param-london-main', 20) ?? 0) / 100,
+                londonExtPct: (getInt('param-london-ext', 70) ?? 0) / 100,
                 londonResidencyPct: (getInt('param-london-residency', 50) ?? 0) / 100,
                 residencyCount: getInt('param-residency-count', 30),
                 residencyStart: document.getElementById('param-residency-start').value,
                 residencyMonths: getInt('param-residency-months', 24),
                 residencyGrowth: parseFloat(document.getElementById('param-residency-growth')?.value) || 2,
+                // Office space parameters
+                sqftPerPerson: getInt('param-sqft-per-person', 200),
+                floor2Sqft: getInt('param-floor2-sqft', 20000),
+                floor2Date: document.getElementById('param-floor2-date')?.value || '2026-04-01',
+                floor1Sqft: getInt('param-floor1-sqft', 13500),
+                floor1Date: document.getElementById('param-floor1-date')?.value || '2026-08-01',
+                floor3Sqft: getInt('param-floor3-sqft', 20000),
+                floor3LeadTime: getInt('param-floor3-leadtime', 9),
+                officeRemotePct: (getInt('param-office-remote-pct', 10) ?? 0) / 100,
+                officeVisitors: getInt('param-office-visitors', 10),
                 fellowsPerCM: get('param-fellows-per-cm', 35),
                 fellowsPerCPO: get('param-fellows-per-cpo', 100),
                 fellowsPerOps: get('param-fellows-per-ops', 20),
@@ -1955,7 +2045,8 @@
             renderStaffingLocationChart(filteredMonthlyData, params);
             renderCohortGrowthChart(params, schedule);
             renderTeamGrowthChart(allMonthlyData, params, schedule);
-            renderSummaryTable(filteredMonthlyData, peakFellows);
+            renderOfficeSpaceChart(allMonthlyData, params, schedule, filters);
+            renderSummaryTable(filteredMonthlyData, peakFellows, schedule);
             renderStaffTable(filteredMonthlyData, params);
             renderLocationTable(filteredMonthlyData);
         }
@@ -2189,13 +2280,13 @@
             });
         }
         
-        function renderSummaryTable(monthlyData, peak) {
+        function renderSummaryTable(monthlyData, peak, schedule) {
             const tbody = document.querySelector('#summary-table tbody');
             tbody.innerHTML = '';
             monthlyData.forEach(r => {
                 const tr = document.createElement('tr');
                 if (r.fellows === peak && peak > 0) tr.className = 'highlight-row';
-                const cohortStr = Object.entries(r.cohorts).map(([k,v]) => `${k}(${v})`).join(', ');
+                const cohortStr = Object.entries(r.cohorts).map(([k,v]) => `${getCohortSeasonLabel(k, schedule)}(${v})`).join(', ');
                 tr.innerHTML = `
                     <td><strong>${r.month}</strong></td>
                     <td>${r.fellows}</td>
@@ -2343,7 +2434,7 @@
             
             const width = container.clientWidth || 800;
             const height = 280;
-            const margin = { top: 20, right: 120, bottom: 50, left: 55 };
+            const margin = { top: 20, right: 120, bottom: 70, left: 55 };
             
             const svg = d3.select('#cohort-growth-chart').append('svg').attr('width', width).attr('height', height);
             
@@ -2358,7 +2449,8 @@
                 const size = sizes[id] || 0;
                 const prevSize = i > 0 ? (sizes[cohorts[i-1]] || 0) : null;
                 const growth = prevSize && prevSize > 0 ? ((size / prevSize - 1) * 100).toFixed(0) : null;
-                return { id, size, growth: growth !== null ? parseFloat(growth) : null, label: id.replace('.0', '') };
+                const seasonLabel = getCohortSeasonLabel(id, schedule);
+                return { id, size, growth: growth !== null ? parseFloat(growth) : null, label: seasonLabel, shortLabel: id.replace('.0', '') };
             });
             
             const maxSize = d3.max(cohortData, d => d.size) * 1.15 || 100;
@@ -2383,7 +2475,7 @@
                 .on('mouseover', function(e, d) {
                     d3.select(this).attr('opacity', 0.7);
                     const growthText = d.growth !== null ? ` (${d.growth > 0 ? '+' : ''}${d.growth}%)` : '';
-                    showTooltip(e, `<div class="tooltip-label">Cohort ${d.label}</div><div class="tooltip-value">${d.size} fellows${growthText}</div>`);
+                    showTooltip(e, `<div class="tooltip-label">${d.label}</div><div class="tooltip-value">${d.size} fellows${growthText}</div>`);
                 })
                 .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
                 .on('mouseout', function() { d3.select(this).attr('opacity', 1); hideTooltip(); });
@@ -2452,7 +2544,7 @@
             
             // Axes
             svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
-                .selectAll('text').style('fill', '#8888a0').style('font-size', '11px');
+                .selectAll('text').attr('transform', 'rotate(-35)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
             
             svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(ySize).ticks(5))
                 .selectAll('text').style('fill', '#3b82f6').style('font-size', '9px');
@@ -2522,7 +2614,8 @@
                     const maxVal = getMaxDuringCohort(cid, team.key);
                     const prevMax = i > 0 ? getMaxDuringCohort(cohorts[i-1], team.key) : null;
                     const growth = prevMax && prevMax > 0 ? ((maxVal / prevMax - 1) * 100) : null;
-                    return { cohort: cid.replace('.0', ''), maxVal, growth };
+                    const seasonLabel = getCohortSeasonLabel(cid, schedule);
+                    return { cohort: cid.replace('.0', ''), cohortId: cid, seasonLabel, maxVal, growth };
                 });
                 return { ...team, cohortValues };
             }).filter(t => t.cohortValues.some(cv => cv.maxVal > 0));
@@ -2553,7 +2646,7 @@
                     .on('mouseover', function(e, d) {
                         d3.select(this).attr('opacity', 0.7);
                         const growthText = d.growth !== null ? ` (${d.growth > 0 ? '+' : ''}${d.growth.toFixed(0)}% vs prev)` : '';
-                        showTooltip(e, `<div class="tooltip-label">${team.label} - Cohort ${d.cohort}</div><div class="tooltip-value">${d.maxVal} staff${growthText}</div>`);
+                        showTooltip(e, `<div class="tooltip-label">${team.label} - ${d.seasonLabel}</div><div class="tooltip-value">${d.maxVal} staff${growthText}</div>`);
                     })
                     .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
                     .on('mouseout', function() { d3.select(this).attr('opacity', 1); hideTooltip(); });
@@ -2572,11 +2665,245 @@
             
             // Legend for cohorts
             const legend = svg.append('g').attr('transform', `translate(${margin.left + 10}, 5)`);
-            const cohortLabels = cohorts.map(c => c.replace('.0', ''));
-            cohortLabels.forEach((c, i) => {
-                legend.append('rect').attr('x', i * 38).attr('y', 0).attr('width', 10).attr('height', 10).attr('fill', cohortColorScale(c)).attr('rx', 2);
-                legend.append('text').attr('x', i * 38 + 13).attr('y', 9).text(c).style('fill', '#f0f0f5').style('font-size', '9px');
+            const cohortLabelsForLegend = cohorts.map(c => {
+                const label = getCohortSeasonLabel(c, schedule);
+                // Shorten to just "9 S'26" format
+                return label.replace('.0 ', ' ').replace("Sum'", "S'").replace("Aut'", "A'").replace("Win'", "W'");
             });
+            cohortLabelsForLegend.forEach((c, i) => {
+                legend.append('rect').attr('x', i * 52).attr('y', 0).attr('width', 10).attr('height', 10).attr('fill', cohortColorScale(cohorts[i].replace('.0', ''))).attr('rx', 2);
+                legend.append('text').attr('x', i * 52 + 13).attr('y', 9).text(c).style('fill', '#f0f0f5').style('font-size', '9px');
+            });
+        }
+        
+        function renderOfficeSpaceChart(allMonthlyData, params, schedule, filters) {
+            const container = document.getElementById('office-space-chart');
+            const infoDiv = document.getElementById('office-space-info');
+            const statusSummary = document.getElementById('office-status-summary');
+            container.innerHTML = '';
+            
+            const width = container.clientWidth || 800;
+            const height = 300;
+            const margin = { top: 20, right: 100, bottom: 50, left: 55 };
+            
+            const svg = d3.select('#office-space-chart').append('svg').attr('width', width).attr('height', height);
+            
+            // Calculate floor availability dates
+            const floor2Date = new Date(params.floor2Date);
+            const floor1Date = new Date(params.floor1Date);
+            
+            // Calculate capacity at each point
+            const floor12Capacity = Math.floor((params.floor2Sqft + params.floor1Sqft) / params.sqftPerPerson);
+            const fullCapacity = Math.floor((params.floor2Sqft + params.floor1Sqft + params.floor3Sqft) / params.sqftPerPerson);
+            
+            // Calculate office people for each month (Berkeley only - staff + fellows based on toggles)
+            const officeData = allMonthlyData.map(m => {
+                const date = monthDates[m.month];
+                
+                // Berkeley staff (apply remote %)
+                let berkeleyStaff = m.berkeleyStaffTotal || 0;
+                berkeleyStaff = Math.round(berkeleyStaff * (1 - params.officeRemotePct));
+                
+                // Berkeley fellows - need to recalculate based on filters
+                let berkeleyFellows = 0;
+                Object.entries(m.cohorts).forEach(([cohortId, count]) => {
+                    if (cohortId === 'Residency') {
+                        if (filters.residency) {
+                            // Berkeley portion of residency
+                            berkeleyFellows += Math.round(count * (1 - params.londonResidencyPct));
+                        }
+                    } else {
+                        const type = getCohortType(cohortId);
+                        if (type === 'main' && filters.main) {
+                            // Main cohorts, Berkeley portion
+                            berkeleyFellows += Math.round(count * (1 - params.londonMainPct));
+                        } else if (type === 'ext1' && filters.ext1) {
+                            // Ext1 cohorts, Berkeley portion
+                            berkeleyFellows += Math.round(count * (1 - params.londonExtPct));
+                        } else if (type === 'ext2' && filters.ext2) {
+                            // Ext2 cohorts, Berkeley portion
+                            berkeleyFellows += Math.round(count * (1 - params.londonExtPct));
+                        }
+                    }
+                });
+                
+                // Apply remote % to fellows
+                berkeleyFellows = Math.round(berkeleyFellows * (1 - params.officeRemotePct));
+                
+                let people = berkeleyStaff + berkeleyFellows;
+                
+                // Add visitors (not subject to remote %)
+                people += params.officeVisitors;
+                
+                // Calculate available space
+                let availableSqft = 0;
+                let floorsAvailable = [];
+                if (date >= floor2Date) {
+                    availableSqft += params.floor2Sqft;
+                    floorsAvailable.push('2');
+                }
+                if (date >= floor1Date) {
+                    availableSqft += params.floor1Sqft;
+                    floorsAvailable.push('1');
+                }
+                
+                const capacity = Math.floor(availableSqft / params.sqftPerPerson);
+                const sqftNeeded = people * params.sqftPerPerson;
+                const utilization = capacity > 0 ? (people / capacity * 100) : 0;
+                const needsFloor3 = people > floor12Capacity;
+                
+                return {
+                    month: m.month,
+                    date,
+                    people,
+                    capacity,
+                    floor12Capacity,
+                    fullCapacity,
+                    sqftNeeded,
+                    availableSqft,
+                    utilization,
+                    needsFloor3,
+                    floorsAvailable
+                };
+            });
+            
+            // Find when floor 3 is first needed
+            const floor3NeededMonth = officeData.find(d => d.needsFloor3);
+            const floor3LeadTimeDate = floor3NeededMonth ? new Date(floor3NeededMonth.date) : null;
+            if (floor3LeadTimeDate) {
+                floor3LeadTimeDate.setMonth(floor3LeadTimeDate.getMonth() - params.floor3LeadTime);
+            }
+            
+            // Chart
+            const chartMonths = officeData.map(d => d.month);
+            const maxY = Math.max(fullCapacity, d3.max(officeData, d => d.people)) * 1.1;
+            
+            const x = d3.scalePoint().domain(chartMonths).range([margin.left, width - margin.right]);
+            const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
+            
+            // Draw capacity zones
+            // Floor 1+2 capacity zone
+            svg.append('rect')
+                .attr('x', margin.left)
+                .attr('y', y(floor12Capacity))
+                .attr('width', width - margin.left - margin.right)
+                .attr('height', y(0) - y(floor12Capacity))
+                .attr('fill', '#22c55e')
+                .attr('opacity', 0.1);
+            
+            // Floor 3 capacity zone
+            svg.append('rect')
+                .attr('x', margin.left)
+                .attr('y', y(fullCapacity))
+                .attr('width', width - margin.left - margin.right)
+                .attr('height', y(floor12Capacity) - y(fullCapacity))
+                .attr('fill', '#f59e0b')
+                .attr('opacity', 0.1);
+            
+            // Capacity lines
+            svg.append('line')
+                .attr('x1', margin.left).attr('x2', width - margin.right)
+                .attr('y1', y(floor12Capacity)).attr('y2', y(floor12Capacity))
+                .attr('stroke', '#22c55e').attr('stroke-width', 2).attr('stroke-dasharray', '6,3');
+            
+            svg.append('line')
+                .attr('x1', margin.left).attr('x2', width - margin.right)
+                .attr('y1', y(fullCapacity)).attr('y2', y(fullCapacity))
+                .attr('stroke', '#f59e0b').attr('stroke-width', 2).attr('stroke-dasharray', '6,3');
+            
+            // People line
+            const line = d3.line().x(d => x(d.month)).y(d => y(d.people)).curve(d3.curveMonotoneX);
+            svg.append('path').datum(officeData)
+                .attr('fill', 'none')
+                .attr('stroke', '#3b82f6')
+                .attr('stroke-width', 2.5)
+                .attr('d', line);
+            
+            // Dots with color coding
+            svg.selectAll('.office-dot').data(officeData).join('circle')
+                .attr('cx', d => x(d.month))
+                .attr('cy', d => y(d.people))
+                .attr('r', 5)
+                .attr('fill', d => d.needsFloor3 ? '#ef4444' : (d.people > d.capacity ? '#f59e0b' : '#3b82f6'))
+                .style('cursor', 'pointer')
+                .on('mouseover', function(e, d) {
+                    d3.select(this).attr('r', 7);
+                    const status = d.needsFloor3 ? '⚠️ Need Floor 3' : (d.people > d.capacity ? '⚠️ Over Capacity' : '✓ OK');
+                    showTooltip(e, `
+                        <div class="tooltip-label">${d.month}</div>
+                        <div class="tooltip-value">${d.people} people (${d.sqftNeeded.toLocaleString()} sq ft)</div>
+                        <div style="font-size:0.75rem;margin-top:4px;">
+                            Capacity: ${d.capacity} (Floors ${d.floorsAvailable.join(', ') || 'None'})<br>
+                            ${status}
+                        </div>
+                    `);
+                })
+                .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
+                .on('mouseout', function() { d3.select(this).attr('r', 5); hideTooltip(); });
+            
+            // Axes
+            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
+                .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '9px');
+            svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(6))
+                .selectAll('text').style('fill', '#8888a0').style('font-size', '9px');
+            
+            // Legend
+            const legend = svg.append('g').attr('transform', `translate(${width - 95}, 15)`);
+            legend.append('line').attr('x1', 0).attr('x2', 15).attr('y1', 0).attr('y2', 0).attr('stroke', '#3b82f6').attr('stroke-width', 2.5);
+            legend.append('text').attr('x', 20).attr('y', 4).text('People').style('fill', '#f0f0f5').style('font-size', '10px');
+            legend.append('line').attr('x1', 0).attr('x2', 15).attr('y1', 18).attr('y2', 18).attr('stroke', '#22c55e').attr('stroke-width', 2).attr('stroke-dasharray', '4,2');
+            legend.append('text').attr('x', 20).attr('y', 22).text('Fl 1+2').style('fill', '#22c55e').style('font-size', '10px');
+            legend.append('line').attr('x1', 0).attr('x2', 15).attr('y1', 36).attr('y2', 36).attr('stroke', '#f59e0b').attr('stroke-width', 2).attr('stroke-dasharray', '4,2');
+            legend.append('text').attr('x', 20).attr('y', 40).text('+ Fl 3').style('fill', '#f59e0b').style('font-size', '10px');
+            
+            // Y-axis label
+            svg.append('text').attr('x', margin.left - 40).attr('y', height / 2).attr('transform', `rotate(-90, ${margin.left - 40}, ${height / 2})`)
+                .style('fill', '#8888a0').style('font-size', '10px').style('text-anchor', 'middle').text('People');
+            
+            // Info panel
+            const floor2Cap = Math.floor(params.floor2Sqft / params.sqftPerPerson);
+            const floor1Cap = Math.floor(params.floor1Sqft / params.sqftPerPerson);
+            const floor3Cap = Math.floor(params.floor3Sqft / params.sqftPerPerson);
+            
+            let infoHtml = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div>
+                        <strong style="color: #22c55e;">Floor 2</strong>: ${params.floor2Sqft.toLocaleString()} sq ft (${floor2Cap} people)<br>
+                        <span style="font-size:0.8rem;color:var(--text-secondary);">Available: ${params.floor2Date}</span>
+                    </div>
+                    <div>
+                        <strong style="color: #22c55e;">Floor 1</strong>: ${params.floor1Sqft.toLocaleString()} sq ft (${floor1Cap} people)<br>
+                        <span style="font-size:0.8rem;color:var(--text-secondary);">Available: ${params.floor1Date}</span>
+                    </div>
+                    <div>
+                        <strong style="color: #f59e0b;">Floor 3</strong>: ${params.floor3Sqft.toLocaleString()} sq ft (${floor3Cap} people)<br>
+                        <span style="font-size:0.8rem;color:var(--text-secondary);">Lead time: ${params.floor3LeadTime} months</span>
+                    </div>
+                </div>
+            `;
+            
+            if (floor3NeededMonth) {
+                const leadTimeStr = floor3LeadTimeDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                infoHtml += `
+                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(239, 68, 68, 0.15); border-radius: 6px; border-left: 3px solid #ef4444;">
+                        <strong style="color: #ef4444;">⚠️ Floor 3 Needed: ${floor3NeededMonth.month}</strong><br>
+                        <span style="font-size:0.85rem;">With ${params.floor3LeadTime}-month lead time, decision needed by <strong>${leadTimeStr}</strong></span><br>
+                        <span style="font-size:0.8rem;color:var(--text-secondary);">Peak: ${floor3NeededMonth.people} people need ${floor3NeededMonth.sqftNeeded.toLocaleString()} sq ft</span>
+                    </div>
+                `;
+                statusSummary.innerHTML = `<span style="color: #ef4444;">⚠️ Floor 3 needed by ${floor3NeededMonth.month}</span>`;
+            } else {
+                const peakMonth = officeData.reduce((max, d) => d.people > max.people ? d : max, officeData[0]);
+                infoHtml += `
+                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(34, 197, 94, 0.15); border-radius: 6px; border-left: 3px solid #22c55e;">
+                        <strong style="color: #22c55e;">✓ Floors 1+2 Sufficient</strong><br>
+                        <span style="font-size:0.85rem;">Peak: ${peakMonth.people} people in ${peakMonth.month} (${Math.round(peakMonth.people / floor12Capacity * 100)}% of capacity)</span>
+                    </div>
+                `;
+                statusSummary.innerHTML = `<span style="color: #22c55e;">✓ Floors 1+2 sufficient through projection</span>`;
+            }
+            
+            infoDiv.innerHTML = infoHtml;
         }
         
         function showTab(tab) {
@@ -2617,8 +2944,8 @@
             document.getElementById('param-8.0').value = 80;
             document.getElementById('param-9.0').value = 90;
             document.getElementById('param-10.0').value = 120;
-            document.getElementById('param-11.0').value = 80;
-            document.getElementById('param-12.0').value = 120;
+            document.getElementById('param-11.0').value = 120;
+            document.getElementById('param-12.0').value = 140;
             document.getElementById('param-13.0').value = 200;
             document.getElementById('param-14.0').value = 140;
             document.getElementById('param-15.0').value = 220;
@@ -2628,13 +2955,23 @@
             document.getElementById('param-8.2-actual').value = 30;
             document.getElementById('param-9.1-actual').value = '';
             document.getElementById('param-9.2-actual').value = '';
-            document.getElementById('param-london-main').value = 10;
-            document.getElementById('param-london-ext').value = 50;
+            document.getElementById('param-london-main').value = 20;
+            document.getElementById('param-london-ext').value = 70;
             document.getElementById('param-london-residency').value = 50;
             document.getElementById('param-residency-count').value = 30;
             document.getElementById('param-residency-start').value = '2026-07-06';
             document.getElementById('param-residency-months').value = 24;
             document.getElementById('param-residency-growth').value = 2;
+            // Office space
+            document.getElementById('param-sqft-per-person').value = 200;
+            document.getElementById('param-floor2-sqft').value = 20000;
+            document.getElementById('param-floor2-date').value = '2026-04-01';
+            document.getElementById('param-floor1-sqft').value = 13500;
+            document.getElementById('param-floor1-date').value = '2026-08-01';
+            document.getElementById('param-floor3-sqft').value = 20000;
+            document.getElementById('param-floor3-leadtime').value = 9;
+            document.getElementById('param-office-remote-pct').value = 10;
+            document.getElementById('param-office-visitors').value = 10;
             document.getElementById('param-fellows-per-cm').value = 35;
             document.getElementById('param-fellows-per-cpo').value = 100;
             document.getElementById('param-fellows-per-ops').value = 20;
