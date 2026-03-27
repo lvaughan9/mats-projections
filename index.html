@@ -1217,6 +1217,127 @@
         </div>
     </div>
     
+    <!-- Equations Documentation -->
+    <div class="card" style="margin: 1rem; max-width: 1600px; margin-left: auto; margin-right: auto;">
+        <div class="card-header" style="cursor: pointer;" onclick="document.getElementById('equations-content').style.display = document.getElementById('equations-content').style.display === 'none' ? 'block' : 'none'; this.querySelector('.toggle-icon').textContent = document.getElementById('equations-content').style.display === 'none' ? '▶' : '▼';">
+            <h2 class="card-title"><span class="toggle-icon">▶</span> 📐 Calculation Methodology</h2>
+        </div>
+        <div id="equations-content" style="display: none; padding: 1rem; font-size: 0.85rem; line-height: 1.6;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+                
+                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
+                    <h3 style="color: #3b82f6; margin-bottom: 0.75rem; font-size: 1rem;">👥 Fellow Counts</h3>
+                    <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
+                        Main Cohort (X.0) = Cohort Size parameter<br>
+                        Extension 1 (X.1) = X.0 × Ext 1 Rate<br>
+                        Extension 2 (X.2) = X.1 × Ext 2 Rate<br>
+                        <br>
+                        Berkeley Fellows = Count × (1 - London %)<br>
+                        London Fellows = Count × London %
+                    </code>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Fellows are active from cohort start date to end date. Location split uses different % for main vs extension cohorts.</p>
+                </div>
+                
+                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
+                    <h3 style="color: #14b8a6; margin-bottom: 0.75rem; font-size: 1rem;">🏠 Residency Program</h3>
+                    <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
+                        Months 0-5: Base Count<br>
+                        Months 6-11: Base × √(YoY Growth)<br>
+                        Months 12-17: Base × YoY Growth<br>
+                        Months 18-23: Base × YoY Growth × √(YoY Growth)<br>
+                        <br>
+                        6-month multiplier = √(YoY Growth)
+                    </code>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Residency grows every 6 months using compound growth based on YoY rate.</p>
+                </div>
+                
+                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
+                    <h3 style="color: #a855f7; margin-bottom: 0.75rem; font-size: 1rem;">👔 Research Management Staff</h3>
+                    <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
+                        <strong>Per Location (Berkeley/London):</strong><br>
+                        RMs = ⌈Fellows ÷ Fellows/RM ratio⌉<br>
+                        SRMs from RMs = ⌈RMs ÷ RMs/SRM ratio⌉<br>
+                        SRMs from Fellows = ⌈Fellows ÷ Fellows/SRM ratio⌉<br>
+                        SRMs = max(SRMs from RMs, SRMs from Fellows)<br>
+                        <br>
+                        Leads = (Berkeley SRMs ÷ 2) + (London SRMs ÷ 2)
+                    </code>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">RM/SRM ratios are location-specific. Rounding uses configurable cutoff (default 0.4).</p>
+                </div>
+                
+                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
+                    <h3 style="color: #f59e0b; margin-bottom: 0.75rem; font-size: 1rem;">🌐 Global Support Roles</h3>
+                    <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
+                        Total Fellows = Berkeley + London fellows<br>
+                        <br>
+                        CMs = ⌈Total Fellows ÷ Fellows/CM⌉<br>
+                        CPOs = ⌈Total Fellows ÷ Fellows/CPO⌉<br>
+                        Ops = ⌈Total Fellows ÷ Fellows/Ops⌉<br>
+                        PMs = ⌈Total Fellows ÷ Fellows/PM⌉<br>
+                        Compute Admins = ⌈Total Fellows ÷ Fellows/CA⌉<br>
+                        RCEs = ⌈Total Fellows ÷ Fellows/RCE⌉<br>
+                        Recruiters = ⌈Total Fellows ÷ Fellows/Recruiter⌉
+                    </code>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Global roles scale with total fellow count across both locations.</p>
+                </div>
+                
+                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
+                    <h3 style="color: #22c55e; margin-bottom: 0.75rem; font-size: 1rem;">📈 Staff Ratchet (No Layoffs)</h3>
+                    <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
+                        For each role and month:<br>
+                        Actual Staff = max(Calculated Need, Previous Max)<br>
+                        <br>
+                        Running Max updates each month<br>
+                        Exception: Feb 2027 spike excluded from max
+                    </code>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Staff counts only grow over time. The Feb 2027 outlier doesn't set new floor.</p>
+                </div>
+                
+                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
+                    <h3 style="color: #ec4899; margin-bottom: 0.75rem; font-size: 1rem;">📅 Hiring Timeline</h3>
+                    <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
+                        Onboarding Start = Month Start - (Onboarding Weeks × 7 days)<br>
+                        Rounded to previous Monday<br>
+                        <br>
+                        Hire Delta = max(0, Need - Running Max)<br>
+                        Gap = Need - Current Staff (at start)
+                    </code>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Shows when to start hiring to have staff ready by cohort start.</p>
+                </div>
+                
+                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
+                    <h3 style="color: #f59e0b; margin-bottom: 0.75rem; font-size: 1rem;">🏢 Office Space (Berkeley)</h3>
+                    <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
+                        Berkeley Staff (in-office) = Staff × (1 - Remote %)<br>
+                        Main Fellows (in-office) = Fellows × (1 - Remote %)<br>
+                        Ext Fellows (in-office) = Fellows × (1 - Ext Remote %)<br>
+                        <br>
+                        Total People = Staff + Fellows + Visitors<br>
+                        Sq Ft Needed = People × Sq Ft/Person<br>
+                        <br>
+                        Capacity = Available Floors ÷ Sq Ft/Person<br>
+                        Floor 3 Needed = People > Floor 1+2 Capacity
+                    </code>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Different remote % for main vs extension fellows. Floor 3 decision date = need date minus lead time.</p>
+                </div>
+                
+                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
+                    <h3 style="color: #6366f1; margin-bottom: 0.75rem; font-size: 1rem;">📊 YoY Growth Stats</h3>
+                    <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
+                        Max Fellows (Year) = max of monthly fellows in year<br>
+                        Max Staff (Year) = max of monthly staff in year<br>
+                        <br>
+                        YoY Growth = Max(Year N+1) ÷ Max(Year N)<br>
+                        <br>
+                        Displayed as: 2026→27 / 2027→28
+                    </code>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Uses peak values from each year, not averages.</p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
     <div class="tooltip" id="tooltip" style="display:none;"></div>
     
     <script>
