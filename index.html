@@ -1924,7 +1924,7 @@
                 calculateCohortSizes(params);
             const cutoff = params.roundingCutoff;
             
-            return months.map(month => {
+            return months.map((month, monthIndex) => {
                 const date = monthDates[month];
                 const activeCohorts = {};
                 let londonFellows = 0, berkeleyFellows = 0;
