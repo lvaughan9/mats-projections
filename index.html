@@ -869,7 +869,7 @@
                         </p>
                         <div class="param-row">
                             <span class="param-label">SRMs/Lead</span>
-                            <input type="number" class="param-input" id="param-srms-per-lead" value="4" min="0" max="50">
+                            <input type="number" class="param-input" id="param-srms-per-lead" value="6" min="0" max="50">
                         </div>
                         <div class="param-row">
                             <span class="param-label">(CMs+CPOs)/Lead</span>
@@ -877,7 +877,7 @@
                         </div>
                         <div class="param-row">
                             <span class="param-label">Ops/Lead</span>
-                            <input type="number" class="param-input" id="param-ops-per-lead" value="0" min="0" max="50">
+                            <input type="number" class="param-input" id="param-ops-per-lead" value="8" min="0" max="50">
                         </div>
                         <div class="param-row">
                             <span class="param-label">PMs/Lead</span>
@@ -1590,9 +1590,9 @@
                 fellowsPerRCE: get('param-fellows-per-rce', 50),
                 fellowsPerRecruiter: get('param-fellows-per-recruiter', 150),
                 // Per-team lead ratios (0 = no leads for that team)
-                srmsPerLead: getInt('param-srms-per-lead', 4),
+                srmsPerLead: getInt('param-srms-per-lead', 6),
                 communityPerLead: getInt('param-community-per-lead', 6),  // CMs + CPOs combined
-                opsPerLead: getInt('param-ops-per-lead', 0),
+                opsPerLead: getInt('param-ops-per-lead', 8),
                 pmsPerLead: getInt('param-pms-per-lead', 5),
                 computePerLead: getInt('param-compute-per-lead', 6),  // CA + RCE combined
                 fellowsPerAdditional: get('param-fellows-per-additional', 0),
@@ -3214,9 +3214,9 @@
             document.getElementById('param-fellows-per-rce').value = 50;
             document.getElementById('param-fellows-per-recruiter').value = 150;
             // Per-team lead ratios
-            document.getElementById('param-srms-per-lead').value = 4;
+            document.getElementById('param-srms-per-lead').value = 6;
             document.getElementById('param-community-per-lead').value = 6;
-            document.getElementById('param-ops-per-lead').value = 0;
+            document.getElementById('param-ops-per-lead').value = 8;
             document.getElementById('param-pms-per-lead').value = 5;
             document.getElementById('param-compute-per-lead').value = 6;
             document.getElementById('param-fellows-per-additional').value = 0;
