@@ -584,28 +584,12 @@
                         </p>
                     </div>
                     
-                    <div class="param-section global">
-                        <div class="param-section-title">👥 Leads</div>
-                        <div class="param-row">
-                            <span class="param-label">Berkeley (2026)</span>
-                            <input type="number" class="param-input" id="param-leads-berkeley" value="6" min="0" max="50">
-                        </div>
-                        <div class="param-row">
-                            <span class="param-label">London (2026)</span>
-                            <input type="number" class="param-input" id="param-leads-london" value="1" min="0" max="50">
-                        </div>
-                        <div class="param-row">
-                            <span class="param-label">Berkeley (2027)</span>
-                            <input type="number" class="param-input" id="param-leads-berkeley-2027" value="8" min="0" max="50">
-                        </div>
-                        <div class="param-row">
-                            <span class="param-label">London (2027)</span>
-                            <input type="number" class="param-input" id="param-leads-london-2027" value="2" min="0" max="50">
-                        </div>
-                    </div>
-                    
                     <div class="param-section berkeley">
                         <div class="param-section-title">🇺🇸 Current Berkeley Staff</div>
+                        <div class="param-row">
+                            <span class="param-label">Leads</span>
+                            <input type="number" class="param-input" id="param-current-berkeley-leads" value="6" min="0">
+                        </div>
                         <div class="param-row">
                             <span class="param-label">SRMs</span>
                             <input type="number" class="param-input" id="param-current-berkeley-srms" value="4" min="0">
@@ -642,6 +626,10 @@
                     
                     <div class="param-section london">
                         <div class="param-section-title">🇬🇧 Current London Staff</div>
+                        <div class="param-row">
+                            <span class="param-label">Leads</span>
+                            <input type="number" class="param-input" id="param-current-london-leads" value="1" min="0">
+                        </div>
                         <div class="param-row">
                             <span class="param-label">SRMs</span>
                             <input type="number" class="param-input" id="param-current-london-srms" value="2" min="0">
@@ -818,6 +806,9 @@
                             </div>
                         </div>
                         <div style="margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px solid var(--border-color);">
+                            <p style="font-size:0.65rem;color:var(--text-secondary);margin-bottom:0.5rem;line-height:1.2;">
+                                Staff & main fellows use Remote %. Extensions split: Remote % first, then London/Berkeley.
+                            </p>
                             <div class="param-row">
                                 <span class="param-label">Remote %</span>
                                 <div class="input-group">
@@ -868,6 +859,33 @@
                         <div class="param-row">
                             <span class="param-label">Fellows/Recruiter</span>
                             <input type="number" class="param-input" id="param-fellows-per-recruiter" value="150" min="1" max="500">
+                        </div>
+                    </div>
+                    
+                    <div class="param-section" style="border-left: 3px solid #eab308;">
+                        <div class="param-section-title" style="color: #eab308;">👥 Leads per Team</div>
+                        <p style="font-size:0.65rem;color:var(--text-secondary);margin-bottom:0.5rem;line-height:1.2;">
+                            Staff/Lead ratio for each team (0 = no leads for that team)
+                        </p>
+                        <div class="param-row">
+                            <span class="param-label">SRMs/Lead</span>
+                            <input type="number" class="param-input" id="param-srms-per-lead" value="4" min="0" max="50">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">(CMs+CPOs)/Lead</span>
+                            <input type="number" class="param-input" id="param-community-per-lead" value="6" min="0" max="50">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Ops/Lead</span>
+                            <input type="number" class="param-input" id="param-ops-per-lead" value="0" min="0" max="50">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">PMs/Lead</span>
+                            <input type="number" class="param-input" id="param-pms-per-lead" value="5" min="0" max="50">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">(CA+RCE)/Lead</span>
+                            <input type="number" class="param-input" id="param-compute-per-lead" value="6" min="0" max="50">
                         </div>
                     </div>
                     
@@ -1260,9 +1278,14 @@
                         SRMs from Fellows = ⌈Fellows ÷ Fellows/SRM ratio⌉<br>
                         SRMs = max(SRMs from RMs, SRMs from Fellows)<br>
                         <br>
-                        Leads = (Berkeley SRMs ÷ 2) + (London SRMs ÷ 2)
+                        <strong>Leads (per team, per location):</strong><br>
+                        Leads from SRMs = ⌈SRMs ÷ SRMs/Lead⌉<br>
+                        Leads from Community = ⌈(CMs+CPOs) ÷ (CMs+CPOs)/Lead⌉<br>
+                        Leads from PMs = ⌈PMs ÷ PMs/Lead⌉<br>
+                        Leads from Compute = ⌈(CA+RCE) ÷ (CA+RCE)/Lead⌉<br>
+                        Total Leads = sum of all team leads
                     </code>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem;">RM/SRM ratios are location-specific. Rounding uses configurable cutoff (default 0.4).</p>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Each team has its own Staff/Lead ratio. Set to 0 to disable leads for that team. CMs+CPOs and CA+RCE are combined for lead calculations.</p>
                 </div>
                 
                 <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
@@ -1308,17 +1331,21 @@
                 <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
                     <h3 style="color: #f59e0b; margin-bottom: 0.75rem; font-size: 1rem;">🏢 Office Space (Berkeley)</h3>
                     <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
-                        Berkeley Staff (in-office) = Staff × (1 - Remote %)<br>
-                        Main Fellows (in-office) = Fellows × (1 - Remote %)<br>
-                        Ext Fellows (in-office) = Fellows × (1 - Ext Remote %)<br>
+                        <strong>Staff & Main Fellows:</strong><br>
+                        In-office = Count × (1 - Remote %)<br>
                         <br>
-                        Total People = Staff + Fellows + Visitors<br>
+                        <strong>Extension Fellows (3 locations):</strong><br>
+                        Remote = Count × Ext Remote % (no office)<br>
+                        Non-remote = Count × (1 - Ext Remote %)<br>
+                        London = Non-remote × London Ext %<br>
+                        Berkeley = Non-remote × (1 - London Ext %)<br>
+                        <br>
+                        <strong>Total:</strong><br>
+                        People = Staff + Main + Ext + Visitors<br>
                         Sq Ft Needed = People × Sq Ft/Person<br>
-                        <br>
-                        Capacity = Available Floors ÷ Sq Ft/Person<br>
-                        Floor 3 Needed = People > Floor 1+2 Capacity
+                        Floor 3 Needed when People > Fl 1+2 Capacity
                     </code>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Different remote % for main vs extension fellows. Floor 3 decision date = need date minus lead time.</p>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Extensions split 3 ways: Remote (40%), then London/Berkeley. Floor 3 decision = need date − lead time.</p>
                 </div>
                 
                 <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
@@ -1515,10 +1542,6 @@
             return {
                 roundingCutoff: get('param-rounding-cutoff', 0.4),
                 onboardingWeeks: getInt('param-onboarding-weeks', 3),
-                leadsBerkeley: getInt('param-leads-berkeley', 6),
-                leadsLondon: getInt('param-leads-london', 1),
-                leadsBerkeley2027: getInt('param-leads-berkeley-2027', 8),
-                leadsLondon2027: getInt('param-leads-london-2027', 2),
                 // Staff growth constraint
                 growthEnabled: document.getElementById('param-growth-enabled')?.checked || false,
                 growthMultiplier: get('param-growth-multiplier', 2),
@@ -1566,6 +1589,12 @@
                 fellowsPerCA: get('param-fellows-per-ca', 60),
                 fellowsPerRCE: get('param-fellows-per-rce', 50),
                 fellowsPerRecruiter: get('param-fellows-per-recruiter', 150),
+                // Per-team lead ratios (0 = no leads for that team)
+                srmsPerLead: getInt('param-srms-per-lead', 4),
+                communityPerLead: getInt('param-community-per-lead', 6),  // CMs + CPOs combined
+                opsPerLead: getInt('param-ops-per-lead', 0),
+                pmsPerLead: getInt('param-pms-per-lead', 5),
+                computePerLead: getInt('param-compute-per-lead', 6),  // CA + RCE combined
                 fellowsPerAdditional: get('param-fellows-per-additional', 0),
                 additionalName: document.getElementById('param-additional-name').value || 'Additional',
                 londonFellowsPerRM: get('param-london-fellows-per-rm', 8),
@@ -1575,6 +1604,7 @@
                 berkeleyRMsPerSRM: get('param-berkeley-rms-per-srm', 3),
                 berkeleyFellowsPerSRM: get('param-berkeley-fellows-per-srm', 3),
                 // Current staff counts
+                currentBerkeleyLeads: getInt('param-current-berkeley-leads', 6),
                 currentBerkeleySRMs: getInt('param-current-berkeley-srms', 4),
                 currentBerkeleyRMs: getInt('param-current-berkeley-rms', 10),
                 currentBerkeleyCMs: getInt('param-current-berkeley-cms', 2),
@@ -1583,6 +1613,7 @@
                 currentBerkeleyPMs: getInt('param-current-berkeley-pms', 1),
                 currentBerkeleyCompute: getInt('param-current-berkeley-compute', 3),
                 currentBerkeleyRecruiters: getInt('param-current-berkeley-recruiters', 0),
+                currentLondonLeads: getInt('param-current-london-leads', 1),
                 currentLondonSRMs: getInt('param-current-london-srms', 2),
                 currentLondonRMs: getInt('param-current-london-rms', 6),
                 currentLondonCMs: getInt('param-current-london-cms', 1),
@@ -1685,7 +1716,18 @@
             const rcePerFellow = 1 / params.fellowsPerRCE;
             const recruiterPerFellow = params.fellowsPerRecruiter > 0 ? 1 / params.fellowsPerRecruiter : 0;
             
-            return rmPerFellow + srmPerFellow + cmPerFellow + cpoPerFellow + opsPerFellow + pmPerFellow + caPerFellow + rcePerFellow + recruiterPerFellow;
+            const nonLeadStaffPerFellow = rmPerFellow + srmPerFellow + cmPerFellow + cpoPerFellow + opsPerFellow + pmPerFellow + caPerFellow + rcePerFellow + recruiterPerFellow;
+            
+            // Calculate leads per fellow based on per-team ratios (with combined teams)
+            const leadsFromSRMs = params.srmsPerLead > 0 ? srmPerFellow / params.srmsPerLead : 0;
+            const leadsFromCommunity = params.communityPerLead > 0 ? (cmPerFellow + cpoPerFellow) / params.communityPerLead : 0;
+            const leadsFromOps = params.opsPerLead > 0 ? opsPerFellow / params.opsPerLead : 0;
+            const leadsFromPMs = params.pmsPerLead > 0 ? pmPerFellow / params.pmsPerLead : 0;
+            const leadsFromCompute = params.computePerLead > 0 ? (caPerFellow + rcePerFellow) / params.computePerLead : 0;
+            
+            const leadPerFellow = leadsFromSRMs + leadsFromCommunity + leadsFromOps + leadsFromPMs + leadsFromCompute;
+            
+            return nonLeadStaffPerFellow + leadPerFellow;
         }
         
         // Calculate constrained cohort sizes with proportional weights
@@ -1745,14 +1787,8 @@
             function getRequiredStaff(baseUnit, monthIdx) {
                 const totalFellows = getTotalFellowsForMonth(baseUnit, monthIdx);
                 
-                const month = months[monthIdx];
-                const is2027 = month.includes('2027');
-                const is2028 = month.includes('2028');
-                let leadsProgress = is2028 ? 1 : (is2027 ? Math.min(1, (monthIdx - 11) / 4) : 0);
-                const leads = Math.round(params.leadsBerkeley + (params.leadsBerkeley2027 - params.leadsBerkeley) * leadsProgress) +
-                              Math.round(params.leadsLondon + (params.leadsLondon2027 - params.leadsLondon) * leadsProgress);
-                
-                return totalFellows * staffPerFellow + leads;
+                // staffPerFellow already includes leads based on staff/lead ratio
+                return totalFellows * staffPerFellow;
             }
             
             // Helper: check if base unit fits within annual staff caps
@@ -1943,23 +1979,7 @@
                 const recruiters = (filters.program && params.fellowsPerRecruiter > 0 && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerRecruiter, cutoff)) : 0;
                 const additional = (filters.additional && params.fellowsPerAdditional > 0 && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerAdditional, cutoff)) : 0;
                 
-                // Leads with smooth progression from 2026 to 2027
-                const monthIndex = months.indexOf(month);
-                const is2027 = month.includes('2027');
-                const is2028 = month.includes('2028');
-                // Smooth progression: Jan 2027 starts transition, fully at 2027 levels by Apr 2027
-                let leadsProgress = 0;
-                if (is2027) {
-                    const monthsInto2027 = monthIndex - 12; // 0 for Jan 2027
-                    leadsProgress = Math.min(1, (monthsInto2027 + 1) / 4); // 0.25, 0.5, 0.75, 1.0
-                } else if (is2028) {
-                    leadsProgress = 1; // Full 2027 values for 2028
-                }
-                const leadsBerkeley = filters.leads ? Math.round(params.leadsBerkeley + (params.leadsBerkeley2027 - params.leadsBerkeley) * leadsProgress) : 0;
-                const leadsLondon = filters.leads ? Math.round(params.leadsLondon + (params.leadsLondon2027 - params.leadsLondon) * leadsProgress) : 0;
-                const leads = leadsBerkeley + leadsLondon;
-                
-                // Split global roles by location proportionally
+                // Calculate non-lead staff per location first
                 const londonPct = totalFellows > 0 ? londonTotal / totalFellows : 0;
                 const berkeleyPct = totalFellows > 0 ? berkeleyTotal / totalFellows : 0;
                 
@@ -1979,6 +1999,32 @@
                 const berkeleyRecruiters = recruiters - londonRecruiters;
                 const londonAdditional = Math.round(additional * londonPct);
                 const berkeleyAdditional = additional - londonAdditional;
+                
+                // Calculate leads per team (each team has its own ratio)
+                function calcLeadsForTeam(count, ratio) {
+                    if (!filters.leads || ratio <= 0 || count <= 0) return 0;
+                    return customRound(count / ratio, cutoff);
+                }
+                
+                // Berkeley leads by team
+                const berkeleyLeadsFromSRMs = calcLeadsForTeam(berkeleyStaff.srms, params.srmsPerLead);
+                const berkeleyLeadsFromCommunity = calcLeadsForTeam(berkeleyCMs + berkeleyCPOs, params.communityPerLead);
+                const berkeleyLeadsFromOps = calcLeadsForTeam(berkeleyOps, params.opsPerLead);
+                const berkeleyLeadsFromPMs = calcLeadsForTeam(berkeleyPMs, params.pmsPerLead);
+                const berkeleyLeadsFromCompute = calcLeadsForTeam(berkeleyCAs + berkeleyRCEs, params.computePerLead);
+                
+                // London leads by team
+                const londonLeadsFromSRMs = calcLeadsForTeam(londonStaff.srms, params.srmsPerLead);
+                const londonLeadsFromCommunity = calcLeadsForTeam(londonCMs + londonCPOs, params.communityPerLead);
+                const londonLeadsFromOps = calcLeadsForTeam(londonOps, params.opsPerLead);
+                const londonLeadsFromPMs = calcLeadsForTeam(londonPMs, params.pmsPerLead);
+                const londonLeadsFromCompute = calcLeadsForTeam(londonCAs + londonRCEs, params.computePerLead);
+                
+                const leadsBerkeley = berkeleyLeadsFromSRMs + berkeleyLeadsFromCommunity + 
+                    berkeleyLeadsFromOps + berkeleyLeadsFromPMs + berkeleyLeadsFromCompute;
+                const leadsLondon = londonLeadsFromSRMs + londonLeadsFromCommunity + 
+                    londonLeadsFromOps + londonLeadsFromPMs + londonLeadsFromCompute;
+                const leads = leadsBerkeley + leadsLondon;
                 
                 // Use filtered RM/SRM values for location totals
                 const londonRMsFiltered = filters.rm ? londonStaff.rms : 0;
@@ -2067,6 +2113,7 @@
             const data = [];
             // Start with current staff counts as the baseline (high water mark)
             let max = { 
+                leads: (params.currentBerkeleyLeads || 0) + (params.currentLondonLeads || 0),
                 rms: (params.currentBerkeleyRMs || 0) + (params.currentLondonRMs || 0), 
                 srms: (params.currentBerkeleySRMs || 0) + (params.currentLondonSRMs || 0), 
                 cms: (params.currentBerkeleyCMs || 0) + (params.currentLondonCMs || 0), 
@@ -2082,7 +2129,7 @@
             monthlyData.forEach(m => {
                 const deltas = {};
                 let total = 0;
-                ['rms','srms','cms','cpos','ops','pms','cas','rces','recruiters','additional'].forEach(k => {
+                ['leads','rms','srms','cms','cpos','ops','pms','cas','rces','recruiters','additional'].forEach(k => {
                     deltas[k] = Math.max(0, m[k] - max[k]);
                     max[k] = Math.max(max[k], m[k]);
                     total += deltas[k];
@@ -2891,6 +2938,9 @@
                 berkeleyStaff = Math.round(berkeleyStaff * (1 - params.officeRemotePct));
                 
                 // Berkeley fellows - need to recalculate based on filters
+                // For extensions, Remote is a third location category:
+                //   1. Remote % are fully remote (no office at any location)
+                //   2. Remaining (1 - Remote %) split between London and Berkeley
                 let berkeleyMainFellows = 0;
                 let berkeleyExtFellows = 0;
                 Object.entries(m.cohorts).forEach(([cohortId, count]) => {
@@ -2902,21 +2952,19 @@
                     } else {
                         const type = getCohortType(cohortId);
                         if (type === 'main' && filters.main) {
-                            // Main cohorts, Berkeley portion
+                            // Main cohorts: Berkeley portion
                             berkeleyMainFellows += Math.round(count * (1 - params.londonMainPct));
-                        } else if (type === 'ext1' && filters.ext1) {
-                            // Ext1 cohorts, Berkeley portion
-                            berkeleyExtFellows += Math.round(count * (1 - params.londonExtPct));
-                        } else if (type === 'ext2' && filters.ext2) {
-                            // Ext2 cohorts, Berkeley portion
-                            berkeleyExtFellows += Math.round(count * (1 - params.londonExtPct));
+                        } else if ((type === 'ext1' && filters.ext1) || (type === 'ext2' && filters.ext2)) {
+                            // Extension cohorts: Remote is third location, remaining split London/Berkeley
+                            // Non-remote extensions × Berkeley portion
+                            const nonRemote = count * (1 - params.officeExtRemotePct);
+                            berkeleyExtFellows += Math.round(nonRemote * (1 - params.londonExtPct));
                         }
                     }
                 });
                 
-                // Apply remote % to fellows (different rates for main vs extension)
+                // Apply remote % to staff and main fellows only (extensions already handled above)
                 berkeleyMainFellows = Math.round(berkeleyMainFellows * (1 - params.officeRemotePct));
-                berkeleyExtFellows = Math.round(berkeleyExtFellows * (1 - params.officeExtRemotePct));
                 
                 let people = berkeleyStaff + berkeleyMainFellows + berkeleyExtFellows;
                 
@@ -3105,12 +3153,8 @@
         function resetToDefaults() {
             document.getElementById('param-rounding-cutoff').value = 0.4;
             document.getElementById('param-onboarding-weeks').value = 3;
-            // Leads
-            document.getElementById('param-leads-berkeley').value = 6;
-            document.getElementById('param-leads-london').value = 1;
-            document.getElementById('param-leads-berkeley-2027').value = 8;
-            document.getElementById('param-leads-london-2027').value = 2;
             // Current staff - Berkeley
+            document.getElementById('param-current-berkeley-leads').value = 6;
             document.getElementById('param-current-berkeley-srms').value = 4;
             document.getElementById('param-current-berkeley-rms').value = 10;
             document.getElementById('param-current-berkeley-cms').value = 2;
@@ -3120,6 +3164,7 @@
             document.getElementById('param-current-berkeley-compute').value = 3;
             document.getElementById('param-current-berkeley-recruiters').value = 0;
             // Current staff - London
+            document.getElementById('param-current-london-leads').value = 1;
             document.getElementById('param-current-london-srms').value = 2;
             document.getElementById('param-current-london-rms').value = 6;
             document.getElementById('param-current-london-cms').value = 1;
@@ -3168,6 +3213,12 @@
             document.getElementById('param-fellows-per-ca').value = 60;
             document.getElementById('param-fellows-per-rce').value = 50;
             document.getElementById('param-fellows-per-recruiter').value = 150;
+            // Per-team lead ratios
+            document.getElementById('param-srms-per-lead').value = 4;
+            document.getElementById('param-community-per-lead').value = 6;
+            document.getElementById('param-ops-per-lead').value = 0;
+            document.getElementById('param-pms-per-lead').value = 5;
+            document.getElementById('param-compute-per-lead').value = 6;
             document.getElementById('param-fellows-per-additional').value = 0;
             document.getElementById('param-additional-name').value = 'Additional';
             document.getElementById('param-london-fellows-per-rm').value = 8;
