@@ -496,11 +496,11 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="stat-fellow-growth" style="color: var(--accent-green);">—</div>
-                    <div class="stat-label">Fellow Growth (Max YoY)</div>
+                    <div class="stat-label">Fellow Growth (26→27)</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="stat-staff-growth" style="color: var(--accent-orange);">—</div>
-                    <div class="stat-label">Staff Growth (Max YoY)</div>
+                    <div class="stat-label">Staff Growth (26→27)</div>
                 </div>
                 <div class="stat-card" id="stat-budget-card" style="display:none;">
                     <div class="stat-value" id="stat-budget-status">—</div>
@@ -668,35 +668,43 @@
                         <div class="param-section-title">Cohort Sizes (x.0)</div>
                         <div class="param-row">
                             <span class="param-label">8.0</span>
+                            <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Win'26</span>
                             <input type="number" class="param-input" id="param-8.0" value="80" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">9.0</span>
+                            <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Win'26</span>
                             <input type="number" class="param-input" id="param-9.0" value="90" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">10.0</span>
+                            <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Sum'26</span>
                             <input type="number" class="param-input" id="param-10.0" value="120" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">11.0</span>
+                            <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Aut'26</span>
                             <input type="number" class="param-input" id="param-11.0" value="120" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">12.0</span>
+                            <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Win'27</span>
                             <input type="number" class="param-input" id="param-12.0" value="140" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">13.0</span>
-                            <input type="number" class="param-input" id="param-13.0" value="200" min="0" max="500">
+                            <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Sum'27</span>
+                            <input type="number" class="param-input" id="param-13.0" value="240" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">14.0</span>
-                            <input type="number" class="param-input" id="param-14.0" value="140" min="0" max="500">
+                            <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Aut'27</span>
+                            <input type="number" class="param-input" id="param-14.0" value="160" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">15.0</span>
-                            <input type="number" class="param-input" id="param-15.0" value="220" min="0" max="500">
+                            <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Win'28</span>
+                            <input type="number" class="param-input" id="param-15.0" value="280" min="0" max="500">
                         </div>
                     </div>
                     
@@ -901,35 +909,35 @@
                         </div>
                     </div>
                     
-                    <div class="param-section london">
-                        <div class="param-section-title">🇬🇧 London Ratios</div>
+                    <div class="param-section" style="border-left: 3px solid #22c55e;">
+                        <div class="param-section-title" style="color: #22c55e;">📋 Main Program Ratios</div>
                         <div class="param-row">
                             <span class="param-label">Fellows/RM</span>
-                            <input type="number" class="param-input" id="param-london-fellows-per-rm" value="8" min="1" max="20" step="0.5">
+                            <input type="number" class="param-input" id="param-main-fellows-per-rm" value="6" min="1" max="20" step="0.5">
                         </div>
                         <div class="param-row">
                             <span class="param-label">RMs/SRM</span>
-                            <input type="number" class="param-input" id="param-london-rms-per-srm" value="3" min="1" max="10" step="0.5">
+                            <input type="number" class="param-input" id="param-main-rms-per-srm" value="3" min="1" max="10" step="0.5">
                         </div>
                         <div class="param-row">
                             <span class="param-label">Fellows/SRM direct</span>
-                            <input type="number" class="param-input" id="param-london-fellows-per-srm" value="4" min="0" max="10">
+                            <input type="number" class="param-input" id="param-main-fellows-per-srm" value="3" min="0" max="10">
                         </div>
                     </div>
                     
-                    <div class="param-section berkeley">
-                        <div class="param-section-title">🇺🇸 Berkeley Ratios</div>
+                    <div class="param-section" style="border-left: 3px solid #f97316;">
+                        <div class="param-section-title" style="color: #f97316;">🔄 Extension Ratios</div>
                         <div class="param-row">
                             <span class="param-label">Fellows/RM</span>
-                            <input type="number" class="param-input" id="param-berkeley-fellows-per-rm" value="6" min="1" max="20" step="0.5">
+                            <input type="number" class="param-input" id="param-ext-fellows-per-rm" value="8" min="1" max="20" step="0.5">
                         </div>
                         <div class="param-row">
                             <span class="param-label">RMs/SRM</span>
-                            <input type="number" class="param-input" id="param-berkeley-rms-per-srm" value="3" min="1" max="10" step="0.5">
+                            <input type="number" class="param-input" id="param-ext-rms-per-srm" value="3" min="1" max="10" step="0.5">
                         </div>
                         <div class="param-row">
                             <span class="param-label">Fellows/SRM direct</span>
-                            <input type="number" class="param-input" id="param-berkeley-fellows-per-srm" value="3" min="0" max="10">
+                            <input type="number" class="param-input" id="param-ext-fellows-per-srm" value="4" min="0" max="10">
                         </div>
                     </div>
                     
@@ -1272,11 +1280,16 @@
                 <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
                     <h3 style="color: #a855f7; margin-bottom: 0.75rem; font-size: 1rem;">👔 Research Management Staff</h3>
                     <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
-                        <strong>Per Location (Berkeley/London):</strong><br>
-                        RMs = ⌈Fellows ÷ Fellows/RM ratio⌉<br>
-                        SRMs from RMs = ⌈RMs ÷ RMs/SRM ratio⌉<br>
-                        SRMs from Fellows = ⌈Fellows ÷ Fellows/SRM ratio⌉<br>
-                        SRMs = max(SRMs from RMs, SRMs from Fellows)<br>
+                        <strong>By Program Type (Main/Extension):</strong><br>
+                        Main Fellows = x.0 cohorts + Residency<br>
+                        Extension Fellows = x.1 and x.2 cohorts<br>
+                        <br>
+                        Main RMs = ⌈Main Fellows ÷ Main Fellows/RM⌉<br>
+                        Main SRMs = max(⌈Main RMs ÷ RMs/SRM⌉, ⌈Main Fellows ÷ Fellows/SRM⌉)<br>
+                        Ext RMs = ⌈Ext Fellows ÷ Ext Fellows/RM⌉<br>
+                        Ext SRMs = max(⌈Ext RMs ÷ RMs/SRM⌉, ⌈Ext Fellows ÷ Fellows/SRM⌉)<br>
+                        <br>
+                        Total RMs/SRMs attributed to locations by fellow distribution<br>
                         <br>
                         <strong>Leads (per team, per location):</strong><br>
                         Leads from SRMs = ⌈SRMs ÷ SRMs/Lead⌉<br>
@@ -1285,7 +1298,7 @@
                         Leads from Compute = ⌈(CA+RCE) ÷ (CA+RCE)/Lead⌉<br>
                         Total Leads = sum of all team leads
                     </code>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Each team has its own Staff/Lead ratio. Set to 0 to disable leads for that team. CMs+CPOs and CA+RCE are combined for lead calculations.</p>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">RM/SRM ratios differ by program type. RMs/SRMs are attributed to London/Berkeley proportionally based on fellow distribution.</p>
                 </div>
                 
                 <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
@@ -1555,9 +1568,9 @@
                 cohort10_0: getIntOrDefault('param-10.0', 120),
                 cohort11_0: getIntOrDefault('param-11.0', 120),
                 cohort12_0: getIntOrDefault('param-12.0', 140),
-                cohort13_0: getIntOrDefault('param-13.0', 200),
-                cohort14_0: getIntOrDefault('param-14.0', 140),
-                cohort15_0: getIntOrDefault('param-15.0', 220),
+                cohort13_0: getIntOrDefault('param-13.0', 240),
+                cohort14_0: getIntOrDefault('param-14.0', 160),
+                cohort15_0: getIntOrDefault('param-15.0', 280),
                 ext1Rate: (getIntOrDefault('param-ext1-rate', 70)) / 100,
                 ext2Rate: (getIntOrDefault('param-ext2-rate', 50)) / 100,
                 cohort8_1_actual: getInt('param-8.1-actual', 50),
@@ -1597,12 +1610,12 @@
                 computePerLead: getInt('param-compute-per-lead', 6),  // CA + RCE combined
                 fellowsPerAdditional: get('param-fellows-per-additional', 0),
                 additionalName: document.getElementById('param-additional-name').value || 'Additional',
-                londonFellowsPerRM: get('param-london-fellows-per-rm', 8),
-                londonRMsPerSRM: get('param-london-rms-per-srm', 3),
-                londonFellowsPerSRM: get('param-london-fellows-per-srm', 4),
-                berkeleyFellowsPerRM: get('param-berkeley-fellows-per-rm', 6),
-                berkeleyRMsPerSRM: get('param-berkeley-rms-per-srm', 3),
-                berkeleyFellowsPerSRM: get('param-berkeley-fellows-per-srm', 3),
+                mainFellowsPerRM: get('param-main-fellows-per-rm', 6),
+                mainRMsPerSRM: get('param-main-rms-per-srm', 3),
+                mainFellowsPerSRM: get('param-main-fellows-per-srm', 3),
+                extFellowsPerRM: get('param-ext-fellows-per-rm', 8),
+                extRMsPerSRM: get('param-ext-rms-per-srm', 3),
+                extFellowsPerSRM: get('param-ext-fellows-per-srm', 4),
                 // Current staff counts
                 currentBerkeleyLeads: getInt('param-current-berkeley-leads', 6),
                 currentBerkeleySRMs: getInt('param-current-berkeley-srms', 4),
@@ -1703,8 +1716,9 @@
         
         // Calculate staff needed per fellow (for constraint checking)
         function calculateStaffPerFellow(params) {
-            const avgFellowsPerRM = (params.berkeleyFellowsPerRM * 0.7 + params.londonFellowsPerRM * 0.3);
-            const avgRMsPerSRM = (params.berkeleyRMsPerSRM * 0.7 + params.londonRMsPerSRM * 0.3);
+            // Use weighted average of main and extension ratios (assuming ~60% main, ~40% extension)
+            const avgFellowsPerRM = (params.mainFellowsPerRM * 0.6 + params.extFellowsPerRM * 0.4);
+            const avgRMsPerSRM = (params.mainRMsPerSRM * 0.6 + params.extRMsPerSRM * 0.4);
             
             const rmPerFellow = 1 / avgFellowsPerRM;
             const srmPerFellow = rmPerFellow / avgRMsPerSRM;
@@ -1929,6 +1943,8 @@
                 const activeCohorts = {};
                 let londonFellows = 0, berkeleyFellows = 0;
                 let londonResidents = 0, berkeleyResidents = 0;
+                let mainFellows = 0, extFellows = 0;
+                let mainLondon = 0, mainBerkeley = 0, extLondon = 0, extBerkeley = 0;
                 
                 // Fellowship cohorts
                 allCohortIds.forEach(cohort => {
@@ -1947,6 +1963,17 @@
                         
                         if (filters.london) londonFellows += londonCount;
                         if (filters.berkeley) berkeleyFellows += berkeleyCount;
+                        
+                        // Track main vs extension for RM ratio calculation
+                        if (type === 'main') {
+                            mainFellows += count;
+                            if (filters.london) mainLondon += londonCount;
+                            if (filters.berkeley) mainBerkeley += berkeleyCount;
+                        } else {
+                            extFellows += count;
+                            if (filters.london) extLondon += londonCount;
+                            if (filters.berkeley) extBerkeley += berkeleyCount;
+                        }
                     }
                 });
                 
@@ -1964,9 +1991,29 @@
                 const berkeleyTotal = berkeleyFellows + berkeleyResidents;
                 const totalFellows = londonTotal + berkeleyTotal;
                 
-                // Staffing calculations
-                const londonStaff = calculateStaffing(londonTotal, params.londonFellowsPerRM, params.londonRMsPerSRM, params.londonFellowsPerSRM, cutoff);
-                const berkeleyStaff = calculateStaffing(berkeleyTotal, params.berkeleyFellowsPerRM, params.berkeleyRMsPerSRM, params.berkeleyFellowsPerSRM, cutoff);
+                // Staffing calculations - use main ratios for main fellows, extension ratios for extensions
+                // Residency fellows use main program ratios
+                const mainWithResidency = mainFellows + londonResidents + berkeleyResidents;
+                const mainStaff = calculateStaffing(mainWithResidency, params.mainFellowsPerRM, params.mainRMsPerSRM, params.mainFellowsPerSRM, cutoff);
+                const extStaff = calculateStaffing(extFellows, params.extFellowsPerRM, params.extRMsPerSRM, params.extFellowsPerSRM, cutoff);
+                
+                // Total RMs and SRMs
+                const totalRMs = mainStaff.rms + extStaff.rms;
+                const totalSRMs = mainStaff.srms + extStaff.srms;
+                
+                // Attribute RMs/SRMs to locations based on fellow distribution
+                const londonPctOfTotal = totalFellows > 0 ? londonTotal / totalFellows : 0;
+                const berkeleyPctOfTotal = totalFellows > 0 ? berkeleyTotal / totalFellows : 0;
+                
+                // Create location staff objects for compatibility with rest of code
+                const londonStaff = {
+                    rms: Math.round(totalRMs * londonPctOfTotal),
+                    srms: Math.round(totalSRMs * londonPctOfTotal)
+                };
+                const berkeleyStaff = {
+                    rms: totalRMs - londonStaff.rms,
+                    srms: totalSRMs - londonStaff.srms
+                };
                 
                 const rms = (filters.rm ? londonStaff.rms + berkeleyStaff.rms : 0);
                 const srms = (filters.rm ? londonStaff.srms + berkeleyStaff.srms : 0);
@@ -2213,15 +2260,12 @@
             // Calculate YoY growth (compare maximum values from each year span)
             const data2026 = allMonthlyData.filter(m => m.month.includes('2026'));
             const data2027 = allMonthlyData.filter(m => m.month.includes('2027'));
-            const data2028 = allMonthlyData.filter(m => m.month.includes('2028'));
             
             const max2026Fellows = Math.max(...data2026.map(m => m.fellows), 0);
             const max2027Fellows = Math.max(...data2027.map(m => m.fellows), 0);
-            const max2028Fellows = Math.max(...data2028.map(m => m.fellows), 0);
             
             const max2026Staff = Math.max(...data2026.map(m => m.totalStaff), 0);
             const max2027Staff = Math.max(...data2027.map(m => m.totalStaff), 0);
-            const max2028Staff = Math.max(...data2028.map(m => m.totalStaff), 0);
             
             // Show growth as multiplier (e.g., "1.8×" or "2026→27: 1.5×, 27→28: 1.3×")
             const fellowGrowthEl = document.getElementById('stat-fellow-growth');
@@ -2229,18 +2273,16 @@
             
             if (max2026Fellows > 0 && max2027Fellows > 0) {
                 const growth2627 = (max2027Fellows / max2026Fellows).toFixed(1);
-                const growth2728 = max2028Fellows > 0 ? (max2028Fellows / max2027Fellows).toFixed(1) : null;
-                fellowGrowthEl.textContent = growth2728 ? `${growth2627}× / ${growth2728}×` : `${growth2627}×`;
-                fellowGrowthEl.title = `2026 max: ${max2026Fellows} → 2027 max: ${max2027Fellows}` + (growth2728 ? ` → 2028 max: ${max2028Fellows}` : '');
+                fellowGrowthEl.textContent = `${growth2627}×`;
+                fellowGrowthEl.title = `2026 max: ${max2026Fellows} → 2027 max: ${max2027Fellows}`;
             } else {
                 fellowGrowthEl.textContent = '—';
             }
             
             if (max2026Staff > 0 && max2027Staff > 0) {
                 const growth2627 = (max2027Staff / max2026Staff).toFixed(1);
-                const growth2728 = max2028Staff > 0 ? (max2028Staff / max2027Staff).toFixed(1) : null;
-                staffGrowthEl.textContent = growth2728 ? `${growth2627}× / ${growth2728}×` : `${growth2627}×`;
-                staffGrowthEl.title = `2026 max: ${max2026Staff} → 2027 max: ${max2027Staff}` + (growth2728 ? ` → 2028 max: ${max2028Staff}` : '');
+                staffGrowthEl.textContent = `${growth2627}×`;
+                staffGrowthEl.title = `2026 max: ${max2026Staff} → 2027 max: ${max2027Staff}`;
             } else {
                 staffGrowthEl.textContent = '—';
             }
@@ -3179,9 +3221,9 @@
             document.getElementById('param-10.0').value = 120;
             document.getElementById('param-11.0').value = 120;
             document.getElementById('param-12.0').value = 140;
-            document.getElementById('param-13.0').value = 200;
-            document.getElementById('param-14.0').value = 140;
-            document.getElementById('param-15.0').value = 220;
+            document.getElementById('param-13.0').value = 240;
+            document.getElementById('param-14.0').value = 160;
+            document.getElementById('param-15.0').value = 280;
             document.getElementById('param-ext1-rate').value = 70;
             document.getElementById('param-ext2-rate').value = 50;
             document.getElementById('param-8.1-actual').value = 50;
@@ -3221,12 +3263,12 @@
             document.getElementById('param-compute-per-lead').value = 6;
             document.getElementById('param-fellows-per-additional').value = 0;
             document.getElementById('param-additional-name').value = 'Additional';
-            document.getElementById('param-london-fellows-per-rm').value = 8;
-            document.getElementById('param-london-rms-per-srm').value = 3;
-            document.getElementById('param-london-fellows-per-srm').value = 4;
-            document.getElementById('param-berkeley-fellows-per-rm').value = 6;
-            document.getElementById('param-berkeley-rms-per-srm').value = 3;
-            document.getElementById('param-berkeley-fellows-per-srm').value = 3;
+            document.getElementById('param-main-fellows-per-rm').value = 6;
+            document.getElementById('param-main-rms-per-srm').value = 3;
+            document.getElementById('param-main-fellows-per-srm').value = 3;
+            document.getElementById('param-ext-fellows-per-rm').value = 8;
+            document.getElementById('param-ext-rms-per-srm').value = 3;
+            document.getElementById('param-ext-fellows-per-srm').value = 4;
             // Growth constraint
             document.getElementById('param-growth-enabled').checked = false;
             document.getElementById('param-growth-multiplier').value = 2;
