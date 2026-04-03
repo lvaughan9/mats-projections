@@ -638,8 +638,8 @@
                             <input type="number" class="param-input" id="param-current-berkeley-cms" value="2" min="0">
                         </div>
                         <div class="param-row">
-                            <span class="param-label">CPOs</span>
-                            <input type="number" class="param-input" id="param-current-berkeley-cpos" value="1" min="0">
+                            <span class="param-label">JTs</span>
+                            <input type="number" class="param-input" id="param-current-berkeley-jts" value="1" min="0">
                         </div>
                         <div class="param-row">
                             <span class="param-label">Ops</span>
@@ -671,15 +671,15 @@
                         </div>
                         <div class="param-row">
                             <span class="param-label">RMs</span>
-                            <input type="number" class="param-input" id="param-current-london-rms" value="6" min="0">
+                            <input type="number" class="param-input" id="param-current-london-rms" value="8" min="0">
                         </div>
                         <div class="param-row">
                             <span class="param-label">CMs</span>
-                            <input type="number" class="param-input" id="param-current-london-cms" value="1" min="0">
+                            <input type="number" class="param-input" id="param-current-london-cms" value="0" min="0">
                         </div>
                         <div class="param-row">
-                            <span class="param-label">CPOs</span>
-                            <input type="number" class="param-input" id="param-current-london-cpos" value="0" min="0">
+                            <span class="param-label">JTs</span>
+                            <input type="number" class="param-input" id="param-current-london-jts" value="0" min="0">
                         </div>
                         <div class="param-row">
                             <span class="param-label">Ops</span>
@@ -892,14 +892,6 @@
                     <div class="param-section global">
                         <div class="param-section-title">🌐 Global Role Ratios</div>
                         <div class="param-row">
-                            <span class="param-label">Fellows/CM</span>
-                            <input type="number" class="param-input" id="param-fellows-per-cm" value="35" min="1" max="200">
-                        </div>
-                        <div class="param-row">
-                            <span class="param-label">Fellows/CPO</span>
-                            <input type="number" class="param-input" id="param-fellows-per-cpo" value="100" min="1" max="500">
-                        </div>
-                        <div class="param-row">
                             <span class="param-label">Fellows/Ops (London)</span>
                             <input type="number" class="param-input" id="param-fellows-per-ops" value="20" min="1" max="200">
                         </div>
@@ -916,15 +908,11 @@
                             <input type="number" class="param-input" id="param-berkeley-sqft-per-ops" value="25000" min="1000" max="100000">
                         </div>
                         <div class="param-row">
-                            <span class="param-label">Fellows/PM</span>
-                            <input type="number" class="param-input" id="param-fellows-per-pm" value="30" min="1" max="200">
-                        </div>
-                        <div class="param-row">
                             <span class="param-label">Fellows/Compute Admin</span>
                             <input type="number" class="param-input" id="param-fellows-per-ca" value="60" min="1" max="200">
                         </div>
                         <div class="param-row">
-                            <span class="param-label">Fellows/RCE</span>
+                            <span class="param-label">Fellows/Research Engineer</span>
                             <input type="number" class="param-input" id="param-fellows-per-rce" value="50" min="1" max="200">
                         </div>
                         <div class="param-row">
@@ -943,7 +931,7 @@
                             <input type="number" class="param-input" id="param-srms-per-lead" value="6" min="0" max="50">
                         </div>
                         <div class="param-row">
-                            <span class="param-label">(CMs+CPOs)/Lead</span>
+                            <span class="param-label">(CMs+JTs)/Lead</span>
                             <input type="number" class="param-input" id="param-community-per-lead" value="6" min="0" max="50">
                         </div>
                         <div class="param-row">
@@ -955,8 +943,39 @@
                             <input type="number" class="param-input" id="param-pms-per-lead" value="5" min="0" max="50">
                         </div>
                         <div class="param-row">
-                            <span class="param-label">(CA+RCE)/Lead</span>
+                            <span class="param-label">(CA+RE)/Lead</span>
                             <input type="number" class="param-input" id="param-compute-per-lead" value="6" min="0" max="50">
+                        </div>
+                    </div>
+                    
+                    <div class="param-section" style="border-left: 3px solid #8b5cf6;">
+                        <div class="param-section-title" style="color: #8b5cf6;">📋 Program Team Scaling</div>
+                        <p style="font-size:0.65rem;color:var(--text-secondary);margin-bottom:0.5rem;line-height:1.2;">
+                            PM headcount at each date (cumulative)
+                        </p>
+                        <div class="param-row" style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                            <input type="number" class="param-input" id="param-pm-count-1" value="3" min="0" max="50" placeholder="PMs">
+                            <input type="date" class="param-input date-input" id="param-pm-date-1" value="2026-01-01">
+                        </div>
+                        <div class="param-row" style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                            <input type="number" class="param-input" id="param-pm-count-2" value="4" min="0" max="50" placeholder="PMs">
+                            <input type="date" class="param-input date-input" id="param-pm-date-2" value="2026-06-01">
+                        </div>
+                        <div class="param-row" style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                            <input type="number" class="param-input" id="param-pm-count-3" value="5" min="0" max="50" placeholder="PMs">
+                            <input type="date" class="param-input date-input" id="param-pm-date-3" value="2027-01-01">
+                        </div>
+                        <div class="param-row" style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                            <input type="number" class="param-input" id="param-pm-count-4" value="6" min="0" max="50" placeholder="PMs">
+                            <input type="date" class="param-input date-input" id="param-pm-date-4" value="2027-06-01">
+                        </div>
+                        <div class="param-row" style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                            <input type="number" class="param-input" id="param-pm-count-5" value="7" min="0" max="50" placeholder="PMs">
+                            <input type="date" class="param-input date-input" id="param-pm-date-5" value="2028-01-01">
+                        </div>
+                        <div class="param-row" style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                            <input type="number" class="param-input" id="param-pm-count-6" value="" min="0" max="50" placeholder="PMs">
+                            <input type="date" class="param-input date-input" id="param-pm-date-6" value="">
                         </div>
                     </div>
                     
@@ -986,6 +1005,14 @@
                             <span class="param-label">Fellows/SRM direct</span>
                             <input type="number" class="param-input" id="param-main-fellows-per-srm" value="3" min="0" max="10">
                         </div>
+                        <div class="param-row">
+                            <span class="param-label">Fellows/CM</span>
+                            <input type="number" class="param-input" id="param-main-fellows-per-cm" value="35" min="1" max="200">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Fellows/JT</span>
+                            <input type="number" class="param-input" id="param-main-fellows-per-jt" value="100" min="1" max="500">
+                        </div>
                     </div>
                     
                     <div class="param-section" style="border-left: 3px solid #f97316;">
@@ -1001,6 +1028,14 @@
                         <div class="param-row">
                             <span class="param-label">Fellows/SRM direct</span>
                             <input type="number" class="param-input" id="param-ext-fellows-per-srm" value="4" min="0" max="10">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Fellows/CM</span>
+                            <input type="number" class="param-input" id="param-ext-fellows-per-cm" value="35" min="1" max="200">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Fellows/JT</span>
+                            <input type="number" class="param-input" id="param-ext-fellows-per-jt" value="100" min="1" max="500">
                         </div>
                     </div>
                     
@@ -1172,11 +1207,11 @@
                                 <th>RMs</th>
                                 <th>SRMs</th>
                                 <th>CMs</th>
-                                <th>CPOs</th>
+                                <th>JTs</th>
                                 <th>Ops</th>
                                 <th>PMs</th>
                                 <th>CA</th>
-                                <th>RCE</th>
+                                <th>RE</th>
                                 <th>Recruit</th>
                                 <th id="onboarding-additional-header">Add'l</th>
                                 <th>Total</th>
@@ -1288,11 +1323,11 @@
                                 <th>RMs</th>
                                 <th>SRMs</th>
                                 <th>CMs</th>
-                                <th>CPOs</th>
+                                <th>JTs</th>
                                 <th>Ops</th>
                                 <th>PMs</th>
                                 <th>CA</th>
-                                <th>RCE</th>
+                                <th>RE</th>
                                 <th>Recruit</th>
                                 <th id="staff-additional-header">Add'l</th>
                                 <th>Total</th>
@@ -1373,9 +1408,9 @@
                         <br>
                         <strong>Leads (per team, per location):</strong><br>
                         Leads from SRMs = ⌈SRMs ÷ SRMs/Lead⌉<br>
-                        Leads from Community = ⌈(CMs+CPOs) ÷ (CMs+CPOs)/Lead⌉<br>
+                        Leads from Community = ⌈(CMs+JTs) ÷ (CMs+JTs)/Lead⌉<br>
                         Leads from PMs = ⌈PMs ÷ PMs/Lead⌉<br>
-                        Leads from Compute = ⌈(CA+RCE) ÷ (CA+RCE)/Lead⌉<br>
+                        Leads from Compute = ⌈(CA+RE) ÷ (CA+RE)/Lead⌉<br>
                         Total Leads = sum of all team leads
                     </code>
                     <p style="color: var(--text-secondary); font-size: 0.8rem;">RM/SRM ratios differ by program type. RMs/SRMs are attributed to London/Berkeley proportionally based on fellow distribution.</p>
@@ -1386,15 +1421,16 @@
                     <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
                         Total Fellows = London + Remote + Berkeley<br>
                         <br>
-                        CMs = ⌈Total Fellows ÷ Fellows/CM⌉<br>
-                        CPOs = ⌈Total Fellows ÷ Fellows/CPO⌉<br>
-                        Ops = ⌈Total Fellows ÷ Fellows/Ops⌉<br>
-                        PMs = ⌈Total Fellows ÷ Fellows/PM⌉<br>
+                        CMs = ⌈Main Fellows ÷ Main Fellows/CM⌉ + ⌈Ext Fellows ÷ Ext Fellows/CM⌉<br>
+                        JTs = ⌈Main Fellows ÷ Main Fellows/JT⌉ + ⌈Ext Fellows ÷ Ext Fellows/JT⌉<br>
+                        London/Remote Ops = ⌈Location Fellows ÷ Fellows/Ops⌉<br>
+                        Berkeley Ops = Fellows/40 + Staff/10 + Sqft/25k<br>
+                        PMs = Date-based scaling (see Program Team Scaling)<br>
                         Compute Admins = ⌈Total Fellows ÷ Fellows/CA⌉<br>
-                        RCEs = ⌈Total Fellows ÷ Fellows/RCE⌉<br>
+                        REs = ⌈Total Fellows ÷ Fellows/RCE⌉<br>
                         Recruiters = ⌈Total Fellows ÷ Fellows/Recruiter⌉
                     </code>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Global roles scale with total fellow count across all three locations.</p>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Most roles scale with fellow count. PMs use explicit headcount schedule. Berkeley ops uses additive formula.</p>
                 </div>
                 
                 <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
@@ -1699,19 +1735,25 @@
                 floor3Date: document.getElementById('param-floor3-date')?.value || '2027-06-01',
                 floor3LeadTime: getInt('param-floor3-leadtime', 9),
                 officeVisitors: getInt('param-office-visitors', 10),
-                fellowsPerCM: get('param-fellows-per-cm', 35),
-                fellowsPerCPO: get('param-fellows-per-cpo', 100),
                 fellowsPerOps: get('param-fellows-per-ops', 20),  // London ops ratio
                 berkeleyFellowsPerOps: get('param-berkeley-fellows-per-ops', 40),
                 berkeleyStaffPerOps: get('param-berkeley-staff-per-ops', 10),
                 berkeleySqftPerOps: get('param-berkeley-sqft-per-ops', 25000),
-                fellowsPerPM: get('param-fellows-per-pm', 30),
+                // PM scaling (date-based)
+                pmScaling: [
+                    { count: getInt('param-pm-count-1', 3), date: document.getElementById('param-pm-date-1')?.value || '2026-01-01' },
+                    { count: getInt('param-pm-count-2', 4), date: document.getElementById('param-pm-date-2')?.value || '2026-06-01' },
+                    { count: getInt('param-pm-count-3', 5), date: document.getElementById('param-pm-date-3')?.value || '2027-01-01' },
+                    { count: getInt('param-pm-count-4', 6), date: document.getElementById('param-pm-date-4')?.value || '2027-06-01' },
+                    { count: getInt('param-pm-count-5', 7), date: document.getElementById('param-pm-date-5')?.value || '2028-01-01' },
+                    { count: getInt('param-pm-count-6', null), date: document.getElementById('param-pm-date-6')?.value || '' },
+                ].filter(s => s.count !== null && s.date),
                 fellowsPerCA: get('param-fellows-per-ca', 60),
                 fellowsPerRCE: get('param-fellows-per-rce', 50),
                 fellowsPerRecruiter: get('param-fellows-per-recruiter', 150),
                 // Per-team lead ratios (0 = no leads for that team)
                 srmsPerLead: getInt('param-srms-per-lead', 6),
-                communityPerLead: getInt('param-community-per-lead', 6),  // CMs + CPOs combined
+                communityPerLead: getInt('param-community-per-lead', 6),  // CMs + JTs combined
                 opsPerLead: getInt('param-ops-per-lead', 8),
                 pmsPerLead: getInt('param-pms-per-lead', 5),
                 computePerLead: getInt('param-compute-per-lead', 6),  // CA + RCE combined
@@ -1720,24 +1762,28 @@
                 mainFellowsPerRM: get('param-main-fellows-per-rm', 6),
                 mainRMsPerSRM: get('param-main-rms-per-srm', 3),
                 mainFellowsPerSRM: get('param-main-fellows-per-srm', 3),
+                mainFellowsPerCM: get('param-main-fellows-per-cm', 35),
+                mainFellowsPerJT: get('param-main-fellows-per-jt', 100),
                 extFellowsPerRM: get('param-ext-fellows-per-rm', 8),
                 extRMsPerSRM: get('param-ext-rms-per-srm', 3),
                 extFellowsPerSRM: get('param-ext-fellows-per-srm', 4),
+                extFellowsPerCM: get('param-ext-fellows-per-cm', 35),
+                extFellowsPerJT: get('param-ext-fellows-per-jt', 100),
                 // Current staff counts
                 currentBerkeleyLeads: getInt('param-current-berkeley-leads', 6),
                 currentBerkeleySRMs: getInt('param-current-berkeley-srms', 4),
                 currentBerkeleyRMs: getInt('param-current-berkeley-rms', 10),
                 currentBerkeleyCMs: getInt('param-current-berkeley-cms', 2),
-                currentBerkeleyCPOs: getInt('param-current-berkeley-cpos', 1),
+                currentBerkeleyJTs: getInt('param-current-berkeley-jts', 1),
                 currentBerkeleyOps: getInt('param-current-berkeley-ops', 5),
                 currentBerkeleyPMs: getInt('param-current-berkeley-pms', 1),
                 currentBerkeleyCompute: getInt('param-current-berkeley-compute', 3),
                 currentBerkeleyRecruiters: getInt('param-current-berkeley-recruiters', 0),
                 currentLondonLeads: getInt('param-current-london-leads', 1),
                 currentLondonSRMs: getInt('param-current-london-srms', 2),
-                currentLondonRMs: getInt('param-current-london-rms', 6),
-                currentLondonCMs: getInt('param-current-london-cms', 1),
-                currentLondonCPOs: getInt('param-current-london-cpos', 0),
+                currentLondonRMs: getInt('param-current-london-rms', 8),
+                currentLondonCMs: getInt('param-current-london-cms', 0),
+                currentLondonJTs: getInt('param-current-london-jts', 0),
                 currentLondonOps: getInt('param-current-london-ops', 2),
                 currentLondonPMs: getInt('param-current-london-pms', 1),
                 currentLondonCompute: getInt('param-current-london-compute', 0),
@@ -1826,11 +1872,13 @@
             // Use weighted average of main and extension ratios (assuming ~60% main, ~40% extension)
             const avgFellowsPerRM = (params.mainFellowsPerRM * 0.6 + params.extFellowsPerRM * 0.4);
             const avgRMsPerSRM = (params.mainRMsPerSRM * 0.6 + params.extRMsPerSRM * 0.4);
+            const avgFellowsPerCM = (params.mainFellowsPerCM * 0.6 + params.extFellowsPerCM * 0.4);
+            const avgFellowsPerJT = (params.mainFellowsPerJT * 0.6 + params.extFellowsPerJT * 0.4);
             
             const rmPerFellow = 1 / avgFellowsPerRM;
             const srmPerFellow = rmPerFellow / avgRMsPerSRM;
-            const cmPerFellow = 1 / params.fellowsPerCM;
-            const cpoPerFellow = 1 / params.fellowsPerCPO;
+            const cmPerFellow = 1 / avgFellowsPerCM;
+            const jtPerFellow = 1 / avgFellowsPerJT;
             // Blended ops: ~70% Berkeley (complex formula), ~30% London/Remote (simple ratio)
             // For Berkeley: ops ≈ fellows/40 + staff/10 + sqft/25000
             // Approximate Berkeley ops per fellow as: 1/40 + (staffPerFellow)/10 ≈ 0.025 + 0.01 = 0.035
@@ -1838,18 +1886,22 @@
             const londonOpsPerFellow = 1 / params.fellowsPerOps;
             const berkeleyOpsPerFellow = 1 / params.berkeleyFellowsPerOps + 0.01; // Approximate staff component
             const opsPerFellow = berkeleyOpsPerFellow * 0.7 + londonOpsPerFellow * 0.3;
-            const pmPerFellow = 1 / params.fellowsPerPM;
+            // Note: PMs now use date-based scaling, not per-fellow ratio
+            const pmPerFellow = 0;  // PMs excluded from per-fellow calculation
             const caPerFellow = 1 / params.fellowsPerCA;
             const rcePerFellow = 1 / params.fellowsPerRCE;
             const recruiterPerFellow = params.fellowsPerRecruiter > 0 ? 1 / params.fellowsPerRecruiter : 0;
             
-            const nonLeadStaffPerFellow = rmPerFellow + srmPerFellow + cmPerFellow + cpoPerFellow + opsPerFellow + pmPerFellow + caPerFellow + rcePerFellow + recruiterPerFellow;
+            const nonLeadStaffPerFellow = rmPerFellow + srmPerFellow + cmPerFellow + jtPerFellow + opsPerFellow + pmPerFellow + caPerFellow + rcePerFellow + recruiterPerFellow;
             
             // Calculate leads per fellow based on per-team ratios (with combined teams)
             const leadsFromSRMs = params.srmsPerLead > 0 ? srmPerFellow / params.srmsPerLead : 0;
-            const leadsFromCommunity = params.communityPerLead > 0 ? (cmPerFellow + cpoPerFellow) / params.communityPerLead : 0;
+            const leadsFromCommunity = params.communityPerLead > 0 ? (cmPerFellow + jtPerFellow) / params.communityPerLead : 0;
             const leadsFromOps = params.opsPerLead > 0 ? opsPerFellow / params.opsPerLead : 0;
-            const leadsFromPMs = params.pmsPerLead > 0 ? pmPerFellow / params.pmsPerLead : 0;
+            // PM leads approximated from average PM count
+            const avgPMs = params.pmScaling && params.pmScaling.length > 0 ? 
+                params.pmScaling.reduce((sum, s) => sum + s.count, 0) / params.pmScaling.length : 0;
+            const leadsFromPMs = params.pmsPerLead > 0 ? (avgPMs / 500) / params.pmsPerLead : 0;  // Rough estimate
             const leadsFromCompute = params.computePerLead > 0 ? (caPerFellow + rcePerFellow) / params.computePerLead : 0;
             
             const leadPerFellow = leadsFromSRMs + leadsFromCommunity + leadsFromOps + leadsFromPMs + leadsFromCompute;
@@ -2044,6 +2096,26 @@
             return { rms, srms };
         }
         
+        // Get PM count for a given date based on scaling schedule
+        function getPMCountForDate(date, pmScaling) {
+            if (!pmScaling || pmScaling.length === 0) return 0;
+            
+            // Sort by date ascending
+            const sorted = [...pmScaling].sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // Find the most recent entry at or before the given date
+            let pmCount = 0;
+            for (const entry of sorted) {
+                const entryDate = new Date(entry.date);
+                if (date >= entryDate) {
+                    pmCount = entry.count;
+                } else {
+                    break;
+                }
+            }
+            return pmCount;
+        }
+        
         function calculateMonthlyData(params, schedule, filters) {
             // Use constrained sizes when growth constraint is enabled
             const sizes = params.growthEnabled ? 
@@ -2200,9 +2272,15 @@
                 // Calculate all staff roles (always calculate full values for peaks)
                 const rmsCalc = totalRMs;
                 const srmsCalc = totalSRMs;
-                const cmsCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerCM, cutoff)) : 0;
-                const cposCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerCPO, cutoff)) : 0;
-                const pmsCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerPM, cutoff)) : 0;
+                // CMs calculated separately for main (with residency) and extension fellows
+                const mainCMs = mainWithResidency > 0 ? Math.max(1, customRound(mainWithResidency / params.mainFellowsPerCM, cutoff)) : 0;
+                const extCMs = extFellows > 0 ? Math.max(1, customRound(extFellows / params.extFellowsPerCM, cutoff)) : 0;
+                const cmsCalc = mainCMs + extCMs;
+                // JTs calculated separately for main (with residency) and extension fellows
+                const mainJTs = mainWithResidency > 0 ? Math.max(1, customRound(mainWithResidency / params.mainFellowsPerJT, cutoff)) : 0;
+                const extJTs = extFellows > 0 ? Math.max(1, customRound(extFellows / params.extFellowsPerJT, cutoff)) : 0;
+                const jtsCalc = mainJTs + extJTs;
+                const pmsCalc = getPMCountForDate(date, params.pmScaling);  // Date-based scaling
                 const casCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerCA, cutoff)) : 0;
                 const rcesCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerRCE, cutoff)) : 0;
                 const recruitersCalc = (params.fellowsPerRecruiter > 0 && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerRecruiter, cutoff)) : 0;
@@ -2217,9 +2295,9 @@
                 const londonCMs = Math.round(cmsCalc * londonPct);
                 const remoteCMs = Math.round(cmsCalc * remotePct);
                 const berkeleyCMs = cmsCalc - londonCMs - remoteCMs;
-                const londonCPOs = Math.round(cposCalc * londonPct);
-                const remoteCPOs = Math.round(cposCalc * remotePct);
-                const berkeleyCPOs = cposCalc - londonCPOs - remoteCPOs;
+                const londonJTs = Math.round(jtsCalc * londonPct);
+                const remoteJTs = Math.round(jtsCalc * remotePct);
+                const berkeleyJTs = jtsCalc - londonJTs - remoteJTs;
                 const londonPMs = Math.round(pmsCalc * londonPct);
                 const remotePMs = Math.round(pmsCalc * remotePct);
                 const berkeleyPMs = pmsCalc - londonPMs - remotePMs;
@@ -2248,7 +2326,7 @@
                 const berkeleyOpsFromFellows = berkeleyTotal > 0 ? customRound(berkeleyTotal / params.berkeleyFellowsPerOps, cutoff) : 0;
                 
                 // 2. Staff-to-Ops: 1 ops per berkeleyStaffPerOps non-ops Berkeley staff
-                const berkeleyNonOpsStaff = berkeleyStaff.rms + berkeleyStaff.srms + berkeleyCMs + berkeleyCPOs + 
+                const berkeleyNonOpsStaff = berkeleyStaff.rms + berkeleyStaff.srms + berkeleyCMs + berkeleyJTs + 
                     berkeleyPMs + berkeleyCAs + berkeleyRCEs + berkeleyRecruiters + berkeleyAdditional;
                 const berkeleyOpsFromStaff = berkeleyNonOpsStaff > 0 ? customRound(berkeleyNonOpsStaff / params.berkeleyStaffPerOps, cutoff) : 0;
                 
@@ -2276,9 +2354,15 @@
                 const berkeleyOps = berkeleyOpsCalc;
                 
                 // Calculate FILTERED staff roles (based on filtered fellow counts)
-                const filteredCmsCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerCM, cutoff)) : 0;
-                const filteredCposCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerCPO, cutoff)) : 0;
-                const filteredPmsCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerPM, cutoff)) : 0;
+                // CMs calculated separately for main (with residency) and extension fellows
+                const filteredMainCMs = filteredMainWithResidency > 0 ? Math.max(1, customRound(filteredMainWithResidency / params.mainFellowsPerCM, cutoff)) : 0;
+                const filteredExtCMs = filteredExtFellows > 0 ? Math.max(1, customRound(filteredExtFellows / params.extFellowsPerCM, cutoff)) : 0;
+                const filteredCmsCalc = filteredMainCMs + filteredExtCMs;
+                // JTs calculated separately for main (with residency) and extension fellows
+                const filteredMainJTs = filteredMainWithResidency > 0 ? Math.max(1, customRound(filteredMainWithResidency / params.mainFellowsPerJT, cutoff)) : 0;
+                const filteredExtJTs = filteredExtFellows > 0 ? Math.max(1, customRound(filteredExtFellows / params.extFellowsPerJT, cutoff)) : 0;
+                const filteredJtsCalc = filteredMainJTs + filteredExtJTs;
+                const filteredPmsCalc = pmsCalc;  // PMs use date-based scaling (same as unfiltered)
                 const filteredCasCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerCA, cutoff)) : 0;
                 const filteredRcesCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerRCE, cutoff)) : 0;
                 const filteredRecruitersCalc = (params.fellowsPerRecruiter > 0 && filteredTotalFellows > 0) ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerRecruiter, cutoff)) : 0;
@@ -2295,7 +2379,7 @@
                 // Filtered Berkeley ops (additive)
                 const filteredBerkeleyOpsFromFellows = filteredBerkeleyTotal > 0 ? customRound(filteredBerkeleyTotal / params.berkeleyFellowsPerOps, cutoff) : 0;
                 const filteredBerkeleyNonOpsStaff = filteredMainStaff.rms + filteredMainStaff.srms + filteredExtStaff.rms + filteredExtStaff.srms +
-                    Math.round(filteredCmsCalc * filteredBerkeleyPct) + Math.round(filteredCposCalc * filteredBerkeleyPct) +
+                    Math.round(filteredCmsCalc * filteredBerkeleyPct) + Math.round(filteredJtsCalc * filteredBerkeleyPct) +
                     Math.round(filteredPmsCalc * filteredBerkeleyPct) + Math.round(filteredCasCalc * filteredBerkeleyPct) +
                     Math.round(filteredRcesCalc * filteredBerkeleyPct);
                 const filteredBerkeleyOpsFromStaff = filteredBerkeleyNonOpsStaff > 0 ? customRound(filteredBerkeleyNonOpsStaff / params.berkeleyStaffPerOps, cutoff) : 0;
@@ -2308,7 +2392,7 @@
                 const rms = filters.rm ? filteredTotalRMs : 0;
                 const srms = filters.rm ? filteredTotalSRMs : 0;
                 const cms = filters.community ? filteredCmsCalc : 0;
-                const cpos = filters.community ? filteredCposCalc : 0;
+                const jts = filters.community ? filteredJtsCalc : 0;
                 const ops = filters.ops ? filteredOpsCalc : 0;
                 const pms = filters.program ? filteredPmsCalc : 0;
                 const cas = filters.compute ? filteredCasCalc : 0;
@@ -2328,21 +2412,21 @@
                 
                 // Berkeley leads by team (calculated from full staff values)
                 const berkeleyLeadsFromSRMs = calcLeadsForTeam(berkeleyStaff.srms, params.srmsPerLead);
-                const berkeleyLeadsFromCommunity = calcLeadsForTeam(berkeleyCMs + berkeleyCPOs, params.communityPerLead);
+                const berkeleyLeadsFromCommunity = calcLeadsForTeam(berkeleyCMs + berkeleyJTs, params.communityPerLead);
                 const berkeleyLeadsFromOps = calcLeadsForTeam(berkeleyOps, params.opsPerLead);
                 const berkeleyLeadsFromPMs = calcLeadsForTeam(berkeleyPMs, params.pmsPerLead);
                 const berkeleyLeadsFromCompute = calcLeadsForTeam(berkeleyCAs + berkeleyRCEs, params.computePerLead);
                 
                 // London leads by team (calculated from full staff values)
                 const londonLeadsFromSRMs = calcLeadsForTeam(londonStaff.srms, params.srmsPerLead);
-                const londonLeadsFromCommunity = calcLeadsForTeam(londonCMs + londonCPOs, params.communityPerLead);
+                const londonLeadsFromCommunity = calcLeadsForTeam(londonCMs + londonJTs, params.communityPerLead);
                 const londonLeadsFromOps = calcLeadsForTeam(londonOps, params.opsPerLead);
                 const londonLeadsFromPMs = calcLeadsForTeam(londonPMs, params.pmsPerLead);
                 const londonLeadsFromCompute = calcLeadsForTeam(londonCAs + londonRCEs, params.computePerLead);
                 
                 // Remote leads by team (calculated from full staff values)
                 const remoteLeadsFromSRMs = calcLeadsForTeam(remoteSRMs, params.srmsPerLead);
-                const remoteLeadsFromCommunity = calcLeadsForTeam(remoteCMs + remoteCPOs, params.communityPerLead);
+                const remoteLeadsFromCommunity = calcLeadsForTeam(remoteCMs + remoteJTs, params.communityPerLead);
                 const remoteLeadsFromOps = calcLeadsForTeam(remoteOps, params.opsPerLead);
                 const remoteLeadsFromPMs = calcLeadsForTeam(remotePMs, params.pmsPerLead);
                 const remoteLeadsFromCompute = calcLeadsForTeam(remoteCAs + remoteRCEs, params.computePerLead);
@@ -2358,7 +2442,7 @@
                 // Calculate FILTERED leads (based on filtered staff values for onboarding accuracy)
                 // Use filtered staff values: filteredTotalSRMs, filteredCmsCalc, etc.
                 const filteredLeadsFromSRMs = calcLeadsForTeam(filteredTotalSRMs, params.srmsPerLead);
-                const filteredLeadsFromCommunity = calcLeadsForTeam(filteredCmsCalc + filteredCposCalc, params.communityPerLead);
+                const filteredLeadsFromCommunity = calcLeadsForTeam(filteredCmsCalc + filteredJtsCalc, params.communityPerLead);
                 const filteredLeadsFromOps = calcLeadsForTeam(filteredOpsCalc, params.opsPerLead);
                 const filteredLeadsFromPMs = calcLeadsForTeam(filteredPmsCalc, params.pmsPerLead);
                 const filteredLeadsFromCompute = calcLeadsForTeam(filteredCasCalc + filteredRcesCalc, params.computePerLead);
@@ -2372,15 +2456,15 @@
                 const leadsRemote = filters.leads ? leadsRemoteCalc : 0;
                 
                 // Location staff totals (always use full calculated values for location breakdown)
-                const londonStaffTotal = leadsLondonCalc + londonStaff.rms + londonStaff.srms + londonCMs + londonCPOs + londonOps + londonPMs + londonCAs + londonRCEs + londonRecruiters + londonAdditional;
-                const berkeleyStaffTotal = leadsBerkeleyCalc + berkeleyStaff.rms + berkeleyStaff.srms + berkeleyCMs + berkeleyCPOs + berkeleyOps + berkeleyPMs + berkeleyCAs + berkeleyRCEs + berkeleyRecruiters + berkeleyAdditional;
-                const remoteStaffTotal = leadsRemoteCalc + remoteRMs + remoteSRMs + remoteCMs + remoteCPOs + remoteOps + remotePMs + remoteCAs + remoteRCEs + remoteRecruiters + remoteAdditional;
+                const londonStaffTotal = leadsLondonCalc + londonStaff.rms + londonStaff.srms + londonCMs + londonJTs + londonOps + londonPMs + londonCAs + londonRCEs + londonRecruiters + londonAdditional;
+                const berkeleyStaffTotal = leadsBerkeleyCalc + berkeleyStaff.rms + berkeleyStaff.srms + berkeleyCMs + berkeleyJTs + berkeleyOps + berkeleyPMs + berkeleyCAs + berkeleyRCEs + berkeleyRecruiters + berkeleyAdditional;
+                const remoteStaffTotal = leadsRemoteCalc + remoteRMs + remoteSRMs + remoteCMs + remoteJTs + remoteOps + remotePMs + remoteCAs + remoteRCEs + remoteRecruiters + remoteAdditional;
                 
                 // Total staff for display (applies role filters)
-                const totalStaff = leads + rms + srms + cms + cpos + ops + pms + cas + rces + recruiters + additional;
+                const totalStaff = leads + rms + srms + cms + jts + ops + pms + cas + rces + recruiters + additional;
                 
                 // Total staff calculated (for peak stats, ignores role filters)
-                const totalStaffCalc = leadsCalc + rmsCalc + srmsCalc + cmsCalc + cposCalc + opsCalc + pmsCalc + casCalc + rcesCalc + recruitersCalc + additionalCalc;
+                const totalStaffCalc = leadsCalc + rmsCalc + srmsCalc + cmsCalc + jtsCalc + opsCalc + pmsCalc + casCalc + rcesCalc + recruitersCalc + additionalCalc;
                 
                 // Staff budget constraint (use calculated total, not filtered)
                 // Convert periodIndex to monthIndex (2 periods per month)
@@ -2392,7 +2476,7 @@
                     period, month, fellows: filteredTotalFellows, london: filteredLondonTotal, berkeley: filteredBerkeleyTotal, remote: filteredRemoteTotal,
                     // Keep full totals for calculations that need them
                     fellowsCalc: totalFellows, londonCalc: londonTotal, berkeleyCalc: berkeleyTotal, remoteCalc: remoteTotal,
-                    rms, srms, cms, cpos, ops, pms, cas, rces, recruiters, additional, leads, leadsBerkeley, leadsLondon, leadsRemote, totalStaff,
+                    rms, srms, cms, jts, ops, pms, cas, rces, recruiters, additional, leads, leadsBerkeley, leadsLondon, leadsRemote, totalStaff,
                     totalStaffCalc,
                     londonRMs: londonStaff.rms, londonSRMs: londonStaff.srms,
                     berkeleyRMs: berkeleyStaff.rms, berkeleySRMs: berkeleyStaff.srms,
@@ -2406,7 +2490,7 @@
         
         // Apply "no layoffs" logic - staff only grows to cumulative max
         function applyStaffRatchet(monthlyData, params) {
-            const staffKeys = ['rms', 'srms', 'cms', 'cpos', 'ops', 'pms', 'cas', 'rces', 'recruiters', 'additional', 'leads'];
+            const staffKeys = ['rms', 'srms', 'cms', 'jts', 'ops', 'pms', 'cas', 'rces', 'recruiters', 'additional', 'leads'];
             const locationStaffKeys = ['londonRMs', 'londonSRMs', 'berkeleyRMs', 'berkeleySRMs', 'remoteRMs', 'remoteSRMs'];
             const allKeys = [...staffKeys, ...locationStaffKeys, 'londonStaffTotal', 'berkeleyStaffTotal', 'remoteStaffTotal', 'totalStaff'];
             
@@ -2433,7 +2517,7 @@
                 rms: (params.currentBerkeleyRMs || 0) + (params.currentLondonRMs || 0), 
                 srms: (params.currentBerkeleySRMs || 0) + (params.currentLondonSRMs || 0), 
                 cms: (params.currentBerkeleyCMs || 0) + (params.currentLondonCMs || 0), 
-                cpos: (params.currentBerkeleyCPOs || 0) + (params.currentLondonCPOs || 0), 
+                jts: (params.currentBerkeleyJTs || 0) + (params.currentLondonJTs || 0), 
                 ops: (params.currentBerkeleyOps || 0) + (params.currentLondonOps || 0), 
                 pms: (params.currentBerkeleyPMs || 0) + (params.currentLondonPMs || 0), 
                 cas: Math.floor(((params.currentBerkeleyCompute || 0) + (params.currentLondonCompute || 0)) / 2), 
@@ -2445,7 +2529,7 @@
             monthlyData.forEach(m => {
                 const deltas = {};
                 let total = 0;
-                ['leads','rms','srms','cms','cpos','ops','pms','cas','rces','recruiters','additional'].forEach(k => {
+                ['leads','rms','srms','cms','jts','ops','pms','cas','rces','recruiters','additional'].forEach(k => {
                     deltas[k] = Math.max(0, m[k] - max[k]);
                     max[k] = Math.max(max[k], m[k]);
                     total += deltas[k];
@@ -2616,7 +2700,7 @@
                     <td>${r.rms > 0 ? `<span class="delta-positive">+${r.rms}</span>` : '—'}</td>
                     <td>${r.srms > 0 ? `<span class="delta-positive">+${r.srms}</span>` : '—'}</td>
                     <td>${r.cms > 0 ? `<span class="delta-positive">+${r.cms}</span>` : '—'}</td>
-                    <td>${r.cpos > 0 ? `<span class="delta-positive">+${r.cpos}</span>` : '—'}</td>
+                    <td>${r.jts > 0 ? `<span class="delta-positive">+${r.jts}</span>` : '—'}</td>
                     <td>${r.ops > 0 ? `<span class="delta-positive">+${r.ops}</span>` : '—'}</td>
                     <td>${r.pms > 0 ? `<span class="delta-positive">+${r.pms}</span>` : '—'}</td>
                     <td>${r.cas > 0 ? `<span class="delta-positive">+${r.cas}</span>` : '—'}</td>
@@ -2786,7 +2870,7 @@
                 { key: 'rms', color: '#a855f7', label: 'RMs', show: filters.rm },
                 { key: 'srms', color: '#22c55e', label: 'SRMs', show: filters.rm },
                 { key: 'cms', color: '#ec4899', label: 'CMs', show: filters.community },
-                { key: 'cpos', color: '#06b6d4', label: 'CPOs', show: filters.community },
+                { key: 'jts', color: '#06b6d4', label: 'JTs', show: filters.community },
                 { key: 'ops', color: '#f59e0b', label: 'Ops', show: filters.ops },
                 { key: 'pms', color: '#6366f1', label: 'PMs', show: filters.program },
                 { key: 'recruiters', color: '#f472b6', label: 'Recruit', show: filters.program },
@@ -2901,7 +2985,7 @@
                     <td>${r.rms}</td>
                     <td>${r.srms}</td>
                     <td>${r.cms}</td>
-                    <td>${r.cpos}</td>
+                    <td>${r.jts}</td>
                     <td>${r.ops}</td>
                     <td>${r.pms}</td>
                     <td>${r.cas}</td>
@@ -3520,7 +3604,7 @@
                 { key: 'rms', label: 'RMs', color: '#a855f7' },
                 { key: 'srms', label: 'SRMs', color: '#22c55e' },
                 { key: 'cms', label: 'CMs', color: '#ec4899' },
-                { key: 'cpos', label: 'CPOs', color: '#06b6d4' },
+                { key: 'jts', label: 'JTs', color: '#06b6d4' },
                 { key: 'ops', label: 'Ops', color: '#f59e0b' },
                 { key: 'pms', label: 'PMs', color: '#6366f1' },
                 { key: 'cas', label: 'CA', color: '#14b8a6' },
@@ -3659,11 +3743,13 @@
                     total += rms + srms;
                 }
                 
-                // CMs and CPOs (Community)
+                // CMs and JTs (Community)
                 if (filters.community) {
-                    const cms = customRound(totalFellows / params.fellowsPerCM, cutoff);
-                    const cpos = customRound(totalFellows / params.fellowsPerCPO, cutoff);
-                    total += cms + cpos;
+                    const fellowsPerCM = isMain ? params.mainFellowsPerCM : params.extFellowsPerCM;
+                    const cms = customRound(totalFellows / fellowsPerCM, cutoff);
+                    const fellowsPerJT = isMain ? params.mainFellowsPerJT : params.extFellowsPerJT;
+                    const jts = customRound(totalFellows / fellowsPerJT, cutoff);
+                    total += cms + jts;
                 }
                 
                 // Ops - Location-specific calculation
@@ -3697,11 +3783,11 @@
                     total += londonOps + remoteOps + berkeleyOps;
                 }
                 
-                // PMs and Recruiters (Program)
+                // PMs - Skip in per-cohort calculation (PMs use global date-based scaling)
+                // Recruiters only
                 if (filters.program) {
-                    const pms = customRound(totalFellows / params.fellowsPerPM, cutoff);
                     const recruiters = params.fellowsPerRecruiter > 0 ? customRound(totalFellows / params.fellowsPerRecruiter, cutoff) : 0;
-                    total += pms + recruiters;
+                    total += recruiters;
                 }
                 
                 // CAs and RCEs (Compute)
@@ -3721,17 +3807,20 @@
                 if (filters.leads) {
                     const rms = filters.rm ? customRound(totalFellows / (isMain ? params.mainFellowsPerRM : params.extFellowsPerRM), cutoff) : 0;
                     const srms = filters.rm ? customRound(rms / (isMain ? params.mainRMsPerSRM : params.extRMsPerSRM), cutoff) : 0;
-                    const cms = filters.community ? customRound(totalFellows / params.fellowsPerCM, cutoff) : 0;
-                    const cpos = filters.community ? customRound(totalFellows / params.fellowsPerCPO, cutoff) : 0;
+                    const fellowsPerCM = isMain ? params.mainFellowsPerCM : params.extFellowsPerCM;
+                    const cms = filters.community ? customRound(totalFellows / fellowsPerCM, cutoff) : 0;
+                    const fellowsPerJT = isMain ? params.mainFellowsPerJT : params.extFellowsPerJT;
+                    const jts = filters.community ? customRound(totalFellows / fellowsPerJT, cutoff) : 0;
                     // Approximate ops for leads calculation
                     const ops = filters.ops ? customRound(totalFellows / params.fellowsPerOps, cutoff) : 0;
-                    const pms = filters.program ? customRound(totalFellows / params.fellowsPerPM, cutoff) : 0;
+                    // PMs use date-based scaling - get count for this date
+                    const pms = filters.program ? getPMCountForDate(date, params.pmScaling) : 0;
                     const cas = filters.compute ? customRound(totalFellows / params.fellowsPerCA, cutoff) : 0;
                     const rces = filters.compute ? customRound(totalFellows / params.fellowsPerRCE, cutoff) : 0;
                     
                     let leads = 0;
                     if (params.srmsPerLead > 0) leads += customRound(srms / params.srmsPerLead, cutoff);
-                    if (params.communityPerLead > 0) leads += customRound((cms + cpos) / params.communityPerLead, cutoff);
+                    if (params.communityPerLead > 0) leads += customRound((cms + jts) / params.communityPerLead, cutoff);
                     if (params.opsPerLead > 0) leads += customRound(ops / params.opsPerLead, cutoff);
                     if (params.pmsPerLead > 0) leads += customRound(pms / params.pmsPerLead, cutoff);
                     if (params.computePerLead > 0) leads += customRound((cas + rces) / params.computePerLead, cutoff);
@@ -4210,7 +4299,7 @@
             document.getElementById('param-current-berkeley-srms').value = 4;
             document.getElementById('param-current-berkeley-rms').value = 10;
             document.getElementById('param-current-berkeley-cms').value = 2;
-            document.getElementById('param-current-berkeley-cpos').value = 1;
+            document.getElementById('param-current-berkeley-jts').value = 1;
             document.getElementById('param-current-berkeley-ops').value = 5;
             document.getElementById('param-current-berkeley-pms').value = 1;
             document.getElementById('param-current-berkeley-compute').value = 3;
@@ -4218,9 +4307,9 @@
             // Current staff - London
             document.getElementById('param-current-london-leads').value = 1;
             document.getElementById('param-current-london-srms').value = 2;
-            document.getElementById('param-current-london-rms').value = 6;
-            document.getElementById('param-current-london-cms').value = 1;
-            document.getElementById('param-current-london-cpos').value = 0;
+            document.getElementById('param-current-london-rms').value = 8;
+            document.getElementById('param-current-london-cms').value = 0;
+            document.getElementById('param-current-london-jts').value = 0;
             document.getElementById('param-current-london-ops').value = 2;
             document.getElementById('param-current-london-pms').value = 1;
             document.getElementById('param-current-london-compute').value = 0;
@@ -4261,13 +4350,27 @@
             document.getElementById('param-floor3-date').value = '2027-06-01';
             document.getElementById('param-floor3-leadtime').value = 9;
             document.getElementById('param-office-visitors').value = 10;
-            document.getElementById('param-fellows-per-cm').value = 35;
-            document.getElementById('param-fellows-per-cpo').value = 100;
+            document.getElementById('param-main-fellows-per-cm').value = 35;
+            document.getElementById('param-ext-fellows-per-cm').value = 35;
+            document.getElementById('param-main-fellows-per-jt').value = 100;
+            document.getElementById('param-ext-fellows-per-jt').value = 100;
             document.getElementById('param-fellows-per-ops').value = 20;
             document.getElementById('param-berkeley-fellows-per-ops').value = 40;
             document.getElementById('param-berkeley-staff-per-ops').value = 10;
             document.getElementById('param-berkeley-sqft-per-ops').value = 25000;
-            document.getElementById('param-fellows-per-pm').value = 30;
+            // PM scaling
+            document.getElementById('param-pm-count-1').value = 3;
+            document.getElementById('param-pm-date-1').value = '2026-01-01';
+            document.getElementById('param-pm-count-2').value = 4;
+            document.getElementById('param-pm-date-2').value = '2026-06-01';
+            document.getElementById('param-pm-count-3').value = 5;
+            document.getElementById('param-pm-date-3').value = '2027-01-01';
+            document.getElementById('param-pm-count-4').value = 6;
+            document.getElementById('param-pm-date-4').value = '2027-06-01';
+            document.getElementById('param-pm-count-5').value = 7;
+            document.getElementById('param-pm-date-5').value = '2028-01-01';
+            document.getElementById('param-pm-count-6').value = '';
+            document.getElementById('param-pm-date-6').value = '';
             document.getElementById('param-fellows-per-ca').value = 60;
             document.getElementById('param-fellows-per-rce').value = 50;
             document.getElementById('param-fellows-per-recruiter').value = 150;
