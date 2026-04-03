@@ -106,6 +106,19 @@
             border-radius: 8px;
             padding: 0.75rem 1rem;
             margin-bottom: 1rem;
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 2rem);
+            max-width: 1400px;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        /* Spacer to prevent content from hiding behind fixed filters */
+        .filters-spacer {
+            height: 140px;
         }
         
         .filters-row {
@@ -435,56 +448,78 @@
             <p class="subtitle">Projections through April 2028 (2-Year Model)</p>
         </header>
         
-        <div class="card">
-            <div class="filters-section">
-                <div class="filters-row" style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">
-                    <div class="filter-group">
-                        <div class="filter-group-title">📅 Projection Range</div>
-                        <div style="display: flex; gap: 1rem; align-items: center;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <label for="filter-start-month" style="font-size: 0.75rem; color: var(--text-secondary);">From</label>
-                                <select id="filter-start-month" class="param-input" style="width: 120px; padding: 0.3rem;"></select>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <label for="filter-end-month" style="font-size: 0.75rem; color: var(--text-secondary);">To</label>
-                                <select id="filter-end-month" class="param-input" style="width: 120px; padding: 0.3rem;"></select>
-                            </div>
-                            <button id="reset-date-range" style="padding: 0.3rem 0.6rem; font-size: 0.7rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: 4px; cursor: pointer;">Reset</button>
+        <div class="filters-section">
+            <div class="filters-row" style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">
+                <div class="filter-group">
+                    <div class="filter-group-title">📅 Projection Range</div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <label for="filter-start-month" style="font-size: 0.75rem; color: var(--text-secondary);">From</label>
+                            <select id="filter-start-month" class="param-input" style="width: 120px; padding: 0.3rem;"></select>
                         </div>
-                    </div>
-                </div>
-                <div class="filters-row">
-                    <div class="filter-group">
-                        <div class="filter-group-title">Location</div>
-                        <div class="filter-checks">
-                            <div class="filter-item"><input type="checkbox" id="filter-berkeley" checked><label for="filter-berkeley">Berkeley</label></div>
-                            <div class="filter-item"><input type="checkbox" id="filter-london" checked><label for="filter-london">London</label></div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <label for="filter-end-month" style="font-size: 0.75rem; color: var(--text-secondary);">To</label>
+                            <select id="filter-end-month" class="param-input" style="width: 120px; padding: 0.3rem;"></select>
                         </div>
-                    </div>
-                    <div class="filter-group">
-                        <div class="filter-group-title">Fellows</div>
-                        <div class="filter-checks">
-                            <div class="filter-item"><input type="checkbox" id="filter-main" checked><label for="filter-main">Main (x.0)</label></div>
-                            <div class="filter-item"><input type="checkbox" id="filter-ext1" checked><label for="filter-ext1">Ext (x.1)</label></div>
-                            <div class="filter-item"><input type="checkbox" id="filter-ext2" checked><label for="filter-ext2">Ext+ (x.2)</label></div>
-                            <div class="filter-item"><input type="checkbox" id="filter-residency" checked><label for="filter-residency">Residency</label></div>
-                        </div>
-                    </div>
-                    <div class="filter-group">
-                        <div class="filter-group-title">Staff Teams</div>
-                        <div class="filter-checks">
-                            <div class="filter-item"><input type="checkbox" id="filter-leads" checked><label for="filter-leads">Leads</label></div>
-                            <div class="filter-item"><input type="checkbox" id="filter-rm" checked><label for="filter-rm">Research Mgmt</label></div>
-                            <div class="filter-item"><input type="checkbox" id="filter-community" checked><label for="filter-community">Community</label></div>
-                            <div class="filter-item"><input type="checkbox" id="filter-ops" checked><label for="filter-ops">Operations</label></div>
-                            <div class="filter-item"><input type="checkbox" id="filter-program" checked><label for="filter-program">Program</label></div>
-                            <div class="filter-item"><input type="checkbox" id="filter-compute" checked><label for="filter-compute">Compute</label></div>
-                            <div class="filter-item"><input type="checkbox" id="filter-additional" checked><label for="filter-additional" id="filter-additional-label">Additional</label></div>
-                        </div>
+                        <button id="reset-date-range" style="padding: 0.3rem 0.6rem; font-size: 0.7rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: 4px; cursor: pointer;">Reset</button>
                     </div>
                 </div>
             </div>
+            <div class="filters-row">
+                <div class="filter-group">
+                    <div class="filter-group-title">Location</div>
+                    <div class="filter-checks">
+                        <div class="filter-item"><input type="checkbox" id="filter-berkeley" checked><label for="filter-berkeley">Berkeley</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-london" checked><label for="filter-london">London</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-remote" checked><label for="filter-remote">Remote</label></div>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-group-title">Fellows</div>
+                    <div class="filter-checks">
+                        <div class="filter-item"><input type="checkbox" id="filter-main" checked><label for="filter-main">Main (x.0)</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-ext1" checked><label for="filter-ext1">Ext (x.1)</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-ext2" checked><label for="filter-ext2">Ext+ (x.2)</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-residency" checked><label for="filter-residency">Residency</label></div>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-group-title">Staff Teams</div>
+                    <div class="filter-checks">
+                        <div class="filter-item"><input type="checkbox" id="filter-leads" checked><label for="filter-leads">Leads</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-rm" checked><label for="filter-rm">Research Mgmt</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-community" checked><label for="filter-community">Community</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-ops" checked><label for="filter-ops">Operations</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-program" checked><label for="filter-program">Program</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-compute" checked><label for="filter-compute">Compute</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-additional" checked><label for="filter-additional" id="filter-additional-label">Additional</label></div>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-group-title">Cohorts</div>
+                    <div class="filter-checks">
+                        <div class="filter-item"><input type="checkbox" id="filter-cohort-8" checked><label for="filter-cohort-8">8</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-cohort-9" checked><label for="filter-cohort-9">9</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-cohort-10" checked><label for="filter-cohort-10">10</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-cohort-11" checked><label for="filter-cohort-11">11</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-cohort-12" checked><label for="filter-cohort-12">12</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-cohort-13" checked><label for="filter-cohort-13">13</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-cohort-14" checked><label for="filter-cohort-14">14</label></div>
+                        <div class="filter-item"><input type="checkbox" id="filter-cohort-15" checked><label for="filter-cohort-15">15</label></div>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-group-title">Options</div>
+                    <div class="filter-checks">
+                        <div class="filter-item"><input type="checkbox" id="filter-ratchet" checked><label for="filter-ratchet">Staff Ratchet</label></div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
+        <div class="filters-spacer"></div>
+        
+        <div class="card">
             <div class="stat-grid">
                 <div class="stat-card">
                     <div class="stat-value blue" id="stat-peak-fellows">0</div>
@@ -668,7 +703,7 @@
                         <div class="param-section-title">Cohort Sizes (x.0)</div>
                         <div class="param-row">
                             <span class="param-label">8.0</span>
-                            <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Win'26</span>
+                            <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Sum'25</span>
                             <input type="number" class="param-input" id="param-8.0" value="80" min="0" max="500">
                         </div>
                         <div class="param-row">
@@ -684,17 +719,17 @@
                         <div class="param-row">
                             <span class="param-label">11.0</span>
                             <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Aut'26</span>
-                            <input type="number" class="param-input" id="param-11.0" value="120" min="0" max="500">
+                            <input type="number" class="param-input" id="param-11.0" value="80" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">12.0</span>
                             <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Win'27</span>
-                            <input type="number" class="param-input" id="param-12.0" value="140" min="0" max="500">
+                            <input type="number" class="param-input" id="param-12.0" value="120" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">13.0</span>
                             <span style="color: var(--text-secondary); font-size: 0.7rem; width: 40px;">Sum'27</span>
-                            <input type="number" class="param-input" id="param-13.0" value="240" min="0" max="500">
+                            <input type="number" class="param-input" id="param-13.0" value="220" min="0" max="500">
                         </div>
                         <div class="param-row">
                             <span class="param-label">14.0</span>
@@ -728,24 +763,55 @@
                     
                     <div class="param-section">
                         <div class="param-section-title">Location %</div>
+                        <p style="font-size:0.65rem;color:var(--text-secondary);margin-bottom:0.5rem;line-height:1.2;">
+                            London / Remote / Berkeley (remainder)
+                        </p>
                         <div class="param-row">
-                            <span class="param-label">London Main</span>
+                            <span class="param-label">Main: London</span>
                             <div class="input-group">
                                 <input type="number" class="param-input" id="param-london-main" value="20" min="0" max="100">
                                 <span class="param-suffix">%</span>
                             </div>
                         </div>
                         <div class="param-row">
-                            <span class="param-label">London Ext</span>
+                            <span class="param-label">Main: Remote</span>
                             <div class="input-group">
-                                <input type="number" class="param-input" id="param-london-ext" value="70" min="0" max="100">
+                                <input type="number" class="param-input" id="param-remote-main" value="10" min="0" max="100">
                                 <span class="param-suffix">%</span>
                             </div>
                         </div>
                         <div class="param-row">
-                            <span class="param-label">London Residency</span>
+                            <span class="param-label">Ext: London</span>
                             <div class="input-group">
-                                <input type="number" class="param-input" id="param-london-residency" value="90" min="0" max="100">
+                                <input type="number" class="param-input" id="param-london-ext" value="50" min="0" max="100">
+                                <span class="param-suffix">%</span>
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Ext: Remote</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input" id="param-remote-ext" value="30" min="0" max="100">
+                                <span class="param-suffix">%</span>
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Residency: London</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input" id="param-london-residency" value="80" min="0" max="100">
+                                <span class="param-suffix">%</span>
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Residency: Remote</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input" id="param-remote-residency" value="10" min="0" max="100">
+                                <span class="param-suffix">%</span>
+                            </div>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Staff: Remote</span>
+                            <div class="input-group">
+                                <input type="number" class="param-input" id="param-remote-staff" value="15" min="0" max="100">
                                 <span class="param-suffix">%</span>
                             </div>
                         </div>
@@ -759,7 +825,7 @@
                         </div>
                         <div class="param-row">
                             <span class="param-label">Start</span>
-                            <input type="date" class="param-input date-input" id="param-residency-start" value="2026-07-06">
+                            <input type="date" class="param-input date-input" id="param-residency-start" value="2026-08-03">
                         </div>
                         <div class="param-row">
                             <span class="param-label">Length</span>
@@ -813,28 +879,9 @@
                                 <span class="param-suffix">mo</span>
                             </div>
                         </div>
-                        <div style="margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px solid var(--border-color);">
-                            <p style="font-size:0.65rem;color:var(--text-secondary);margin-bottom:0.5rem;line-height:1.2;">
-                                Staff & main fellows use Remote %. Extensions split: Remote % first, then London/Berkeley.
-                            </p>
-                            <div class="param-row">
-                                <span class="param-label">Remote %</span>
-                                <div class="input-group">
-                                    <input type="number" class="param-input" id="param-office-remote-pct" value="10" min="0" max="100">
-                                    <span class="param-suffix">%</span>
-                                </div>
-                            </div>
-                            <div class="param-row">
-                                <span class="param-label">Ext Remote %</span>
-                                <div class="input-group">
-                                    <input type="number" class="param-input" id="param-office-ext-remote-pct" value="40" min="0" max="100">
-                                    <span class="param-suffix">%</span>
-                                </div>
-                            </div>
-                            <div class="param-row">
-                                <span class="param-label">Visitors</span>
-                                <input type="number" class="param-input" id="param-office-visitors" value="10" min="0" max="100">
-                            </div>
+                        <div class="param-row">
+                            <span class="param-label">Visitors</span>
+                            <input type="number" class="param-input" id="param-office-visitors" value="10" min="0" max="100">
                         </div>
                     </div>
                     
@@ -1004,7 +1051,7 @@
                         <div class="cohort-dates-grid">
                             <span class="header"></span><span class="header">Start</span><span class="header">End</span>
                             <span>10.0</span>
-                            <input type="date" class="param-input date-input" id="date-10.0-start" value="2026-06-15">
+                            <input type="date" class="param-input date-input" id="date-10.0-start" value="2026-06-01">
                             <input type="date" class="param-input date-input" id="date-10.0-end" value="2026-09-06">
                             <span>10.1</span>
                             <input type="date" class="param-input date-input" id="date-10.1-start" value="2026-09-07">
@@ -1034,7 +1081,7 @@
                         <div class="cohort-dates-grid">
                             <span class="header"></span><span class="header">Start</span><span class="header">End</span>
                             <span>12.0</span>
-                            <input type="date" class="param-input date-input" id="date-12.0-start" value="2027-02-01">
+                            <input type="date" class="param-input date-input" id="date-12.0-start" value="2027-01-11">
                             <input type="date" class="param-input date-input" id="date-12.0-end" value="2027-04-25">
                             <span>12.1</span>
                             <input type="date" class="param-input date-input" id="date-12.1-start" value="2027-04-26">
@@ -1049,7 +1096,7 @@
                         <div class="cohort-dates-grid">
                             <span class="header"></span><span class="header">Start</span><span class="header">End</span>
                             <span>13.0</span>
-                            <input type="date" class="param-input date-input" id="date-13.0-start" value="2027-06-14">
+                            <input type="date" class="param-input date-input" id="date-13.0-start" value="2027-06-07">
                             <input type="date" class="param-input date-input" id="date-13.0-end" value="2027-09-05">
                             <span>13.1</span>
                             <input type="date" class="param-input date-input" id="date-13.1-start" value="2027-09-06">
@@ -1079,7 +1126,7 @@
                         <div class="cohort-dates-grid">
                             <span class="header"></span><span class="header">Start</span><span class="header">End</span>
                             <span>15.0</span>
-                            <input type="date" class="param-input date-input" id="date-15.0-start" value="2028-01-03">
+                            <input type="date" class="param-input date-input" id="date-15.0-start" value="2028-01-10">
                             <input type="date" class="param-input date-input" id="date-15.0-end" value="2028-04-02">
                             <span>15.1</span>
                             <input type="date" class="param-input date-input" id="date-15.1-start" value="2028-04-03">
@@ -1105,6 +1152,7 @@
                             <tr>
                                 <th>Month</th>
                                 <th>Start By</th>
+                                <th>Leads</th>
                                 <th>RMs</th>
                                 <th>SRMs</th>
                                 <th>CMs</th>
@@ -1156,9 +1204,16 @@
             
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">Cohort Growth Rates</h2>
+                    <h2 class="card-title">Cohort Growth Rates <span style="font-size:0.7rem;font-weight:normal;opacity:0.6">(Main Cohorts)</span></h2>
                 </div>
                 <div class="chart-container" id="cohort-growth-chart"></div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Staff Growth Rates <span style="font-size:0.7rem;font-weight:normal;opacity:0.6">(Filtered)</span></h2>
+                </div>
+                <div class="chart-container" id="staff-growth-chart"></div>
             </div>
             
             <div class="card">
@@ -1166,6 +1221,13 @@
                     <h2 class="card-title">Team Growth by Cohort</h2>
                 </div>
                 <div class="chart-container" id="team-growth-chart"></div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Staff per Cohort Over Time <span style="font-size:0.7rem;font-weight:normal;opacity:0.6">(Filtered)</span></h2>
+                </div>
+                <div class="chart-container-large" id="staff-per-cohort-chart"></div>
             </div>
             
             <div class="card" style="border-left: 3px solid #f59e0b;">
@@ -1229,8 +1291,9 @@
                             <tr>
                                 <th>Month</th>
                                 <th>Fellows</th>
-                                <th>London Fellows</th>
-                                <th>Berkeley Fellows</th>
+                                <th>London</th>
+                                <th>Remote</th>
+                                <th>Berkeley</th>
                                 <th>Total Staff</th>
                                 <th>London Staff</th>
                                 <th>Berkeley Staff</th>
@@ -1258,10 +1321,11 @@
                         Extension 1 (X.1) = X.0 × Ext 1 Rate<br>
                         Extension 2 (X.2) = X.1 × Ext 2 Rate<br>
                         <br>
-                        Berkeley Fellows = Count × (1 - London %)<br>
-                        London Fellows = Count × London %
+                        London Fellows = Count × London %<br>
+                        Remote Fellows = Count × Remote %<br>
+                        Berkeley Fellows = Count × (1 - London % - Remote %)
                     </code>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Fellows are active from cohort start date to end date. Location split uses different % for main vs extension cohorts.</p>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Fellows are active from cohort start date to end date. Location split uses different % for main vs extension cohorts. Remote fellows work remotely (not counted in office space).</p>
                 </div>
                 
                 <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
@@ -1304,7 +1368,7 @@
                 <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
                     <h3 style="color: #f59e0b; margin-bottom: 0.75rem; font-size: 1rem;">🌐 Global Support Roles</h3>
                     <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
-                        Total Fellows = Berkeley + London fellows<br>
+                        Total Fellows = London + Remote + Berkeley<br>
                         <br>
                         CMs = ⌈Total Fellows ÷ Fellows/CM⌉<br>
                         CPOs = ⌈Total Fellows ÷ Fellows/CPO⌉<br>
@@ -1314,7 +1378,7 @@
                         RCEs = ⌈Total Fellows ÷ Fellows/RCE⌉<br>
                         Recruiters = ⌈Total Fellows ÷ Fellows/Recruiter⌉
                     </code>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Global roles scale with total fellow count across both locations.</p>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Global roles scale with total fellow count across all three locations.</p>
                 </div>
                 
                 <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
@@ -1323,10 +1387,9 @@
                         For each role and month:<br>
                         Actual Staff = max(Calculated Need, Previous Max)<br>
                         <br>
-                        Running Max updates each month<br>
-                        Exception: Feb 2027 spike excluded from max
+                        Running Max updates each month
                     </code>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Staff counts only grow over time. The Feb 2027 outlier doesn't set new floor.</p>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Staff counts only grow over time (no layoffs). Each month's staff is at least the previous maximum.</p>
                 </div>
                 
                 <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
@@ -1344,21 +1407,20 @@
                 <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
                     <h3 style="color: #f59e0b; margin-bottom: 0.75rem; font-size: 1rem;">🏢 Office Space (Berkeley)</h3>
                     <code style="display: block; background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.8rem;">
-                        <strong>Staff & Main Fellows:</strong><br>
-                        In-office = Count × (1 - Remote %)<br>
+                        <strong>All Fellows (3 locations):</strong><br>
+                        London = Count × London %<br>
+                        Remote = Count × Remote % (no office)<br>
+                        Berkeley = Count × (1 - London % - Remote %)<br>
                         <br>
-                        <strong>Extension Fellows (3 locations):</strong><br>
-                        Remote = Count × Ext Remote % (no office)<br>
-                        Non-remote = Count × (1 - Ext Remote %)<br>
-                        London = Non-remote × London Ext %<br>
-                        Berkeley = Non-remote × (1 - London Ext %)<br>
+                        <strong>Staff:</strong><br>
+                        Berkeley Staff × (1 - Staff Remote %)<br>
                         <br>
                         <strong>Total:</strong><br>
-                        People = Staff + Main + Ext + Visitors<br>
+                        People = In-office Staff + Berkeley Fellows + Visitors<br>
                         Sq Ft Needed = People × Sq Ft/Person<br>
                         Floor 3 Needed when People > Fl 1+2 Capacity
                     </code>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Extensions split 3 ways: Remote (40%), then London/Berkeley. Floor 3 decision = need date − lead time.</p>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem;">Remote fellows don't need office space at any location. Floor 3 decision = need date − lead time.</p>
                 </div>
                 
                 <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
@@ -1389,13 +1451,24 @@
             "Jan 2028", "Feb 2028", "Mar 2028", "Apr 2028"
         ];
         
+        // Bi-monthly periods (two per month for finer granularity)
+        const periods = [];
+        months.forEach(m => {
+            periods.push(`${m} E`);  // Early month (1st-15th)
+            periods.push(`${m} L`);  // Late month (16th-end)
+        });
+        
         const monthDates = {};
         const monthStarts = {};
+        const periodDates = {};
         months.forEach((m, i) => {
             const year = m.includes('2026') ? 2026 : (m.includes('2027') ? 2027 : 2028);
             const monthIndex = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(m.split(' ')[0]);
             monthDates[m] = new Date(year, monthIndex, 15);
             monthStarts[m] = new Date(year, monthIndex, 1);
+            // Period dates: 7th for early, 22nd for late
+            periodDates[`${m} E`] = new Date(year, monthIndex, 7);
+            periodDates[`${m} L`] = new Date(year, monthIndex, 22);
         });
         
         const cohortColors = {
@@ -1501,6 +1574,7 @@
             return {
                 berkeley: document.getElementById('filter-berkeley').checked,
                 london: document.getElementById('filter-london').checked,
+                remote: document.getElementById('filter-remote').checked,
                 main: document.getElementById('filter-main').checked,
                 ext1: document.getElementById('filter-ext1').checked,
                 ext2: document.getElementById('filter-ext2').checked,
@@ -1511,7 +1585,17 @@
                 ops: document.getElementById('filter-ops').checked,
                 program: document.getElementById('filter-program').checked,
                 compute: document.getElementById('filter-compute').checked,
-                additional: document.getElementById('filter-additional').checked
+                additional: document.getElementById('filter-additional').checked,
+                ratchet: document.getElementById('filter-ratchet')?.checked ?? true,
+                // Per-cohort visual filters (by major version)
+                cohort8: document.getElementById('filter-cohort-8')?.checked ?? true,
+                cohort9: document.getElementById('filter-cohort-9')?.checked ?? true,
+                cohort10: document.getElementById('filter-cohort-10')?.checked ?? true,
+                cohort11: document.getElementById('filter-cohort-11')?.checked ?? true,
+                cohort12: document.getElementById('filter-cohort-12')?.checked ?? true,
+                cohort13: document.getElementById('filter-cohort-13')?.checked ?? true,
+                cohort14: document.getElementById('filter-cohort-14')?.checked ?? true,
+                cohort15: document.getElementById('filter-cohort-15')?.checked ?? true
             };
         }
         
@@ -1566,9 +1650,9 @@
                 cohort8_0: getIntOrDefault('param-8.0', 80),
                 cohort9_0: getIntOrDefault('param-9.0', 90),
                 cohort10_0: getIntOrDefault('param-10.0', 120),
-                cohort11_0: getIntOrDefault('param-11.0', 120),
-                cohort12_0: getIntOrDefault('param-12.0', 140),
-                cohort13_0: getIntOrDefault('param-13.0', 240),
+                cohort11_0: getIntOrDefault('param-11.0', 80),
+                cohort12_0: getIntOrDefault('param-12.0', 120),
+                cohort13_0: getIntOrDefault('param-13.0', 220),
                 cohort14_0: getIntOrDefault('param-14.0', 160),
                 cohort15_0: getIntOrDefault('param-15.0', 280),
                 ext1Rate: (getIntOrDefault('param-ext1-rate', 70)) / 100,
@@ -1577,9 +1661,14 @@
                 cohort8_2_actual: getInt('param-8.2-actual', 30),
                 cohort9_1_actual: getInt('param-9.1-actual', null),
                 cohort9_2_actual: getInt('param-9.2-actual', null),
+                // Location percentages (London / Remote / Berkeley remainder)
                 londonMainPct: (getInt('param-london-main', 20) ?? 0) / 100,
-                londonExtPct: (getInt('param-london-ext', 70) ?? 0) / 100,
-                londonResidencyPct: (getInt('param-london-residency', 90) ?? 0) / 100,
+                remoteMainPct: (getInt('param-remote-main', 10) ?? 0) / 100,
+                londonExtPct: (getInt('param-london-ext', 50) ?? 0) / 100,
+                remoteExtPct: (getInt('param-remote-ext', 30) ?? 0) / 100,
+                londonResidencyPct: (getInt('param-london-residency', 80) ?? 0) / 100,
+                remoteResidencyPct: (getInt('param-remote-residency', 10) ?? 0) / 100,
+                remoteStaffPct: (getInt('param-remote-staff', 15) ?? 0) / 100,
                 residencyCount: getInt('param-residency-count', 10),
                 residencyStart: document.getElementById('param-residency-start').value,
                 residencyMonths: getInt('param-residency-months', 24),
@@ -1592,8 +1681,6 @@
                 floor1Date: document.getElementById('param-floor1-date')?.value || '2026-08-01',
                 floor3Sqft: getInt('param-floor3-sqft', 20000),
                 floor3LeadTime: getInt('param-floor3-leadtime', 9),
-                officeRemotePct: (getInt('param-office-remote-pct', 10) ?? 0) / 100,
-                officeExtRemotePct: (getInt('param-office-ext-remote-pct', 40) ?? 0) / 100,
                 officeVisitors: getInt('param-office-visitors', 10),
                 fellowsPerCM: get('param-fellows-per-cm', 35),
                 fellowsPerCPO: get('param-fellows-per-cpo', 100),
@@ -1938,68 +2025,137 @@
                 calculateCohortSizes(params);
             const cutoff = params.roundingCutoff;
             
-            return months.map((month, monthIndex) => {
-                const date = monthDates[month];
+            return periods.map((period, periodIndex) => {
+                const date = periodDates[period];
+                const month = period.replace(' E', '').replace(' L', '');
                 const activeCohorts = {};
-                let londonFellows = 0, berkeleyFellows = 0;
-                let londonResidents = 0, berkeleyResidents = 0;
-                let mainFellows = 0, extFellows = 0;
-                let mainLondon = 0, mainBerkeley = 0, extLondon = 0, extBerkeley = 0;
                 
-                // Fellowship cohorts
+                // Track FULL fellow counts (for accurate peak calculations)
+                let londonFellows = 0, berkeleyFellows = 0, remoteFellows = 0;
+                let londonResidents = 0, berkeleyResidents = 0, remoteResidents = 0;
+                let mainFellows = 0, extFellows = 0;
+                let mainLondon = 0, mainBerkeley = 0, mainRemote = 0;
+                let extLondon = 0, extBerkeley = 0, extRemote = 0;
+                
+                // Track FILTERED fellow counts (for display-filtered staff calculations)
+                let filteredLondonFellows = 0, filteredBerkeleyFellows = 0, filteredRemoteFellows = 0;
+                let filteredMainFellows = 0, filteredExtFellows = 0;
+                let filteredResidents = 0;
+                
+                // Fellowship cohorts - calculate ALL, track which are filtered for display
                 allCohortIds.forEach(cohort => {
                     if (isActive(cohort, date, schedule) && sizes[cohort] > 0) {
                         const type = getCohortType(cohort);
-                        if ((type === 'main' && !filters.main) || 
+                        const majorVersion = cohort.split('.')[0];
+                        const cohortFilterKey = `cohort${majorVersion}`;
+                        const isCohortFiltered = filters[cohortFilterKey] === false;
+                        const isTypeFiltered = (type === 'main' && !filters.main) || 
                             (type === 'ext1' && !filters.ext1) || 
-                            (type === 'ext2' && !filters.ext2)) return;
+                            (type === 'ext2' && !filters.ext2);
+                        const isFiltered = isTypeFiltered || isCohortFiltered;
                         
                         const count = sizes[cohort];
-                        activeCohorts[cohort] = count;
+                        if (!isFiltered) {
+                            activeCohorts[cohort] = count;
+                        }
                         
+                        // Three-location split: London / Remote / Berkeley (remainder)
                         const londonPct = type === 'main' ? params.londonMainPct : params.londonExtPct;
+                        const remotePct = type === 'main' ? params.remoteMainPct : params.remoteExtPct;
                         const londonCount = Math.round(count * londonPct);
-                        const berkeleyCount = count - londonCount;
+                        const remoteCount = Math.round(count * remotePct);
+                        const berkeleyCount = Math.max(0, count - londonCount - remoteCount);
                         
-                        if (filters.london) londonFellows += londonCount;
-                        if (filters.berkeley) berkeleyFellows += berkeleyCount;
+                        // Always accumulate FULL counts for calculation purposes
+                        londonFellows += londonCount;
+                        berkeleyFellows += berkeleyCount;
+                        remoteFellows += remoteCount;
                         
                         // Track main vs extension for RM ratio calculation
                         if (type === 'main') {
                             mainFellows += count;
-                            if (filters.london) mainLondon += londonCount;
-                            if (filters.berkeley) mainBerkeley += berkeleyCount;
+                            mainLondon += londonCount;
+                            mainBerkeley += berkeleyCount;
+                            mainRemote += remoteCount;
                         } else {
                             extFellows += count;
-                            if (filters.london) extLondon += londonCount;
-                            if (filters.berkeley) extBerkeley += berkeleyCount;
+                            extLondon += londonCount;
+                            extBerkeley += berkeleyCount;
+                            extRemote += remoteCount;
+                        }
+                        
+                        // Accumulate FILTERED counts (only if cohort type AND location are checked)
+                        if (!isFiltered) {
+                            if (filters.london) filteredLondonFellows += londonCount;
+                            if (filters.berkeley) filteredBerkeleyFellows += berkeleyCount;
+                            if (filters.remote) filteredRemoteFellows += remoteCount;
+                            if (type === 'main') {
+                                filteredMainFellows += (filters.london ? londonCount : 0) + 
+                                                       (filters.berkeley ? berkeleyCount : 0) + 
+                                                       (filters.remote ? remoteCount : 0);
+                            } else {
+                                filteredExtFellows += (filters.london ? londonCount : 0) + 
+                                                      (filters.berkeley ? berkeleyCount : 0) + 
+                                                      (filters.remote ? remoteCount : 0);
+                            }
                         }
                     }
                 });
                 
-                // Residency - with growth over time
+                // Residency - ALWAYS calculate (filter only affects display)
                 const residencyCount = getResidencyCount(date, params);
-                if (filters.residency && residencyCount > 0) {
-                    activeCohorts['Residency'] = residencyCount;
+                let filteredLondonResidents = 0, filteredBerkeleyResidents = 0, filteredRemoteResidents = 0;
+                if (residencyCount > 0) {
+                    if (filters.residency) {
+                        activeCohorts['Residency'] = residencyCount;
+                    }
                     const londonRes = Math.round(residencyCount * params.londonResidencyPct);
-                    const berkeleyRes = residencyCount - londonRes;
-                    if (filters.london) londonResidents = londonRes;
-                    if (filters.berkeley) berkeleyResidents = berkeleyRes;
+                    const remoteRes = Math.round(residencyCount * params.remoteResidencyPct);
+                    const berkeleyRes = Math.max(0, residencyCount - londonRes - remoteRes);
+                    londonResidents = londonRes;
+                    berkeleyResidents = berkeleyRes;
+                    remoteResidents = remoteRes;
+                    
+                    // Track filtered residency by location (only if residency filter is checked)
+                    if (filters.residency) {
+                        filteredLondonResidents = londonRes;
+                        filteredBerkeleyResidents = berkeleyRes;
+                        filteredRemoteResidents = remoteRes;
+                    }
                 }
                 
+                // Calculate totals (always full calculation for accurate peaks)
                 const londonTotal = londonFellows + londonResidents;
                 const berkeleyTotal = berkeleyFellows + berkeleyResidents;
-                const totalFellows = londonTotal + berkeleyTotal;
+                const remoteTotal = remoteFellows + remoteResidents;
+                const totalFellows = londonTotal + berkeleyTotal + remoteTotal;
+                
+                // Calculate filtered location totals (for Fellows by Location chart)
+                const filteredLondonTotal = filteredLondonFellows + filteredLondonResidents;
+                const filteredBerkeleyTotal = filteredBerkeleyFellows + filteredBerkeleyResidents;
+                const filteredRemoteTotal = filteredRemoteFellows + filteredRemoteResidents;
+                
+                // Calculate filtered totals (for display-filtered staff)
+                const filteredTotalFellows = filteredLondonTotal + filteredBerkeleyTotal + filteredRemoteTotal;
+                const filteredMainWithResidency = filteredMainFellows + filteredLondonResidents + filteredBerkeleyResidents + filteredRemoteResidents;
                 
                 // Staffing calculations - use main ratios for main fellows, extension ratios for extensions
                 // Residency fellows use main program ratios
-                const mainWithResidency = mainFellows + londonResidents + berkeleyResidents;
+                const mainWithResidency = mainFellows + londonResidents + berkeleyResidents + remoteResidents;
                 const mainStaff = calculateStaffing(mainWithResidency, params.mainFellowsPerRM, params.mainRMsPerSRM, params.mainFellowsPerSRM, cutoff);
                 const extStaff = calculateStaffing(extFellows, params.extFellowsPerRM, params.extRMsPerSRM, params.extFellowsPerSRM, cutoff);
                 
-                // Total RMs and SRMs
+                // Filtered staffing calculations (for display)
+                const filteredMainStaff = calculateStaffing(filteredMainWithResidency, params.mainFellowsPerRM, params.mainRMsPerSRM, params.mainFellowsPerSRM, cutoff);
+                const filteredExtStaff = calculateStaffing(filteredExtFellows, params.extFellowsPerRM, params.extRMsPerSRM, params.extFellowsPerSRM, cutoff);
+                
+                // Total RMs and SRMs (always calculate full values)
                 const totalRMs = mainStaff.rms + extStaff.rms;
                 const totalSRMs = mainStaff.srms + extStaff.srms;
+                
+                // Filtered RMs and SRMs
+                const filteredTotalRMs = filteredMainStaff.rms + filteredExtStaff.rms;
+                const filteredTotalSRMs = filteredMainStaff.srms + filteredExtStaff.srms;
                 
                 // Attribute RMs/SRMs to locations based on fellow distribution
                 const londonPctOfTotal = totalFellows > 0 ? londonTotal / totalFellows : 0;
@@ -2015,85 +2171,152 @@
                     srms: totalSRMs - londonStaff.srms
                 };
                 
-                const rms = (filters.rm ? londonStaff.rms + berkeleyStaff.rms : 0);
-                const srms = (filters.rm ? londonStaff.srms + berkeleyStaff.srms : 0);
-                const cms = (filters.community && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerCM, cutoff)) : 0;
-                const cpos = (filters.community && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerCPO, cutoff)) : 0;
-                const ops = (filters.ops && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerOps, cutoff)) : 0;
-                const pms = (filters.program && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerPM, cutoff)) : 0;
-                const cas = (filters.compute && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerCA, cutoff)) : 0;
-                const rces = (filters.compute && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerRCE, cutoff)) : 0;
-                const recruiters = (filters.program && params.fellowsPerRecruiter > 0 && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerRecruiter, cutoff)) : 0;
-                const additional = (filters.additional && params.fellowsPerAdditional > 0 && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerAdditional, cutoff)) : 0;
+                // Calculate all staff roles (always calculate full values for peaks)
+                const rmsCalc = totalRMs;
+                const srmsCalc = totalSRMs;
+                const cmsCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerCM, cutoff)) : 0;
+                const cposCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerCPO, cutoff)) : 0;
+                const opsCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerOps, cutoff)) : 0;
+                const pmsCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerPM, cutoff)) : 0;
+                const casCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerCA, cutoff)) : 0;
+                const rcesCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerRCE, cutoff)) : 0;
+                const recruitersCalc = (params.fellowsPerRecruiter > 0 && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerRecruiter, cutoff)) : 0;
+                const additionalCalc = (params.fellowsPerAdditional > 0 && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerAdditional, cutoff)) : 0;
                 
-                // Calculate non-lead staff per location first
+                // Calculate FILTERED staff roles (based on filtered fellow counts)
+                const filteredCmsCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerCM, cutoff)) : 0;
+                const filteredCposCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerCPO, cutoff)) : 0;
+                const filteredOpsCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerOps, cutoff)) : 0;
+                const filteredPmsCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerPM, cutoff)) : 0;
+                const filteredCasCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerCA, cutoff)) : 0;
+                const filteredRcesCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerRCE, cutoff)) : 0;
+                const filteredRecruitersCalc = (params.fellowsPerRecruiter > 0 && filteredTotalFellows > 0) ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerRecruiter, cutoff)) : 0;
+                const filteredAdditionalCalc = (params.fellowsPerAdditional > 0 && filteredTotalFellows > 0) ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerAdditional, cutoff)) : 0;
+                
+                // Apply staff team filters to filtered values (for display/onboarding)
+                const rms = filters.rm ? filteredTotalRMs : 0;
+                const srms = filters.rm ? filteredTotalSRMs : 0;
+                const cms = filters.community ? filteredCmsCalc : 0;
+                const cpos = filters.community ? filteredCposCalc : 0;
+                const ops = filters.ops ? filteredOpsCalc : 0;
+                const pms = filters.program ? filteredPmsCalc : 0;
+                const cas = filters.compute ? filteredCasCalc : 0;
+                const rces = filters.compute ? filteredRcesCalc : 0;
+                const recruiters = filters.program ? filteredRecruitersCalc : 0;
+                const additional = filters.additional ? filteredAdditionalCalc : 0;
+                
+                // Calculate non-lead staff per location (use full calculated values)
                 const londonPct = totalFellows > 0 ? londonTotal / totalFellows : 0;
+                const remotePct = totalFellows > 0 ? remoteTotal / totalFellows : 0;
                 const berkeleyPct = totalFellows > 0 ? berkeleyTotal / totalFellows : 0;
                 
-                const londonCMs = Math.round(cms * londonPct);
-                const berkeleyCMs = cms - londonCMs;
-                const londonCPOs = Math.round(cpos * londonPct);
-                const berkeleyCPOs = cpos - londonCPOs;
-                const londonOps = Math.round(ops * londonPct);
-                const berkeleyOps = ops - londonOps;
-                const londonPMs = Math.round(pms * londonPct);
-                const berkeleyPMs = pms - londonPMs;
-                const londonCAs = Math.round(cas * londonPct);
-                const berkeleyCAs = cas - londonCAs;
-                const londonRCEs = Math.round(rces * londonPct);
-                const berkeleyRCEs = rces - londonRCEs;
-                const londonRecruiters = Math.round(recruiters * londonPct);
-                const berkeleyRecruiters = recruiters - londonRecruiters;
-                const londonAdditional = Math.round(additional * londonPct);
-                const berkeleyAdditional = additional - londonAdditional;
+                const londonCMs = Math.round(cmsCalc * londonPct);
+                const remoteCMs = Math.round(cmsCalc * remotePct);
+                const berkeleyCMs = cmsCalc - londonCMs - remoteCMs;
+                const londonCPOs = Math.round(cposCalc * londonPct);
+                const remoteCPOs = Math.round(cposCalc * remotePct);
+                const berkeleyCPOs = cposCalc - londonCPOs - remoteCPOs;
+                const londonOps = Math.round(opsCalc * londonPct);
+                const remoteOps = Math.round(opsCalc * remotePct);
+                const berkeleyOps = opsCalc - londonOps - remoteOps;
+                const londonPMs = Math.round(pmsCalc * londonPct);
+                const remotePMs = Math.round(pmsCalc * remotePct);
+                const berkeleyPMs = pmsCalc - londonPMs - remotePMs;
+                const londonCAs = Math.round(casCalc * londonPct);
+                const remoteCAs = Math.round(casCalc * remotePct);
+                const berkeleyCAs = casCalc - londonCAs - remoteCAs;
+                const londonRCEs = Math.round(rcesCalc * londonPct);
+                const remoteRCEs = Math.round(rcesCalc * remotePct);
+                const berkeleyRCEs = rcesCalc - londonRCEs - remoteRCEs;
+                const londonRecruiters = Math.round(recruitersCalc * londonPct);
+                const remoteRecruiters = Math.round(recruitersCalc * remotePct);
+                const berkeleyRecruiters = recruitersCalc - londonRecruiters - remoteRecruiters;
+                const londonAdditional = Math.round(additionalCalc * londonPct);
+                const remoteAdditional = Math.round(additionalCalc * remotePct);
+                const berkeleyAdditional = additionalCalc - londonAdditional - remoteAdditional;
                 
-                // Calculate leads per team (each team has its own ratio)
+                // Remote RMs/SRMs (proportional to fellow distribution)
+                const remoteRMs = Math.round(totalRMs * remotePct);
+                const remoteSRMs = Math.round(totalSRMs * remotePct);
+                
+                // Calculate leads per team (each team has its own ratio) - use full calculated values
                 function calcLeadsForTeam(count, ratio) {
-                    if (!filters.leads || ratio <= 0 || count <= 0) return 0;
+                    if (ratio <= 0 || count <= 0) return 0;
                     return customRound(count / ratio, cutoff);
                 }
                 
-                // Berkeley leads by team
+                // Berkeley leads by team (calculated from full staff values)
                 const berkeleyLeadsFromSRMs = calcLeadsForTeam(berkeleyStaff.srms, params.srmsPerLead);
                 const berkeleyLeadsFromCommunity = calcLeadsForTeam(berkeleyCMs + berkeleyCPOs, params.communityPerLead);
                 const berkeleyLeadsFromOps = calcLeadsForTeam(berkeleyOps, params.opsPerLead);
                 const berkeleyLeadsFromPMs = calcLeadsForTeam(berkeleyPMs, params.pmsPerLead);
                 const berkeleyLeadsFromCompute = calcLeadsForTeam(berkeleyCAs + berkeleyRCEs, params.computePerLead);
                 
-                // London leads by team
+                // London leads by team (calculated from full staff values)
                 const londonLeadsFromSRMs = calcLeadsForTeam(londonStaff.srms, params.srmsPerLead);
                 const londonLeadsFromCommunity = calcLeadsForTeam(londonCMs + londonCPOs, params.communityPerLead);
                 const londonLeadsFromOps = calcLeadsForTeam(londonOps, params.opsPerLead);
                 const londonLeadsFromPMs = calcLeadsForTeam(londonPMs, params.pmsPerLead);
                 const londonLeadsFromCompute = calcLeadsForTeam(londonCAs + londonRCEs, params.computePerLead);
                 
-                const leadsBerkeley = berkeleyLeadsFromSRMs + berkeleyLeadsFromCommunity + 
+                // Remote leads by team (calculated from full staff values)
+                const remoteLeadsFromSRMs = calcLeadsForTeam(remoteSRMs, params.srmsPerLead);
+                const remoteLeadsFromCommunity = calcLeadsForTeam(remoteCMs + remoteCPOs, params.communityPerLead);
+                const remoteLeadsFromOps = calcLeadsForTeam(remoteOps, params.opsPerLead);
+                const remoteLeadsFromPMs = calcLeadsForTeam(remotePMs, params.pmsPerLead);
+                const remoteLeadsFromCompute = calcLeadsForTeam(remoteCAs + remoteRCEs, params.computePerLead);
+                
+                const leadsBerkeleyCalc = berkeleyLeadsFromSRMs + berkeleyLeadsFromCommunity + 
                     berkeleyLeadsFromOps + berkeleyLeadsFromPMs + berkeleyLeadsFromCompute;
-                const leadsLondon = londonLeadsFromSRMs + londonLeadsFromCommunity + 
+                const leadsLondonCalc = londonLeadsFromSRMs + londonLeadsFromCommunity + 
                     londonLeadsFromOps + londonLeadsFromPMs + londonLeadsFromCompute;
-                const leads = leadsBerkeley + leadsLondon;
+                const leadsRemoteCalc = remoteLeadsFromSRMs + remoteLeadsFromCommunity + 
+                    remoteLeadsFromOps + remoteLeadsFromPMs + remoteLeadsFromCompute;
+                const leadsCalc = leadsBerkeleyCalc + leadsLondonCalc + leadsRemoteCalc;
                 
-                // Use filtered RM/SRM values for location totals
-                const londonRMsFiltered = filters.rm ? londonStaff.rms : 0;
-                const londonSRMsFiltered = filters.rm ? londonStaff.srms : 0;
-                const berkeleyRMsFiltered = filters.rm ? berkeleyStaff.rms : 0;
-                const berkeleySRMsFiltered = filters.rm ? berkeleyStaff.srms : 0;
+                // Calculate FILTERED leads (based on filtered staff values for onboarding accuracy)
+                // Use filtered staff values: filteredTotalSRMs, filteredCmsCalc, etc.
+                const filteredLeadsFromSRMs = calcLeadsForTeam(filteredTotalSRMs, params.srmsPerLead);
+                const filteredLeadsFromCommunity = calcLeadsForTeam(filteredCmsCalc + filteredCposCalc, params.communityPerLead);
+                const filteredLeadsFromOps = calcLeadsForTeam(filteredOpsCalc, params.opsPerLead);
+                const filteredLeadsFromPMs = calcLeadsForTeam(filteredPmsCalc, params.pmsPerLead);
+                const filteredLeadsFromCompute = calcLeadsForTeam(filteredCasCalc + filteredRcesCalc, params.computePerLead);
+                const filteredLeadsCalc = filteredLeadsFromSRMs + filteredLeadsFromCommunity + 
+                    filteredLeadsFromOps + filteredLeadsFromPMs + filteredLeadsFromCompute;
                 
-                const londonStaffTotal = leadsLondon + londonRMsFiltered + londonSRMsFiltered + londonCMs + londonCPOs + londonOps + londonPMs + londonCAs + londonRCEs + londonRecruiters + londonAdditional;
-                const berkeleyStaffTotal = leadsBerkeley + berkeleyRMsFiltered + berkeleySRMsFiltered + berkeleyCMs + berkeleyCPOs + berkeleyOps + berkeleyPMs + berkeleyCAs + berkeleyRCEs + berkeleyRecruiters + berkeleyAdditional;
+                // Apply leads filter for display - use FILTERED leads calculation
+                const leads = filters.leads ? filteredLeadsCalc : 0;
+                const leadsBerkeley = filters.leads ? leadsBerkeleyCalc : 0;
+                const leadsLondon = filters.leads ? leadsLondonCalc : 0;
+                const leadsRemote = filters.leads ? leadsRemoteCalc : 0;
                 
+                // Location staff totals (always use full calculated values for location breakdown)
+                const londonStaffTotal = leadsLondonCalc + londonStaff.rms + londonStaff.srms + londonCMs + londonCPOs + londonOps + londonPMs + londonCAs + londonRCEs + londonRecruiters + londonAdditional;
+                const berkeleyStaffTotal = leadsBerkeleyCalc + berkeleyStaff.rms + berkeleyStaff.srms + berkeleyCMs + berkeleyCPOs + berkeleyOps + berkeleyPMs + berkeleyCAs + berkeleyRCEs + berkeleyRecruiters + berkeleyAdditional;
+                const remoteStaffTotal = leadsRemoteCalc + remoteRMs + remoteSRMs + remoteCMs + remoteCPOs + remoteOps + remotePMs + remoteCAs + remoteRCEs + remoteRecruiters + remoteAdditional;
+                
+                // Total staff for display (applies role filters)
                 const totalStaff = leads + rms + srms + cms + cpos + ops + pms + cas + rces + recruiters + additional;
                 
-                // Staff budget constraint
+                // Total staff calculated (for peak stats, ignores role filters)
+                const totalStaffCalc = leadsCalc + rmsCalc + srmsCalc + cmsCalc + cposCalc + opsCalc + pmsCalc + casCalc + rcesCalc + recruitersCalc + additionalCalc;
+                
+                // Staff budget constraint (use calculated total, not filtered)
+                // Convert periodIndex to monthIndex (2 periods per month)
+                const monthIndex = Math.floor(periodIndex / 2);
                 const staffBudget = getStaffBudget(monthIndex, params);
-                const overBudget = totalStaff > staffBudget;
+                const overBudget = totalStaffCalc > staffBudget;
                 
                 return {
-                    month, fellows: totalFellows, london: londonTotal, berkeley: berkeleyTotal,
-                    rms, srms, cms, cpos, ops, pms, cas, rces, recruiters, additional, leads, leadsBerkeley, leadsLondon, totalStaff,
-                    londonRMs: londonRMsFiltered, londonSRMs: londonSRMsFiltered,
-                    berkeleyRMs: berkeleyRMsFiltered, berkeleySRMs: berkeleySRMsFiltered,
-                    londonStaffTotal, berkeleyStaffTotal,
+                    period, month, fellows: filteredTotalFellows, london: filteredLondonTotal, berkeley: filteredBerkeleyTotal, remote: filteredRemoteTotal,
+                    // Keep full totals for calculations that need them
+                    fellowsCalc: totalFellows, londonCalc: londonTotal, berkeleyCalc: berkeleyTotal, remoteCalc: remoteTotal,
+                    rms, srms, cms, cpos, ops, pms, cas, rces, recruiters, additional, leads, leadsBerkeley, leadsLondon, leadsRemote, totalStaff,
+                    totalStaffCalc,
+                    londonRMs: londonStaff.rms, londonSRMs: londonStaff.srms,
+                    berkeleyRMs: berkeleyStaff.rms, berkeleySRMs: berkeleyStaff.srms,
+                    remoteRMs, remoteSRMs,
+                    londonStaffTotal, berkeleyStaffTotal, remoteStaffTotal,
                     staffBudget, overBudget,
                     cohorts: activeCohorts
                 };
@@ -2101,56 +2324,21 @@
         }
         
         // Apply "no layoffs" logic - staff only grows to cumulative max
-        // Exception: Feb 2027 is an outlier spike, excluded from max calculation
         function applyStaffRatchet(monthlyData, params) {
             const staffKeys = ['rms', 'srms', 'cms', 'cpos', 'ops', 'pms', 'cas', 'rces', 'recruiters', 'additional', 'leads'];
-            const locationStaffKeys = ['londonRMs', 'londonSRMs', 'berkeleyRMs', 'berkeleySRMs'];
-            const allKeys = [...staffKeys, ...locationStaffKeys, 'londonStaffTotal', 'berkeleyStaffTotal', 'totalStaff'];
+            const locationStaffKeys = ['londonRMs', 'londonSRMs', 'berkeleyRMs', 'berkeleySRMs', 'remoteRMs', 'remoteSRMs'];
+            const allKeys = [...staffKeys, ...locationStaffKeys, 'londonStaffTotal', 'berkeleyStaffTotal', 'remoteStaffTotal', 'totalStaff'];
             
-            // Initialize running max from current staff
+            // Initialize running max
             const runningMax = {};
             allKeys.forEach(k => runningMax[k] = 0);
             
-            // First pass: calculate running max, excluding Feb 2027
+            // Apply ratchet: staff can't go below running max
             monthlyData.forEach(m => {
-                if (m.month === 'Feb 2027') return; // Skip outlier
                 allKeys.forEach(k => {
                     runningMax[k] = Math.max(runningMax[k], m[k] || 0);
+                    m[k] = runningMax[k];
                 });
-            });
-            
-            // Reset for second pass
-            allKeys.forEach(k => runningMax[k] = 0);
-            
-            // Second pass: apply ratchet
-            let maxBeforeFeb2027 = {};
-            monthlyData.forEach((m, idx) => {
-                // Store max before Feb 2027 for restoration after
-                if (m.month === 'Feb 2027') {
-                    maxBeforeFeb2027 = { ...runningMax };
-                }
-                
-                // Update running max (skip Feb 2027)
-                if (m.month !== 'Feb 2027') {
-                    allKeys.forEach(k => {
-                        runningMax[k] = Math.max(runningMax[k], m[k] || 0);
-                    });
-                }
-                
-                // After Feb 2027, restore running max to pre-Feb values
-                // (so March continues from Jan's trajectory, not Feb's spike)
-                if (m.month === 'Mar 2027' && Object.keys(maxBeforeFeb2027).length > 0) {
-                    allKeys.forEach(k => {
-                        runningMax[k] = Math.max(maxBeforeFeb2027[k] || 0, m[k] || 0);
-                    });
-                }
-                
-                // Apply ratchet: staff can't go below running max (except Feb 2027 outlier)
-                if (m.month !== 'Feb 2027') {
-                    allKeys.forEach(k => {
-                        m[k] = Math.max(m[k] || 0, runningMax[k]);
-                    });
-                }
             });
             
             return monthlyData;
@@ -2192,7 +2380,7 @@
                         const daysBack = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
                         onboardingStart.setDate(onboardingStart.getDate() - daysBack);
                     }
-                    data.push({ month: m.month, onboardingStart, ...deltas, total });
+                    data.push({ period: m.period, month: m.month, onboardingStart, ...deltas, total });
                 }
             });
             
@@ -2229,7 +2417,9 @@
             
             // Calculate data for ALL months (needed for continuity)
             let allMonthlyData = calculateMonthlyData(params, schedule, filters);
-            allMonthlyData = applyStaffRatchet(allMonthlyData, params);
+            if (filters.ratchet) {
+                allMonthlyData = applyStaffRatchet(allMonthlyData, params);
+            }
             const onboardingData = calculateOnboardingData(allMonthlyData, params.onboardingWeeks, params);
             
             // Get filtered months for display
@@ -2239,13 +2429,13 @@
             updateAdditionalLabels();
             document.getElementById('onboarding-lead-display').textContent = params.onboardingWeeks;
             
-            // Stats - use filtered data
+            // Stats - use calculated totals for accurate peak stats (not affected by filters)
             let peakFellows = 0, peakStaff = 0, peakFellowsLondon = 0, peakFellowsBerkeley = 0, peakStaffLondon = 0, peakStaffBerkeley = 0;
             filteredMonthlyData.forEach(m => {
-                if (m.fellows > peakFellows) peakFellows = m.fellows;
-                if (m.totalStaff > peakStaff) peakStaff = m.totalStaff;
-                if (m.london > peakFellowsLondon) peakFellowsLondon = m.london;
-                if (m.berkeley > peakFellowsBerkeley) peakFellowsBerkeley = m.berkeley;
+                if ((m.fellowsCalc || m.fellows) > peakFellows) peakFellows = m.fellowsCalc || m.fellows;
+                if ((m.totalStaffCalc || m.totalStaff) > peakStaff) peakStaff = m.totalStaffCalc || m.totalStaff;
+                if ((m.londonCalc || m.london) > peakFellowsLondon) peakFellowsLondon = m.londonCalc || m.london;
+                if ((m.berkeleyCalc || m.berkeley) > peakFellowsBerkeley) peakFellowsBerkeley = m.berkeleyCalc || m.berkeley;
                 if (m.londonStaffTotal > peakStaffLondon) peakStaffLondon = m.londonStaffTotal;
                 if (m.berkeleyStaffTotal > peakStaffBerkeley) peakStaffBerkeley = m.berkeleyStaffTotal;
             });
@@ -2257,15 +2447,15 @@
             document.getElementById('stat-peak-staff-london').textContent = peakStaffLondon;
             document.getElementById('stat-peak-staff-berkeley').textContent = peakStaffBerkeley;
             
-            // Calculate YoY growth (compare maximum values from each year span)
+            // Calculate YoY growth (compare maximum values from each year span) - use full calculated values
             const data2026 = allMonthlyData.filter(m => m.month.includes('2026'));
             const data2027 = allMonthlyData.filter(m => m.month.includes('2027'));
             
-            const max2026Fellows = Math.max(...data2026.map(m => m.fellows), 0);
-            const max2027Fellows = Math.max(...data2027.map(m => m.fellows), 0);
+            const max2026Fellows = Math.max(...data2026.map(m => m.fellowsCalc || m.fellows), 0);
+            const max2027Fellows = Math.max(...data2027.map(m => m.fellowsCalc || m.fellows), 0);
             
-            const max2026Staff = Math.max(...data2026.map(m => m.totalStaff), 0);
-            const max2027Staff = Math.max(...data2027.map(m => m.totalStaff), 0);
+            const max2026Staff = Math.max(...data2026.map(m => m.totalStaffCalc || m.totalStaff), 0);
+            const max2027Staff = Math.max(...data2027.map(m => m.totalStaffCalc || m.totalStaff), 0);
             
             // Show growth as multiplier (e.g., "1.8×" or "2026→27: 1.5×, 27→28: 1.3×")
             const fellowGrowthEl = document.getElementById('stat-fellow-growth');
@@ -2319,7 +2509,9 @@
             renderStaffingChart(filteredMonthlyData, filters, params);
             renderStaffingLocationChart(filteredMonthlyData, params);
             renderCohortGrowthChart(params, schedule);
+            renderStaffGrowthChart(allMonthlyData, params, schedule);
             renderTeamGrowthChart(allMonthlyData, params, schedule);
+            renderStaffPerCohortChart(allMonthlyData, params, schedule, filters);
             renderOfficeSpaceChart(allMonthlyData, params, schedule, filters);
             renderSummaryTable(filteredMonthlyData, peakFellows, schedule);
             renderStaffTable(filteredMonthlyData, params);
@@ -2330,14 +2522,16 @@
             const tbody = document.querySelector('#onboarding-table tbody');
             tbody.innerHTML = '';
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="13" style="text-align:center;color:var(--text-secondary)">No new hires needed</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="14" style="text-align:center;color:var(--text-secondary)">No new hires needed</td></tr>';
                 return;
             }
             data.forEach(r => {
                 const tr = document.createElement('tr');
+                const periodIndicator = r.period.includes(' E') ? '①' : '②';
                 tr.innerHTML = `
-                    <td><strong>${r.month}</strong></td>
+                    <td><strong>${r.month}</strong> <span style="opacity:0.5;font-size:0.7rem">${periodIndicator}</span></td>
                     <td class="onboarding-date">${formatDate(r.onboardingStart)}</td>
+                    <td>${r.leads > 0 ? `<span class="delta-positive">+${r.leads}</span>` : '—'}</td>
                     <td>${r.rms > 0 ? `<span class="delta-positive">+${r.rms}</span>` : '—'}</td>
                     <td>${r.srms > 0 ? `<span class="delta-positive">+${r.srms}</span>` : '—'}</td>
                     <td>${r.cms > 0 ? `<span class="delta-positive">+${r.cms}</span>` : '—'}</td>
@@ -2381,7 +2575,7 @@
             }
             
             const stackData = monthlyData.map(d => {
-                const row = { month: d.month };
+                const row = { period: d.period, month: d.month };
                 cohortList.forEach(c => row[c] = d.cohorts[c] || 0);
                 return row;
             });
@@ -2391,8 +2585,8 @@
             
             const maxY = d3.max(monthlyData, d => d.fellows) * 1.1 || 100;
             
-            const chartMonths = monthlyData.map(d => d.month);
-            const x = d3.scaleBand().domain(chartMonths).range([margin.left, width - margin.right]).padding(0.15);
+            const chartPeriods = monthlyData.map(d => d.period);
+            const x = d3.scaleBand().domain(chartPeriods).range([margin.left, width - margin.right]).padding(0.05);
             const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
             
             svg.append('g').selectAll('g').data(series).join('g')
@@ -2400,21 +2594,27 @@
                 .each(function(seriesData) {
                     const key = seriesData.key;
                     d3.select(this).selectAll('rect').data(seriesData).join('rect')
-                        .attr('x', d => x(d.data.month)).attr('y', d => y(d[1]))
-                        .attr('height', d => Math.max(0, y(d[0]) - y(d[1]))).attr('width', x.bandwidth()).attr('rx', 2)
+                        .attr('x', d => x(d.data.period)).attr('y', d => y(d[1]))
+                        .attr('height', d => Math.max(0, y(d[0]) - y(d[1]))).attr('width', x.bandwidth()).attr('rx', 1)
                         .style('cursor', 'pointer')
                         .on('mouseover', function(e, d) {
                             const val = d.data[key] || 0;
                             if (val > 0) {
                                 d3.select(this).attr('opacity', 0.7);
-                                showTooltip(e, `<div class="tooltip-label">${d.data.month} · ${key}</div><div class="tooltip-value">${val}</div>`);
+                                const periodLabel = d.data.period.includes(' E') ? 'Early ' + d.data.month : 'Late ' + d.data.month;
+                                showTooltip(e, `<div class="tooltip-label">${periodLabel} · ${key}</div><div class="tooltip-value">${val}</div>`);
                             }
                         })
                         .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
                         .on('mouseout', function() { d3.select(this).attr('opacity', 1); hideTooltip(); });
                 });
             
-            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
+            // X-axis with only month labels
+            const xAxis = d3.axisBottom(x).tickFormat((d, i) => {
+                if (d.includes(' L')) return d.replace(' L', '');
+                return '';
+            });
+            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(xAxis)
                 .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '9px');
             svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(5))
                 .selectAll('text').style('fill', '#8888a0').style('font-size', '9px');
@@ -2434,39 +2634,60 @@
             
             const width = container.clientWidth || 400;
             const height = 280;
-            const margin = { top: 20, right: 20, bottom: 50, left: 45 };
+            const margin = { top: 20, right: 90, bottom: 50, left: 45 };
             
             const svg = d3.select('#location-chart').append('svg').attr('width', width).attr('height', height);
             
             const maxY = d3.max(monthlyData, d => d.fellows) * 1.1 || 100;
-            const chartMonths = monthlyData.map(d => d.month);
-            const x = d3.scaleBand().domain(chartMonths).range([margin.left, width - margin.right]).padding(0.15);
+            const chartPeriods = monthlyData.map(d => d.period);
+            const x = d3.scaleBand().domain(chartPeriods).range([margin.left, width - margin.right]).padding(0.05);
             const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
             
-            const stackData = monthlyData.map(d => ({ month: d.month, Berkeley: d.berkeley, London: d.london }));
-            const series = d3.stack().keys(['Berkeley', 'London'])(stackData);
-            const colors = { Berkeley: '#4a9eff', London: '#ef4444' };
+            const stackData = monthlyData.map(d => ({ period: d.period, month: d.month, Berkeley: d.berkeley, London: d.london, Remote: d.remote }));
+            const series = d3.stack().keys(['Berkeley', 'London', 'Remote'])(stackData);
+            const colors = { Berkeley: '#4a9eff', London: '#ef4444', Remote: '#a855f7' };
             
             svg.append('g').selectAll('g').data(series).join('g')
                 .attr('fill', d => colors[d.key])
                 .each(function(seriesData) {
                     const key = seriesData.key;
                     d3.select(this).selectAll('rect').data(seriesData).join('rect')
-                        .attr('x', d => x(d.data.month)).attr('y', d => y(d[1]))
-                        .attr('height', d => Math.max(0, y(d[0]) - y(d[1]))).attr('width', x.bandwidth()).attr('rx', 2)
+                        .attr('x', d => x(d.data.period)).attr('y', d => y(d[1]))
+                        .attr('height', d => Math.max(0, y(d[0]) - y(d[1]))).attr('width', x.bandwidth()).attr('rx', 1)
                         .style('cursor', 'pointer')
                         .on('mouseover', function(e, d) {
                             d3.select(this).attr('opacity', 0.7);
-                            showTooltip(e, `<div class="tooltip-label">${d.data.month} · ${key}</div><div class="tooltip-value">${d.data[key]}</div>`);
+                            const periodLabel = d.data.period.includes(' E') ? 'Early ' + d.data.month : 'Late ' + d.data.month;
+                            showTooltip(e, `<div class="tooltip-label">${periodLabel} · ${key}</div><div class="tooltip-value">${d.data[key]}</div>`);
                         })
                         .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
                         .on('mouseout', function() { d3.select(this).attr('opacity', 1); hideTooltip(); });
                 });
             
-            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
+            // X-axis with only month labels (show only on 'L' periods to center labels)
+            const xAxis = d3.axisBottom(x).tickFormat((d, i) => {
+                // Only show label for late-month periods (every other tick)
+                if (d.includes(' L')) return d.replace(' L', '');
+                return '';
+            });
+            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(xAxis)
                 .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '9px');
             svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(5))
                 .selectAll('text').style('fill', '#8888a0').style('font-size', '9px');
+            
+            // Legend
+            const legendData = [
+                { key: 'Berkeley', color: '#4a9eff' },
+                { key: 'London', color: '#ef4444' },
+                { key: 'Remote', color: '#a855f7' }
+            ];
+            const legend = svg.append('g').attr('transform', `translate(${width - 80}, 25)`);
+            legendData.forEach((l, i) => {
+                legend.append('rect').attr('x', 0).attr('y', i * 18).attr('width', 12).attr('height', 12)
+                    .attr('fill', l.color).attr('rx', 2);
+                legend.append('text').attr('x', 17).attr('y', i * 18 + 10).text(l.key)
+                    .style('fill', '#f0f0f5').style('font-size', '10px');
+            });
         }
         
         function renderStaffingChart(monthlyData, filters, params) {
@@ -2475,7 +2696,7 @@
             
             const width = container.clientWidth || 400;
             const height = 280;
-            const margin = { top: 20, right: 70, bottom: 50, left: 45 };
+            const margin = { top: 20, right: 90, bottom: 50, left: 45 };
             
             const svg = d3.select('#staffing-chart').append('svg').attr('width', width).attr('height', height);
             
@@ -2503,12 +2724,12 @@
             });
             
             const maxY = d3.max(dataWithTotal, d => d._visibleTotal) * 1.15 || 20;
-            const chartMonths = monthlyData.map(d => d.month);
-            const x = d3.scalePoint().domain(chartMonths).range([margin.left, width - margin.right]);
+            const chartPeriods = monthlyData.map(d => d.period);
+            const x = d3.scalePoint().domain(chartPeriods).range([margin.left, width - margin.right]);
             const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
             
             // Draw total line first (behind others)
-            const totalLine = d3.line().x(d => x(d.month)).y(d => y(d._visibleTotal)).curve(d3.curveMonotoneX);
+            const totalLine = d3.line().x(d => x(d.period)).y(d => y(d._visibleTotal)).curve(d3.curveMonotoneX);
             svg.append('path').datum(dataWithTotal)
                 .attr('fill', 'none')
                 .attr('stroke', '#f0f0f5')
@@ -2517,41 +2738,53 @@
                 .attr('d', totalLine);
             
             svg.selectAll('.dot-total').data(dataWithTotal).join('circle')
-                .attr('cx', d => x(d.month)).attr('cy', d => y(d._visibleTotal)).attr('r', 4).attr('fill', '#f0f0f5')
+                .attr('cx', d => x(d.period)).attr('cy', d => y(d._visibleTotal)).attr('r', 4).attr('fill', '#f0f0f5')
                 .style('cursor', 'pointer')
                 .on('mouseover', function(e, d) {
                     d3.select(this).attr('r', 6);
-                    showTooltip(e, `<div class="tooltip-label">${d.month}</div><div class="tooltip-value">${d._visibleTotal} Total (visible)</div>`);
+                    const periodLabel = d.period.includes(' E') ? 'Early ' + d.month : 'Late ' + d.month;
+                    showTooltip(e, `<div class="tooltip-label">${periodLabel}</div><div class="tooltip-value">${d._visibleTotal} Total (visible)</div>`);
                 })
                 .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
                 .on('mouseout', function() { d3.select(this).attr('r', 4); hideTooltip(); });
             
             lines.forEach(l => {
-                const line = d3.line().x(d => x(d.month)).y(d => y(d[l.key] || 0)).curve(d3.curveMonotoneX);
+                const line = d3.line().x(d => x(d.period)).y(d => y(d[l.key] || 0)).curve(d3.curveMonotoneX);
                 svg.append('path').datum(monthlyData).attr('fill', 'none').attr('stroke', l.color).attr('stroke-width', 2).attr('d', line);
                 svg.selectAll(`.dot-${l.key}`).data(monthlyData).join('circle')
-                    .attr('cx', d => x(d.month)).attr('cy', d => y(d[l.key] || 0)).attr('r', 3).attr('fill', l.color)
+                    .attr('cx', d => x(d.period)).attr('cy', d => y(d[l.key] || 0)).attr('r', 3).attr('fill', l.color)
                     .style('cursor', 'pointer')
                     .on('mouseover', function(e, d) {
                         d3.select(this).attr('r', 5);
-                        showTooltip(e, `<div class="tooltip-label">${d.month}</div><div class="tooltip-value">${d[l.key] || 0} ${l.label}</div>`);
+                        const periodLabel = d.period.includes(' E') ? 'Early ' + d.month : 'Late ' + d.month;
+                        showTooltip(e, `<div class="tooltip-label">${periodLabel}</div><div class="tooltip-value">${d[l.key] || 0} ${l.label}</div>`);
                     })
                     .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
                     .on('mouseout', function() { d3.select(this).attr('r', 3); hideTooltip(); });
             });
             
-            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
+            // X-axis with only month labels
+            const xAxis = d3.axisBottom(x).tickFormat((d, i) => {
+                if (d.includes(' L')) return d.replace(' L', '');
+                return '';
+            });
+            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(xAxis)
                 .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '9px');
             svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(5))
                 .selectAll('text').style('fill', '#8888a0').style('font-size', '9px');
             
-            const legend = svg.append('g').attr('transform', `translate(${width - 60}, 10)`);
+            const legend = svg.append('g').attr('transform', `translate(${width - 80}, 5)`);
             // Add total to legend first
-            legend.append('line').attr('x1', -3).attr('x2', 3).attr('y1', 0).attr('y2', 0).attr('stroke', '#f0f0f5').attr('stroke-width', 2).attr('stroke-dasharray', '3,2');
-            legend.append('text').attr('x', 6).attr('y', 3).text('Total').style('fill', '#f0f0f5').style('font-size', '8px').style('font-weight', 'bold');
-            lines.slice(0, 8).forEach((l, i) => {
-                legend.append('circle').attr('cx', 0).attr('cy', (i + 1) * 14).attr('r', 3).attr('fill', l.color);
-                legend.append('text').attr('x', 6).attr('y', (i + 1) * 14 + 3).text(l.label).style('fill', '#f0f0f5').style('font-size', '8px');
+            legend.append('line').attr('x1', -3).attr('x2', 8).attr('y1', 0).attr('y2', 0).attr('stroke', '#f0f0f5').attr('stroke-width', 2).attr('stroke-dasharray', '3,2');
+            legend.append('text').attr('x', 12).attr('y', 3).text('Total').style('fill', '#f0f0f5').style('font-size', '8px').style('font-weight', 'bold');
+            // Show all lines in legend (two columns if needed)
+            const itemsPerCol = 6;
+            lines.forEach((l, i) => {
+                const col = Math.floor(i / itemsPerCol);
+                const row = i % itemsPerCol;
+                const xOffset = col * 45;
+                legend.append('circle').attr('cx', xOffset).attr('cy', (row + 1) * 12).attr('r', 3).attr('fill', l.color);
+                legend.append('text').attr('x', xOffset + 6).attr('y', (row + 1) * 12 + 3).text(l.label).style('fill', '#f0f0f5').style('font-size', '7px');
             });
         }
         
@@ -2562,8 +2795,9 @@
                 const tr = document.createElement('tr');
                 if (r.fellows === peak && peak > 0) tr.className = 'highlight-row';
                 const cohortStr = Object.entries(r.cohorts).map(([k,v]) => `${getCohortSeasonLabel(k, schedule)}(${v})`).join(', ');
+                const periodIndicator = r.period.includes(' E') ? '①' : '②';
                 tr.innerHTML = `
-                    <td><strong>${r.month}</strong></td>
+                    <td><strong>${r.month}</strong> <span style="opacity:0.5;font-size:0.7rem">${periodIndicator}</span></td>
                     <td>${r.fellows}</td>
                     <td><span class="location-badge london">${r.london}</span></td>
                     <td><span class="location-badge berkeley">${r.berkeley}</span></td>
@@ -2579,8 +2813,9 @@
             tbody.innerHTML = '';
             monthlyData.forEach(r => {
                 const tr = document.createElement('tr');
+                const periodIndicator = r.period.includes(' E') ? '①' : '②';
                 tr.innerHTML = `
-                    <td><strong>${r.month}</strong></td>
+                    <td><strong>${r.month}</strong> <span style="opacity:0.5;font-size:0.7rem">${periodIndicator}</span></td>
                     <td>${r.leads}</td>
                     <td>${r.rms}</td>
                     <td>${r.srms}</td>
@@ -2603,10 +2838,12 @@
             tbody.innerHTML = '';
             monthlyData.forEach(r => {
                 const tr = document.createElement('tr');
+                const periodIndicator = r.period.includes(' E') ? '①' : '②';
                 tr.innerHTML = `
-                    <td><strong>${r.month}</strong></td>
+                    <td><strong>${r.month}</strong> <span style="opacity:0.5;font-size:0.7rem">${periodIndicator}</span></td>
                     <td>${r.fellows}</td>
                     <td><span class="location-badge london">${r.london}</span></td>
+                    <td><span class="location-badge" style="background: rgba(168,85,247,0.2); color: #a855f7;">${r.remote || 0}</span></td>
                     <td><span class="location-badge berkeley">${r.berkeley}</span></td>
                     <td><strong>${r.totalStaff}</strong></td>
                     <td><span class="location-badge london">${r.londonStaffTotal}</span></td>
@@ -2627,9 +2864,10 @@
             const svg = d3.select('#staffing-location-chart').append('svg').attr('width', width).attr('height', height);
             
             const lines = [
-                { key: 'londonStaffTotal', color: '#ef4444', label: 'London Staff' },
                 { key: 'berkeleyStaffTotal', color: '#4a9eff', label: 'Berkeley Staff' },
-                { key: 'totalStaff', color: '#a855f7', label: 'Total Staff' }
+                { key: 'londonStaffTotal', color: '#ef4444', label: 'London Staff' },
+                { key: 'remoteStaffTotal', color: '#a855f7', label: 'Remote Staff' },
+                { key: 'totalStaff', color: '#f0f0f5', label: 'Total Staff', dashed: true }
             ];
             
             // Add budget line if constraint is enabled
@@ -2642,12 +2880,12 @@
                 const budget = params.growthEnabled && isFinite(d.staffBudget) ? d.staffBudget : 0;
                 return Math.max(d.totalStaff, budget);
             }) * 1.15 || 50;
-            const chartMonths = monthlyData.map(d => d.month);
-            const x = d3.scalePoint().domain(chartMonths).range([margin.left, width - margin.right]);
+            const chartPeriods = monthlyData.map(d => d.period);
+            const x = d3.scalePoint().domain(chartPeriods).range([margin.left, width - margin.right]);
             const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
             
             lines.forEach(l => {
-                const line = d3.line().x(d => x(d.month)).y(d => y(d[l.key] || 0)).curve(d3.curveMonotoneX);
+                const line = d3.line().x(d => x(d.period)).y(d => y(d[l.key] || 0)).curve(d3.curveMonotoneX);
                 svg.append('path').datum(monthlyData)
                     .attr('fill', 'none')
                     .attr('stroke', l.color)
@@ -2657,12 +2895,13 @@
                     
                 if (!l.dashed) {
                     svg.selectAll(`.dot-${l.key}`).data(monthlyData).join('circle')
-                        .attr('cx', d => x(d.month)).attr('cy', d => y(d[l.key] || 0)).attr('r', 4).attr('fill', l.color)
+                        .attr('cx', d => x(d.period)).attr('cy', d => y(d[l.key] || 0)).attr('r', 4).attr('fill', l.color)
                         .style('cursor', 'pointer')
                         .on('mouseover', function(e, d) {
                             d3.select(this).attr('r', 6);
+                            const periodLabel = d.period.includes(' E') ? 'Early ' + d.month : 'Late ' + d.month;
                             const budgetInfo = params.growthEnabled ? ` (Budget: ${d.staffBudget})` : '';
-                            showTooltip(e, `<div class="tooltip-label">${d.month}${budgetInfo}</div><div class="tooltip-value">${d[l.key] || 0} ${l.label}</div>`);
+                            showTooltip(e, `<div class="tooltip-label">${periodLabel}${budgetInfo}</div><div class="tooltip-value">${d[l.key] || 0} ${l.label}</div>`);
                         })
                         .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
                         .on('mouseout', function() { d3.select(this).attr('r', 4); hideTooltip(); });
@@ -2674,7 +2913,7 @@
                 monthlyData.forEach(d => {
                     if (d.overBudget) {
                         svg.append('circle')
-                            .attr('cx', x(d.month))
+                            .attr('cx', x(d.period))
                             .attr('cy', y(d.totalStaff))
                             .attr('r', 8)
                             .attr('fill', 'none')
@@ -2684,7 +2923,12 @@
                 });
             }
             
-            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
+            // X-axis with only month labels
+            const xAxis = d3.axisBottom(x).tickFormat((d, i) => {
+                if (d.includes(' L')) return d.replace(' L', '');
+                return '';
+            });
+            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(xAxis)
                 .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '9px');
             svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(6))
                 .selectAll('text').style('fill', '#8888a0').style('font-size', '9px');
@@ -2718,20 +2962,72 @@
                 calculateConstrainedCohortSizes(params, schedule) : 
                 calculateCohortSizes(params);
             
-            // Build cohort data for main cohorts only (.0)
-            const cohorts = ['9.0', '10.0', '11.0', '12.0', '13.0', '14.0', '15.0'];
+            // Add historical cohort sizes (for growth calculations)
+            const historicalSizes = {
+                '5.0': 60,  // Winter 2024
+                '6.0': 88,  // Summer 2024
+                '7.0': 77   // Winter 2025
+            };
+            const allSizes = { ...historicalSizes, ...sizes };
+            
+            // Calculate extension sizes for historical cohorts using current ratios
+            const ext1Rate = params.ext1Rate || 0.5;
+            const ext2Rate = params.ext2Rate || 0.25;
+            allSizes['5.1'] = Math.round(historicalSizes['5.0'] * ext1Rate);
+            allSizes['5.2'] = Math.round(historicalSizes['5.0'] * ext2Rate);
+            allSizes['6.1'] = Math.round(historicalSizes['6.0'] * ext1Rate);
+            allSizes['6.2'] = Math.round(historicalSizes['6.0'] * ext2Rate);
+            allSizes['7.1'] = Math.round(historicalSizes['7.0'] * ext1Rate);
+            allSizes['7.2'] = Math.round(historicalSizes['7.0'] * ext2Rate);
+            
+            // Season-based YoY mapping (same season, 1 year prior)
+            // Winter: 5.0 -> 7.0 -> 9.0 -> 12.0 -> 15.0
+            // Summer: 6.0 -> 8.0 -> 10.0 -> 13.0
+            // Autumn: 11.0 -> 14.0 (no autumn before 11.0)
+            const yoyMapping = {
+                '8.0': '6.0',   // Summer 2025 vs Summer 2024
+                '9.0': '7.0',   // Winter 2026 vs Winter 2025
+                '10.0': '8.0',  // Summer 2026 vs Summer 2025
+                '11.0': null,   // Autumn 2026 - no previous autumn
+                '12.0': '9.0',  // Winter 2027 vs Winter 2026
+                '13.0': '10.0', // Summer 2027 vs Summer 2026
+                '14.0': '11.0', // Autumn 2027 vs Autumn 2026
+                '15.0': '12.0'  // Winter 2028 vs Winter 2027
+            };
+            
+            // Build cohort data for main cohorts (.0) - now including 8.0
+            const cohorts = ['8.0', '9.0', '10.0', '11.0', '12.0', '13.0', '14.0', '15.0'];
             const cohortData = cohorts.map((id, i) => {
-                const size = sizes[id] || 0;
-                const prevSize = i > 0 ? (sizes[cohorts[i-1]] || 0) : null;
-                const growth = prevSize && prevSize > 0 ? ((size / prevSize - 1) * 100).toFixed(0) : null;
+                const size = allSizes[id] || 0;
+                
+                // Sequential growth (vs previous cohort in sequence)
+                const prevCohortId = i > 0 ? cohorts[i-1] : '7.0';
+                const prevSize = allSizes[prevCohortId] || 0;
+                const growth = prevSize > 0 ? ((size / prevSize - 1) * 100).toFixed(0) : null;
+                
+                // Year-over-year growth (same season, 1 year prior)
+                const yoyPrevId = yoyMapping[id];
+                const yoyPrevSize = yoyPrevId ? (allSizes[yoyPrevId] || 0) : null;
+                const yoyGrowth = yoyPrevSize && yoyPrevSize > 0 ? ((size / yoyPrevSize - 1) * 100).toFixed(0) : null;
+                const yoyCompare = yoyPrevId ? yoyPrevId.replace('.0', '') : null;
+                
                 const seasonLabel = getCohortSeasonLabel(id, schedule);
-                return { id, size, growth: growth !== null ? parseFloat(growth) : null, label: seasonLabel, shortLabel: id.replace('.0', '') };
+                return { 
+                    id, size, 
+                    growth: growth !== null ? parseFloat(growth) : null, 
+                    yoyGrowth: yoyGrowth !== null ? parseFloat(yoyGrowth) : null,
+                    yoyCompare,
+                    label: seasonLabel, 
+                    shortLabel: id.replace('.0', '') 
+                };
             });
             
             const maxSize = d3.max(cohortData, d => d.size) * 1.15 || 100;
             const growthValues = cohortData.filter(d => d.growth !== null).map(d => d.growth);
-            const minGrowth = Math.min(0, ...growthValues);
-            const maxGrowth = Math.max(0, ...growthValues) * 1.15 || 50;
+            const yoyGrowthValues = cohortData.filter(d => d.yoyGrowth !== null).map(d => d.yoyGrowth);
+            const allGrowthValues = [...growthValues, ...yoyGrowthValues];
+            const minGrowth = Math.min(0, ...allGrowthValues);
+            const maxGrowth = Math.max(0, ...allGrowthValues) * 1.15 || 50;
             
             const x = d3.scaleBand().domain(cohortData.map(d => d.label)).range([margin.left, width - margin.right]).padding(0.3);
             const ySize = d3.scaleLinear().domain([0, maxSize]).range([height - margin.bottom, margin.top]);
@@ -2749,8 +3045,10 @@
                 .style('cursor', 'pointer')
                 .on('mouseover', function(e, d) {
                     d3.select(this).attr('opacity', 0.7);
-                    const growthText = d.growth !== null ? ` (${d.growth > 0 ? '+' : ''}${d.growth}%)` : '';
-                    showTooltip(e, `<div class="tooltip-label">${d.label}</div><div class="tooltip-value">${d.size} fellows${growthText}</div>`);
+                    const growthText = d.growth !== null ? `${d.growth > 0 ? '+' : ''}${d.growth}% vs prev` : '';
+                    const yoyText = d.yoyGrowth !== null ? `${d.yoyGrowth > 0 ? '+' : ''}${d.yoyGrowth}% vs ${d.yoyCompare} (YoY)` : '';
+                    const details = [growthText, yoyText].filter(t => t).join('<br>');
+                    showTooltip(e, `<div class="tooltip-label">${d.label}</div><div class="tooltip-value">${d.size} fellows</div>${details ? '<div style="font-size:0.75rem;margin-top:4px;color:#aaa">' + details + '</div>' : ''}`);
                 })
                 .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
                 .on('mouseout', function() { d3.select(this).attr('opacity', 1); hideTooltip(); });
@@ -2766,7 +3064,7 @@
                 .style('font-weight', 'bold')
                 .text(d => d.size);
             
-            // Growth rate line (only for cohorts with previous)
+            // Sequential growth rate line (vs previous cohort)
             const growthData = cohortData.filter(d => d.growth !== null);
             if (growthData.length > 0) {
                 const line = d3.line()
@@ -2790,7 +3088,8 @@
                     .style('cursor', 'pointer')
                     .on('mouseover', function(e, d) {
                         d3.select(this).attr('r', 7);
-                        showTooltip(e, `<div class="tooltip-label">Cohort ${d.label} Growth</div><div class="tooltip-value">${d.growth > 0 ? '+' : ''}${d.growth}% vs previous</div>`);
+                        const yoyText = d.yoyGrowth !== null ? `<br><span style="color:#f59e0b">${d.yoyGrowth > 0 ? '+' : ''}${d.yoyGrowth}% YoY (vs ${d.yoyCompare})</span>` : '';
+                        showTooltip(e, `<div class="tooltip-label">${d.label}</div><div class="tooltip-value" style="color:#22c55e">${d.growth > 0 ? '+' : ''}${d.growth}% vs previous</div>${yoyText}`);
                     })
                     .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
                     .on('mouseout', function() { d3.select(this).attr('r', 5); hideTooltip(); });
@@ -2805,6 +3104,49 @@
                     .style('font-size', '10px')
                     .style('font-weight', 'bold')
                     .text(d => `${d.growth > 0 ? '+' : ''}${d.growth}%`);
+            }
+            
+            // Year-over-year growth rate line (vs same season last year)
+            const yoyData = cohortData.filter(d => d.yoyGrowth !== null);
+            if (yoyData.length > 0) {
+                const yoyLine = d3.line()
+                    .x(d => x(d.label) + x.bandwidth() / 2)
+                    .y(d => yGrowth(d.yoyGrowth))
+                    .curve(d3.curveMonotoneX);
+                
+                svg.append('path')
+                    .datum(yoyData)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#f59e0b')
+                    .attr('stroke-width', 2.5)
+                    .attr('stroke-dasharray', '6,3')
+                    .attr('d', yoyLine);
+                
+                svg.selectAll('.yoy-dot').data(yoyData).join('circle')
+                    .attr('class', 'yoy-dot')
+                    .attr('cx', d => x(d.label) + x.bandwidth() / 2)
+                    .attr('cy', d => yGrowth(d.yoyGrowth))
+                    .attr('r', 5)
+                    .attr('fill', '#f59e0b')
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(e, d) {
+                        d3.select(this).attr('r', 7);
+                        const seqText = d.growth !== null ? `<br><span style="color:#22c55e">${d.growth > 0 ? '+' : ''}${d.growth}% vs previous</span>` : '';
+                        showTooltip(e, `<div class="tooltip-label">${d.label}</div><div class="tooltip-value" style="color:#f59e0b">${d.yoyGrowth > 0 ? '+' : ''}${d.yoyGrowth}% YoY (vs ${d.yoyCompare})</div>${seqText}`);
+                    })
+                    .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
+                    .on('mouseout', function() { d3.select(this).attr('r', 5); hideTooltip(); });
+                
+                // YoY growth rate labels (offset to avoid overlap)
+                svg.selectAll('.yoy-label').data(yoyData).join('text')
+                    .attr('class', 'yoy-label')
+                    .attr('x', d => x(d.label) + x.bandwidth() / 2 + 20)
+                    .attr('y', d => yGrowth(d.yoyGrowth) + 4)
+                    .attr('text-anchor', 'start')
+                    .style('fill', '#f59e0b')
+                    .style('font-size', '9px')
+                    .style('font-weight', 'bold')
+                    .text(d => `${d.yoyGrowth > 0 ? '+' : ''}${d.yoyGrowth}%`);
             }
             
             // Zero line for growth
@@ -2835,12 +3177,249 @@
                 .style('fill', '#22c55e').style('font-size', '10px').style('text-anchor', 'middle').text('Growth %');
             
             // Legend
-            const legend = svg.append('g').attr('transform', `translate(${width - 110}, 15)`);
+            const legend = svg.append('g').attr('transform', `translate(${width - 110}, 10)`);
             legend.append('rect').attr('x', 0).attr('y', 0).attr('width', 12).attr('height', 12).attr('fill', '#3b82f6').attr('rx', 2);
             legend.append('text').attr('x', 18).attr('y', 10).text('Size').style('fill', '#f0f0f5').style('font-size', '10px');
-            legend.append('line').attr('x1', 0).attr('x2', 12).attr('y1', 24).attr('y2', 24).attr('stroke', '#22c55e').attr('stroke-width', 2.5);
-            legend.append('circle').attr('cx', 6).attr('cy', 24).attr('r', 4).attr('fill', '#22c55e');
-            legend.append('text').attr('x', 18).attr('y', 28).text('Growth').style('fill', '#f0f0f5').style('font-size', '10px');
+            legend.append('line').attr('x1', 0).attr('x2', 12).attr('y1', 22).attr('y2', 22).attr('stroke', '#22c55e').attr('stroke-width', 2.5);
+            legend.append('circle').attr('cx', 6).attr('cy', 22).attr('r', 4).attr('fill', '#22c55e');
+            legend.append('text').attr('x', 18).attr('y', 26).text('vs Prev').style('fill', '#f0f0f5').style('font-size', '10px');
+            legend.append('line').attr('x1', 0).attr('x2', 12).attr('y1', 38).attr('y2', 38).attr('stroke', '#f59e0b').attr('stroke-width', 2.5).attr('stroke-dasharray', '4,2');
+            legend.append('circle').attr('cx', 6).attr('cy', 38).attr('r', 4).attr('fill', '#f59e0b');
+            legend.append('text').attr('x', 18).attr('y', 42).text('YoY').style('fill', '#f0f0f5').style('font-size', '10px');
+        }
+        
+        function renderStaffGrowthChart(allMonthlyData, params, schedule) {
+            const container = document.getElementById('staff-growth-chart');
+            container.innerHTML = '';
+            
+            const width = container.clientWidth || 800;
+            const height = 280;
+            const margin = { top: 20, right: 120, bottom: 70, left: 55 };
+            
+            const svg = d3.select('#staff-growth-chart').append('svg').attr('width', width).attr('height', height);
+            
+            // Season-based YoY mapping (same season, 1 year prior)
+            // Only map to cohorts we have staff data for (9.0+)
+            const yoyMapping = {
+                '9.0': null,    // Winter 2026 vs Winter 2025 (no data for 7.0)
+                '10.0': null,   // Summer 2026 vs Summer 2025 (no data for 8.0 in projection)
+                '11.0': null,   // Autumn 2026 - no previous autumn
+                '12.0': '9.0',  // Winter 2027 vs Winter 2026
+                '13.0': '10.0', // Summer 2027 vs Summer 2026
+                '14.0': '11.0', // Autumn 2027 vs Autumn 2026
+                '15.0': '12.0'  // Winter 2028 vs Winter 2027
+            };
+            
+            // Build staff data for each main cohort - starting from 9.0
+            const cohorts = ['9.0', '10.0', '11.0', '12.0', '13.0', '14.0', '15.0'];
+            const staffByCorhort = {};
+            
+            const cohortData = cohorts.map((id, i) => {
+                const seasonLabel = getCohortSeasonLabel(id, schedule);
+                const s = schedule[id];
+                
+                if (!s || !s.start || !s.end) {
+                    return { id, staff: 0, growth: null, yoyGrowth: null, yoyCompare: null, label: seasonLabel, shortLabel: id.replace('.0', '') };
+                }
+                
+                const startDate = new Date(s.start);
+                const endDate = new Date(s.end);
+                
+                // Find peak staff during this cohort's active period (use filtered totalStaff)
+                let peakStaff = 0;
+                allMonthlyData.forEach(m => {
+                    const date = periodDates[m.period];
+                    if (date >= startDate && date <= endDate) {
+                        peakStaff = Math.max(peakStaff, m.totalStaff || 0);
+                    }
+                });
+                
+                staffByCorhort[id] = peakStaff;
+                return { id, staff: peakStaff, growth: null, yoyGrowth: null, yoyCompare: null, label: seasonLabel, shortLabel: id.replace('.0', '') };
+            });
+            
+            // Calculate sequential and YoY growth rates
+            cohortData.forEach((d, i) => {
+                // Sequential growth (vs previous cohort)
+                if (i > 0) {
+                    const prevStaff = cohortData[i - 1].staff;
+                    if (prevStaff > 0) {
+                        d.growth = parseFloat(((d.staff / prevStaff - 1) * 100).toFixed(0));
+                    }
+                }
+                
+                // Year-over-year growth (same season, 1 year prior)
+                const yoyPrevId = yoyMapping[d.id];
+                if (yoyPrevId && staffByCorhort[yoyPrevId] > 0) {
+                    d.yoyGrowth = parseFloat(((d.staff / staffByCorhort[yoyPrevId] - 1) * 100).toFixed(0));
+                    d.yoyCompare = yoyPrevId.replace('.0', '');
+                }
+            });
+            
+            const maxStaff = d3.max(cohortData, d => d.staff) * 1.15 || 100;
+            const growthValues = cohortData.filter(d => d.growth !== null).map(d => d.growth);
+            const yoyGrowthValues = cohortData.filter(d => d.yoyGrowth !== null).map(d => d.yoyGrowth);
+            const allGrowthValues = [...growthValues, ...yoyGrowthValues];
+            const minGrowth = Math.min(0, ...allGrowthValues);
+            const maxGrowth = Math.max(0, ...allGrowthValues) * 1.15 || 50;
+            
+            const x = d3.scaleBand().domain(cohortData.map(d => d.label)).range([margin.left, width - margin.right]).padding(0.3);
+            const yStaff = d3.scaleLinear().domain([0, maxStaff]).range([height - margin.bottom, margin.top]);
+            const yGrowth = d3.scaleLinear().domain([minGrowth - 10, maxGrowth]).range([height - margin.bottom, margin.top]);
+            
+            // Bars for staff counts
+            svg.selectAll('.staff-bar').data(cohortData).join('rect')
+                .attr('class', 'staff-bar')
+                .attr('x', d => x(d.label))
+                .attr('y', d => yStaff(d.staff))
+                .attr('width', x.bandwidth())
+                .attr('height', d => Math.max(0, yStaff(0) - yStaff(d.staff)))
+                .attr('fill', '#a855f7')
+                .attr('rx', 3)
+                .style('cursor', 'pointer')
+                .on('mouseover', function(e, d) {
+                    d3.select(this).attr('opacity', 0.7);
+                    const growthText = d.growth !== null ? `${d.growth > 0 ? '+' : ''}${d.growth}% vs prev` : '';
+                    const yoyText = d.yoyGrowth !== null ? `${d.yoyGrowth > 0 ? '+' : ''}${d.yoyGrowth}% vs ${d.yoyCompare} (YoY)` : '';
+                    const details = [growthText, yoyText].filter(t => t).join('<br>');
+                    showTooltip(e, `<div class="tooltip-label">${d.label}</div><div class="tooltip-value">${d.staff} staff</div>${details ? '<div style="font-size:0.75rem;margin-top:4px;color:#aaa">' + details + '</div>' : ''}`);
+                })
+                .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
+                .on('mouseout', function() { d3.select(this).attr('opacity', 1); hideTooltip(); });
+            
+            // Staff labels on bars
+            svg.selectAll('.staff-label').data(cohortData).join('text')
+                .attr('class', 'staff-label')
+                .attr('x', d => x(d.label) + x.bandwidth() / 2)
+                .attr('y', d => yStaff(d.staff) - 5)
+                .attr('text-anchor', 'middle')
+                .style('fill', '#f0f0f5')
+                .style('font-size', '11px')
+                .style('font-weight', 'bold')
+                .text(d => d.staff);
+            
+            // Sequential growth rate line (green, solid - same as Cohort Growth chart)
+            const growthData = cohortData.filter(d => d.growth !== null);
+            if (growthData.length > 0) {
+                const line = d3.line()
+                    .x(d => x(d.label) + x.bandwidth() / 2)
+                    .y(d => yGrowth(d.growth))
+                    .curve(d3.curveMonotoneX);
+                
+                svg.append('path')
+                    .datum(growthData)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#22c55e')
+                    .attr('stroke-width', 2.5)
+                    .attr('d', line);
+                
+                svg.selectAll('.growth-dot').data(growthData).join('circle')
+                    .attr('class', 'growth-dot')
+                    .attr('cx', d => x(d.label) + x.bandwidth() / 2)
+                    .attr('cy', d => yGrowth(d.growth))
+                    .attr('r', 5)
+                    .attr('fill', '#22c55e')
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(e, d) {
+                        d3.select(this).attr('r', 7);
+                        const yoyText = d.yoyGrowth !== null ? `<br><span style="color:#f59e0b">${d.yoyGrowth > 0 ? '+' : ''}${d.yoyGrowth}% YoY (vs ${d.yoyCompare})</span>` : '';
+                        showTooltip(e, `<div class="tooltip-label">Staff Growth for ${d.label}</div><div class="tooltip-value" style="color:#22c55e">${d.growth > 0 ? '+' : ''}${d.growth}% vs previous</div>${yoyText}`);
+                    })
+                    .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
+                    .on('mouseout', function() { d3.select(this).attr('r', 5); hideTooltip(); });
+                
+                // Growth rate labels
+                svg.selectAll('.growth-label').data(growthData).join('text')
+                    .attr('class', 'growth-label')
+                    .attr('x', d => x(d.label) + x.bandwidth() / 2)
+                    .attr('y', d => yGrowth(d.growth) - 8)
+                    .attr('text-anchor', 'middle')
+                    .style('fill', '#22c55e')
+                    .style('font-size', '10px')
+                    .style('font-weight', 'bold')
+                    .text(d => `${d.growth > 0 ? '+' : ''}${d.growth}%`);
+            }
+            
+            // Year-over-year growth rate line (orange, dashed - same as Cohort Growth chart)
+            const yoyData = cohortData.filter(d => d.yoyGrowth !== null);
+            if (yoyData.length > 0) {
+                const yoyLine = d3.line()
+                    .x(d => x(d.label) + x.bandwidth() / 2)
+                    .y(d => yGrowth(d.yoyGrowth))
+                    .curve(d3.curveMonotoneX);
+                
+                svg.append('path')
+                    .datum(yoyData)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#f59e0b')
+                    .attr('stroke-width', 2.5)
+                    .attr('stroke-dasharray', '6,3')
+                    .attr('d', yoyLine);
+                
+                svg.selectAll('.yoy-dot').data(yoyData).join('circle')
+                    .attr('class', 'yoy-dot')
+                    .attr('cx', d => x(d.label) + x.bandwidth() / 2)
+                    .attr('cy', d => yGrowth(d.yoyGrowth))
+                    .attr('r', 5)
+                    .attr('fill', '#f59e0b')
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(e, d) {
+                        d3.select(this).attr('r', 7);
+                        const seqText = d.growth !== null ? `<br><span style="color:#22c55e">${d.growth > 0 ? '+' : ''}${d.growth}% vs previous</span>` : '';
+                        showTooltip(e, `<div class="tooltip-label">Staff Growth for ${d.label}</div><div class="tooltip-value" style="color:#f59e0b">${d.yoyGrowth > 0 ? '+' : ''}${d.yoyGrowth}% YoY (vs ${d.yoyCompare})</div>${seqText}`);
+                    })
+                    .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
+                    .on('mouseout', function() { d3.select(this).attr('r', 5); hideTooltip(); });
+                
+                // YoY growth rate labels (offset to avoid overlap)
+                svg.selectAll('.yoy-label').data(yoyData).join('text')
+                    .attr('class', 'yoy-label')
+                    .attr('x', d => x(d.label) + x.bandwidth() / 2 + 20)
+                    .attr('y', d => yGrowth(d.yoyGrowth) + 4)
+                    .attr('text-anchor', 'start')
+                    .style('fill', '#f59e0b')
+                    .style('font-size', '9px')
+                    .style('font-weight', 'bold')
+                    .text(d => `${d.yoyGrowth > 0 ? '+' : ''}${d.yoyGrowth}%`);
+            }
+            
+            // Zero line for growth
+            svg.append('line')
+                .attr('x1', margin.left)
+                .attr('x2', width - margin.right)
+                .attr('y1', yGrowth(0))
+                .attr('y2', yGrowth(0))
+                .attr('stroke', '#8888a0')
+                .attr('stroke-width', 1)
+                .attr('stroke-dasharray', '4,2');
+            
+            // Axes
+            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
+                .selectAll('text').attr('transform', 'rotate(-35)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '10px');
+            
+            svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(yStaff).ticks(5))
+                .selectAll('text').style('fill', '#a855f7').style('font-size', '9px');
+            
+            svg.append('g').attr('transform', `translate(${width - margin.right},0)`).call(d3.axisRight(yGrowth).ticks(5).tickFormat(d => d + '%'))
+                .selectAll('text').style('fill', '#22c55e').style('font-size', '9px');
+            
+            // Axis labels
+            svg.append('text').attr('x', margin.left - 40).attr('y', height / 2).attr('transform', `rotate(-90, ${margin.left - 40}, ${height / 2})`)
+                .style('fill', '#a855f7').style('font-size', '10px').style('text-anchor', 'middle').text('Peak Staff');
+            
+            svg.append('text').attr('x', width - margin.right + 45).attr('y', height / 2).attr('transform', `rotate(90, ${width - margin.right + 45}, ${height / 2})`)
+                .style('fill', '#22c55e').style('font-size', '10px').style('text-anchor', 'middle').text('Growth %');
+            
+            // Legend (matching Cohort Growth chart)
+            const legend = svg.append('g').attr('transform', `translate(${width - 110}, 10)`);
+            legend.append('rect').attr('x', 0).attr('y', 0).attr('width', 12).attr('height', 12).attr('fill', '#a855f7').attr('rx', 2);
+            legend.append('text').attr('x', 18).attr('y', 10).text('Staff').style('fill', '#f0f0f5').style('font-size', '10px');
+            legend.append('line').attr('x1', 0).attr('x2', 12).attr('y1', 22).attr('y2', 22).attr('stroke', '#22c55e').attr('stroke-width', 2.5);
+            legend.append('circle').attr('cx', 6).attr('cy', 22).attr('r', 4).attr('fill', '#22c55e');
+            legend.append('text').attr('x', 18).attr('y', 26).text('vs Prev').style('fill', '#f0f0f5').style('font-size', '10px');
+            legend.append('line').attr('x1', 0).attr('x2', 12).attr('y1', 38).attr('y2', 38).attr('stroke', '#f59e0b').attr('stroke-width', 2.5).attr('stroke-dasharray', '4,2');
+            legend.append('circle').attr('cx', 6).attr('cy', 38).attr('r', 4).attr('fill', '#f59e0b');
+            legend.append('text').attr('x', 18).attr('y', 42).text('YoY').style('fill', '#f0f0f5').style('font-size', '10px');
         }
         
         function renderTeamGrowthChart(allMonthlyData, params, schedule) {
@@ -2874,13 +3453,13 @@
                 const start = new Date(s.start);
                 const end = new Date(s.end);
                 
-                const activeMonths = allMonthlyData.filter(m => {
-                    const date = monthDates[m.month];
+                const activePeriods = allMonthlyData.filter(m => {
+                    const date = periodDates[m.period];
                     return date >= start && date <= end;
                 });
                 
-                if (activeMonths.length === 0) return 0;
-                return Math.max(...activeMonths.map(m => m[teamKey] || 0));
+                if (activePeriods.length === 0) return 0;
+                return Math.max(...activePeriods.map(m => m[teamKey] || 0));
             }
             
             // Build data: for each team, get max during each cohort
@@ -2951,6 +3530,324 @@
             });
         }
         
+        function renderStaffPerCohortChart(allMonthlyData, params, schedule, filters) {
+            const container = document.getElementById('staff-per-cohort-chart');
+            container.innerHTML = '';
+            
+            const width = container.clientWidth || 800;
+            const height = 320;
+            const margin = { top: 30, right: 20, bottom: 50, left: 55 };
+            
+            const svg = d3.select('#staff-per-cohort-chart').append('svg').attr('width', width).attr('height', height);
+            
+            // Get cohort sizes
+            const sizes = params.growthEnabled ? 
+                calculateConstrainedCohortSizes(params, schedule) : 
+                calculateCohortSizes(params);
+            
+            const cutoff = params.roundingCutoff;
+            
+            // Helper to calculate ALL staff for a given fellow count
+            function calcAllStaffForFellows(fellows, isMain, filters, params) {
+                if (fellows === 0) return 0;
+                
+                let total = 0;
+                
+                // RMs and SRMs (Research Mgmt)
+                if (filters.rm) {
+                    const fellowsPerRM = isMain ? params.mainFellowsPerRM : params.extFellowsPerRM;
+                    const rmsPerSRM = isMain ? params.mainRMsPerSRM : params.extRMsPerSRM;
+                    const fellowsPerSRM = isMain ? params.mainFellowsPerSRM : params.extFellowsPerSRM;
+                    
+                    let rms = customRound(fellows / fellowsPerRM, cutoff);
+                    let srms = customRound(rms / rmsPerSRM, cutoff);
+                    
+                    if (fellowsPerSRM > 0) {
+                        for (let i = 0; i < 10; i++) {
+                            const fellowsHandledBySRMs = srms * fellowsPerSRM;
+                            const fellowsForRMs = Math.max(0, fellows - fellowsHandledBySRMs);
+                            const newRMs = fellowsForRMs > 0 ? customRound(fellowsForRMs / fellowsPerRM, cutoff) : 0;
+                            const newSRMs = fellows > 0 ? Math.max(1, customRound(newRMs / rmsPerSRM, cutoff)) : 0;
+                            if (newRMs === rms && newSRMs === srms) break;
+                            rms = newRMs;
+                            srms = newSRMs;
+                        }
+                    }
+                    if (fellows > 0 && rms === 0) rms = 1;
+                    if (fellows > 0 && srms === 0) srms = 1;
+                    total += rms + srms;
+                }
+                
+                // CMs and CPOs (Community)
+                if (filters.community) {
+                    const cms = customRound(fellows / params.fellowsPerCM, cutoff);
+                    const cpos = customRound(fellows / params.fellowsPerCPO, cutoff);
+                    total += cms + cpos;
+                }
+                
+                // Ops
+                if (filters.ops) {
+                    const ops = customRound(fellows / params.fellowsPerOps, cutoff);
+                    total += ops;
+                }
+                
+                // PMs and Recruiters (Program)
+                if (filters.program) {
+                    const pms = customRound(fellows / params.fellowsPerPM, cutoff);
+                    const recruiters = params.fellowsPerRecruiter > 0 ? customRound(fellows / params.fellowsPerRecruiter, cutoff) : 0;
+                    total += pms + recruiters;
+                }
+                
+                // CAs and RCEs (Compute)
+                if (filters.compute) {
+                    const cas = customRound(fellows / params.fellowsPerCA, cutoff);
+                    const rces = customRound(fellows / params.fellowsPerRCE, cutoff);
+                    total += cas + rces;
+                }
+                
+                // Additional
+                if (filters.additional && params.fellowsPerAdditional > 0) {
+                    const additional = customRound(fellows / params.fellowsPerAdditional, cutoff);
+                    total += additional;
+                }
+                
+                // Leads (calculated from other staff - approximate)
+                if (filters.leads) {
+                    const rms = filters.rm ? customRound(fellows / (isMain ? params.mainFellowsPerRM : params.extFellowsPerRM), cutoff) : 0;
+                    const srms = filters.rm ? customRound(rms / (isMain ? params.mainRMsPerSRM : params.extRMsPerSRM), cutoff) : 0;
+                    const cms = filters.community ? customRound(fellows / params.fellowsPerCM, cutoff) : 0;
+                    const cpos = filters.community ? customRound(fellows / params.fellowsPerCPO, cutoff) : 0;
+                    const ops = filters.ops ? customRound(fellows / params.fellowsPerOps, cutoff) : 0;
+                    const pms = filters.program ? customRound(fellows / params.fellowsPerPM, cutoff) : 0;
+                    const cas = filters.compute ? customRound(fellows / params.fellowsPerCA, cutoff) : 0;
+                    const rces = filters.compute ? customRound(fellows / params.fellowsPerRCE, cutoff) : 0;
+                    
+                    let leads = 0;
+                    if (params.srmsPerLead > 0) leads += customRound(srms / params.srmsPerLead, cutoff);
+                    if (params.communityPerLead > 0) leads += customRound((cms + cpos) / params.communityPerLead, cutoff);
+                    if (params.opsPerLead > 0) leads += customRound(ops / params.opsPerLead, cutoff);
+                    if (params.pmsPerLead > 0) leads += customRound(pms / params.pmsPerLead, cutoff);
+                    if (params.computePerLead > 0) leads += customRound((cas + rces) / params.computePerLead, cutoff);
+                    total += leads;
+                }
+                
+                return total;
+            }
+            
+            // Build data: for each period, calculate actual staff per cohort using ratios
+            const chartData = allMonthlyData.map(m => {
+                const date = periodDates[m.period];
+                const result = { period: m.period, month: m.month, date };
+                
+                let totalStaffCalc = 0;
+                let londonStaffCalc = 0;
+                let berkeleyStaffCalc = 0;
+                let remoteStaffCalc = 0;
+                
+                // Calculate staff per cohort using actual ratios
+                allCohortIds.forEach(cohort => {
+                    if (isActive(cohort, date, schedule) && sizes[cohort] > 0) {
+                        const type = getCohortType(cohort);
+                        const majorVersion = cohort.split('.')[0];
+                        const cohortFilterKey = `cohort${majorVersion}`;
+                        const isCohortFiltered = filters[cohortFilterKey] === false;
+                        
+                        if ((type === 'main' && !filters.main) || 
+                            (type === 'ext1' && !filters.ext1) || 
+                            (type === 'ext2' && !filters.ext2) ||
+                            isCohortFiltered) return;
+                        
+                        const count = sizes[cohort];
+                        const isMain = type === 'main';
+                        
+                        // Get location splits (London / Remote / Berkeley)
+                        const londonPct = isMain ? params.londonMainPct : params.londonExtPct;
+                        const remotePct = isMain ? params.remoteMainPct : params.remoteExtPct;
+                        const berkeleyPct = Math.max(0, 1 - londonPct - remotePct);
+                        
+                        const londonCount = Math.round(count * londonPct);
+                        const remoteCount = Math.round(count * remotePct);
+                        const berkeleyCount = Math.max(0, count - londonCount - remoteCount);
+                        
+                        // Calculate ALL staff for this cohort (based on total fellows in cohort)
+                        const cohortStaff = calcAllStaffForFellows(count, isMain, filters, params);
+                        
+                        // Attribute to locations proportionally
+                        const londonStaff = count > 0 ? cohortStaff * (londonCount / count) : 0;
+                        const remoteStaff = count > 0 ? cohortStaff * (remoteCount / count) : 0;
+                        const berkeleyStaff = count > 0 ? cohortStaff * (berkeleyCount / count) : 0;
+                        
+                        // Only include staff from checked locations
+                        const filteredTotal = (filters.london ? londonStaff : 0) + 
+                                              (filters.remote ? remoteStaff : 0) + 
+                                              (filters.berkeley ? berkeleyStaff : 0);
+                        
+                        result[`${cohort}_total`] = filteredTotal;
+                        result[`${cohort}_london`] = filters.london ? londonStaff : 0;
+                        result[`${cohort}_berkeley`] = filters.berkeley ? berkeleyStaff : 0;
+                        result[`${cohort}_remote`] = filters.remote ? remoteStaff : 0;
+                        
+                        totalStaffCalc += filteredTotal;
+                        if (filters.london) londonStaffCalc += londonStaff;
+                        if (filters.berkeley) berkeleyStaffCalc += berkeleyStaff;
+                        if (filters.remote) remoteStaffCalc += remoteStaff;
+                    }
+                });
+                
+                // Add residency (uses main program ratios)
+                if (filters.residency) {
+                    const residencyCount = getResidencyCount(date, params);
+                    if (residencyCount > 0) {
+                        const londonPct = params.londonResidencyPct;
+                        const remotePct = params.remoteResidencyPct;
+                        const berkeleyPct = Math.max(0, 1 - londonPct - remotePct);
+                        
+                        const londonRes = Math.round(residencyCount * londonPct);
+                        const remoteRes = Math.round(residencyCount * remotePct);
+                        const berkeleyRes = Math.max(0, residencyCount - londonRes - remoteRes);
+                        
+                        const resStaff = calcAllStaffForFellows(residencyCount, true, filters, params);
+                        
+                        const londonStaff = residencyCount > 0 ? resStaff * (londonRes / residencyCount) : 0;
+                        const remoteStaff = residencyCount > 0 ? resStaff * (remoteRes / residencyCount) : 0;
+                        const berkeleyStaff = residencyCount > 0 ? resStaff * (berkeleyRes / residencyCount) : 0;
+                        
+                        // Only include staff from checked locations
+                        const filteredTotal = (filters.london ? londonStaff : 0) + 
+                                              (filters.remote ? remoteStaff : 0) + 
+                                              (filters.berkeley ? berkeleyStaff : 0);
+                        
+                        result['Residency_total'] = filteredTotal;
+                        result['Residency_london'] = filters.london ? londonStaff : 0;
+                        result['Residency_berkeley'] = filters.berkeley ? berkeleyStaff : 0;
+                        result['Residency_remote'] = filters.remote ? remoteStaff : 0;
+                        
+                        totalStaffCalc += filteredTotal;
+                        if (filters.london) londonStaffCalc += londonStaff;
+                        if (filters.berkeley) berkeleyStaffCalc += berkeleyStaff;
+                        if (filters.remote) remoteStaffCalc += remoteStaff;
+                    }
+                }
+                
+                result.totalStaff = totalStaffCalc;
+                result.londonStaff = londonStaffCalc;
+                result.berkeleyStaff = berkeleyStaffCalc;
+                result.remoteStaff = remoteStaffCalc;
+                
+                return result;
+            });
+            
+            // Get all cohorts that appear in the data
+            const activeCohorts = new Set();
+            chartData.forEach(d => {
+                Object.keys(d).forEach(k => {
+                    if (k.endsWith('_total') && d[k] > 0) {
+                        activeCohorts.add(k.replace('_total', ''));
+                    }
+                });
+            });
+            const cohortList = Array.from(activeCohorts).sort((a, b) => {
+                if (a === 'Residency') return 1;
+                if (b === 'Residency') return -1;
+                const [aMaj, aMin] = a.split('.').map(Number);
+                const [bMaj, bMin] = b.split('.').map(Number);
+                return aMaj !== bMaj ? aMaj - bMaj : aMin - bMin;
+            });
+            
+            // Color scale - each major cohort (X.0, X.1, X.2) gets shades of the same color
+            // Color families by major version
+            const colorFamilies = {
+                '8': ['#475569', '#64748b', '#94a3b8'],   // Slate
+                '9': ['#2563eb', '#3b82f6', '#60a5fa'],   // Blue
+                '10': ['#7c3aed', '#8b5cf6', '#a78bfa'],  // Purple
+                '11': ['#db2777', '#ec4899', '#f472b6'],  // Pink
+                '12': ['#16a34a', '#22c55e', '#4ade80'],  // Green
+                '13': ['#0891b2', '#06b6d4', '#22d3ee'],  // Cyan
+                '14': ['#ea580c', '#f97316', '#fb923c'],  // Orange
+                '15': ['#ca8a04', '#eab308', '#facc15'],  // Yellow
+            };
+            
+            function getCohortColor(cohort) {
+                if (cohort === 'Residency') return '#ef4444'; // Red for residency
+                const [major, minor] = cohort.split('.');
+                const family = colorFamilies[major];
+                if (!family) return '#6b7280'; // Fallback gray
+                const minorIdx = parseInt(minor) || 0;
+                return family[Math.min(minorIdx, family.length - 1)];
+            }
+            
+            const colorScale = d => getCohortColor(d);
+            
+            // Scales
+            const xScale = d3.scaleTime()
+                .domain(d3.extent(chartData, d => d.date))
+                .range([margin.left, width - margin.right]);
+            
+            const maxStaff = d3.max(chartData, d => Math.max(d.totalStaff, d.londonStaff, d.berkeleyStaff, d.remoteStaff || 0)) || 50;
+            const yScale = d3.scaleLinear()
+                .domain([0, maxStaff * 1.1])
+                .range([height - margin.bottom, margin.top]);
+            
+            // Axes
+            svg.append('g')
+                .attr('transform', `translate(0,${height - margin.bottom})`)
+                .call(d3.axisBottom(xScale).ticks(8).tickFormat(d3.timeFormat('%b %y')))
+                .selectAll('text').style('fill', '#9ca3af').style('font-size', '10px');
+            
+            svg.append('g')
+                .attr('transform', `translate(${margin.left},0)`)
+                .call(d3.axisLeft(yScale).ticks(6))
+                .selectAll('text').style('fill', '#9ca3af');
+            
+            svg.append('text').attr('x', margin.left - 40).attr('y', margin.top - 10)
+                .style('fill', '#9ca3af').style('font-size', '11px').text('Staff');
+            
+            // Draw stacked areas for Total
+            const stack = d3.stack()
+                .keys(cohortList.map(c => `${c}_total`))
+                .value((d, key) => d[key] || 0);
+            
+            const stackedData = stack(chartData);
+            
+            const area = d3.area()
+                .x(d => xScale(d.data.date))
+                .y0(d => yScale(d[0]))
+                .y1(d => yScale(d[1]))
+                .curve(d3.curveMonotoneX);
+            
+            svg.selectAll('.cohort-area')
+                .data(stackedData)
+                .enter()
+                .append('path')
+                .attr('class', 'cohort-area')
+                .attr('d', area)
+                .attr('fill', d => colorScale(d.key.replace('_total', '')))
+                .attr('opacity', 0.7)
+                .on('mouseover', function(event, d) {
+                    d3.select(this).attr('opacity', 1);
+                })
+                .on('mousemove', function(event, d) {
+                    // Find the closest data point to mouse position
+                    const [mouseX] = d3.pointer(event);
+                    const date = xScale.invert(mouseX);
+                    const bisect = d3.bisector(p => p.data.date).left;
+                    const idx = Math.min(d.length - 1, Math.max(0, bisect(d, date)));
+                    const dataPoint = d[idx];
+                    const staffCount = (dataPoint[1] - dataPoint[0]).toFixed(1);
+                    
+                    const cohortName = d.key.replace('_total', '');
+                    const label = cohortName === 'Residency' ? 'Residency' : getCohortSeasonLabel(cohortName, schedule);
+                    const monthLabel = dataPoint.data.month;
+                    
+                    showTooltip(event, `<strong>${label}</strong><br>${monthLabel}: ${staffCount} staff`);
+                })
+                .on('mouseout', function() {
+                    d3.select(this).attr('opacity', 0.7);
+                    hideTooltip();
+                });
+            
+        }
+        
         function renderOfficeSpaceChart(allMonthlyData, params, schedule, filters) {
             const container = document.getElementById('office-space-chart');
             const infoDiv = document.getElementById('office-space-info');
@@ -2971,44 +3868,39 @@
             const floor12Capacity = Math.floor((params.floor2Sqft + params.floor1Sqft) / params.sqftPerPerson);
             const fullCapacity = Math.floor((params.floor2Sqft + params.floor1Sqft + params.floor3Sqft) / params.sqftPerPerson);
             
-            // Calculate office people for each month (Berkeley only - staff + fellows based on toggles)
+            // Calculate office people for each period (Berkeley only - staff + fellows based on toggles)
             const officeData = allMonthlyData.map(m => {
-                const date = monthDates[m.month];
+                const date = periodDates[m.period];
                 
-                // Berkeley staff (apply remote %)
+                // Berkeley staff (apply staff remote %)
                 let berkeleyStaff = m.berkeleyStaffTotal || 0;
-                berkeleyStaff = Math.round(berkeleyStaff * (1 - params.officeRemotePct));
+                berkeleyStaff = Math.round(berkeleyStaff * (1 - params.remoteStaffPct));
                 
-                // Berkeley fellows - need to recalculate based on filters
-                // For extensions, Remote is a third location category:
-                //   1. Remote % are fully remote (no office at any location)
-                //   2. Remaining (1 - Remote %) split between London and Berkeley
-                let berkeleyMainFellows = 0;
-                let berkeleyExtFellows = 0;
+                // Berkeley fellows - Remote is now a third location category
+                // Fellows are split: London% / Remote% / Berkeley (remainder)
+                let berkeleyFellows = 0;
                 Object.entries(m.cohorts).forEach(([cohortId, count]) => {
                     if (cohortId === 'Residency') {
                         if (filters.residency) {
-                            // Berkeley portion of residency (treat as main for remote %)
-                            berkeleyMainFellows += Math.round(count * (1 - params.londonResidencyPct));
+                            // Residency: Berkeley = total × (1 - londonPct - remotePct)
+                            const berkeleyPct = 1 - params.londonResidencyPct - params.remoteResidencyPct;
+                            berkeleyFellows += Math.round(count * Math.max(0, berkeleyPct));
                         }
                     } else {
                         const type = getCohortType(cohortId);
                         if (type === 'main' && filters.main) {
-                            // Main cohorts: Berkeley portion
-                            berkeleyMainFellows += Math.round(count * (1 - params.londonMainPct));
+                            // Main cohorts: Berkeley = total × (1 - londonPct - remotePct)
+                            const berkeleyPct = 1 - params.londonMainPct - params.remoteMainPct;
+                            berkeleyFellows += Math.round(count * Math.max(0, berkeleyPct));
                         } else if ((type === 'ext1' && filters.ext1) || (type === 'ext2' && filters.ext2)) {
-                            // Extension cohorts: Remote is third location, remaining split London/Berkeley
-                            // Non-remote extensions × Berkeley portion
-                            const nonRemote = count * (1 - params.officeExtRemotePct);
-                            berkeleyExtFellows += Math.round(nonRemote * (1 - params.londonExtPct));
+                            // Extension cohorts: Berkeley = total × (1 - londonPct - remotePct)
+                            const berkeleyPct = 1 - params.londonExtPct - params.remoteExtPct;
+                            berkeleyFellows += Math.round(count * Math.max(0, berkeleyPct));
                         }
                     }
                 });
                 
-                // Apply remote % to staff and main fellows only (extensions already handled above)
-                berkeleyMainFellows = Math.round(berkeleyMainFellows * (1 - params.officeRemotePct));
-                
-                let people = berkeleyStaff + berkeleyMainFellows + berkeleyExtFellows;
+                let people = berkeleyStaff + berkeleyFellows;
                 
                 // Add visitors (not subject to remote %)
                 people += params.officeVisitors;
@@ -3031,6 +3923,7 @@
                 const needsFloor3 = people > floor12Capacity;
                 
                 return {
+                    period: m.period,
                     month: m.month,
                     date,
                     people,
@@ -3053,10 +3946,10 @@
             }
             
             // Chart
-            const chartMonths = officeData.map(d => d.month);
+            const chartPeriods = officeData.map(d => d.period);
             const maxY = Math.max(fullCapacity, d3.max(officeData, d => d.people)) * 1.1;
             
-            const x = d3.scalePoint().domain(chartMonths).range([margin.left, width - margin.right]);
+            const x = d3.scalePoint().domain(chartPeriods).range([margin.left, width - margin.right]);
             const y = d3.scaleLinear().domain([0, maxY]).range([height - margin.bottom, margin.top]);
             
             // Draw capacity zones
@@ -3090,7 +3983,7 @@
                 .attr('stroke', '#f59e0b').attr('stroke-width', 2).attr('stroke-dasharray', '6,3');
             
             // People line
-            const line = d3.line().x(d => x(d.month)).y(d => y(d.people)).curve(d3.curveMonotoneX);
+            const line = d3.line().x(d => x(d.period)).y(d => y(d.people)).curve(d3.curveMonotoneX);
             svg.append('path').datum(officeData)
                 .attr('fill', 'none')
                 .attr('stroke', '#3b82f6')
@@ -3099,16 +3992,17 @@
             
             // Dots with color coding
             svg.selectAll('.office-dot').data(officeData).join('circle')
-                .attr('cx', d => x(d.month))
+                .attr('cx', d => x(d.period))
                 .attr('cy', d => y(d.people))
                 .attr('r', 5)
                 .attr('fill', d => d.needsFloor3 ? '#ef4444' : (d.people > d.capacity ? '#f59e0b' : '#3b82f6'))
                 .style('cursor', 'pointer')
                 .on('mouseover', function(e, d) {
                     d3.select(this).attr('r', 7);
+                    const periodLabel = d.period.includes(' E') ? 'Early ' + d.month : 'Late ' + d.month;
                     const status = d.needsFloor3 ? '⚠️ Need Floor 3' : (d.people > d.capacity ? '⚠️ Over Capacity' : '✓ OK');
                     showTooltip(e, `
-                        <div class="tooltip-label">${d.month}</div>
+                        <div class="tooltip-label">${periodLabel}</div>
                         <div class="tooltip-value">${d.people} people (${d.sqftNeeded.toLocaleString()} sq ft)</div>
                         <div style="font-size:0.75rem;margin-top:4px;">
                             Capacity: ${d.capacity} (Floors ${d.floorsAvailable.join(', ') || 'None'})<br>
@@ -3119,8 +4013,12 @@
                 .on('mousemove', e => showTooltip(e, tooltip.innerHTML))
                 .on('mouseout', function() { d3.select(this).attr('r', 5); hideTooltip(); });
             
-            // Axes
-            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x))
+            // Axes - X-axis with only month labels
+            const xAxis = d3.axisBottom(x).tickFormat((d, i) => {
+                if (d.includes(' L')) return d.replace(' L', '');
+                return '';
+            });
+            svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(xAxis)
                 .selectAll('text').attr('transform', 'rotate(-45)').style('text-anchor', 'end').style('fill', '#8888a0').style('font-size', '9px');
             svg.append('g').attr('transform', `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(6))
                 .selectAll('text').style('fill', '#8888a0').style('font-size', '9px');
@@ -3219,9 +4117,9 @@
             document.getElementById('param-8.0').value = 80;
             document.getElementById('param-9.0').value = 90;
             document.getElementById('param-10.0').value = 120;
-            document.getElementById('param-11.0').value = 120;
-            document.getElementById('param-12.0').value = 140;
-            document.getElementById('param-13.0').value = 240;
+            document.getElementById('param-11.0').value = 80;
+            document.getElementById('param-12.0').value = 120;
+            document.getElementById('param-13.0').value = 220;
             document.getElementById('param-14.0').value = 160;
             document.getElementById('param-15.0').value = 280;
             document.getElementById('param-ext1-rate').value = 70;
@@ -3231,10 +4129,14 @@
             document.getElementById('param-9.1-actual').value = '';
             document.getElementById('param-9.2-actual').value = '';
             document.getElementById('param-london-main').value = 20;
-            document.getElementById('param-london-ext').value = 70;
-            document.getElementById('param-london-residency').value = 90;
+            document.getElementById('param-remote-main').value = 10;
+            document.getElementById('param-london-ext').value = 50;
+            document.getElementById('param-remote-ext').value = 30;
+            document.getElementById('param-london-residency').value = 80;
+            document.getElementById('param-remote-residency').value = 10;
+            document.getElementById('param-remote-staff').value = 15;
             document.getElementById('param-residency-count').value = 10;
-            document.getElementById('param-residency-start').value = '2026-07-06';
+            document.getElementById('param-residency-start').value = '2026-08-03';
             document.getElementById('param-residency-months').value = 24;
             document.getElementById('param-residency-growth').value = 2;
             // Office space
@@ -3245,8 +4147,6 @@
             document.getElementById('param-floor1-date').value = '2026-08-01';
             document.getElementById('param-floor3-sqft').value = 20000;
             document.getElementById('param-floor3-leadtime').value = 9;
-            document.getElementById('param-office-remote-pct').value = 10;
-            document.getElementById('param-office-ext-remote-pct').value = 40;
             document.getElementById('param-office-visitors').value = 10;
             document.getElementById('param-fellows-per-cm').value = 35;
             document.getElementById('param-fellows-per-cpo').value = 100;
@@ -3292,7 +4192,14 @@
                 document.getElementById(`date-${id}-end`).value = e;
             });
             
-            document.querySelectorAll('.filter-item input').forEach(cb => cb.checked = true);
+            document.querySelectorAll('.filter-item input').forEach(cb => {
+                cb.checked = true;
+            });
+            // Cohort filter checkboxes
+            for (let i = 8; i <= 15; i++) {
+                const el = document.getElementById(`filter-cohort-${i}`);
+                if (el) el.checked = true;
+            }
             
             updateAll();
         }
@@ -3305,6 +4212,11 @@
         document.querySelectorAll('.filter-item input').forEach(el => {
             el.addEventListener('change', updateAll);
         });
+        // Cohort filter checkboxes
+        for (let i = 8; i <= 15; i++) {
+            const el = document.getElementById(`filter-cohort-${i}`);
+            if (el) el.addEventListener('change', updateAll);
+        }
         document.getElementById('param-growth-enabled').addEventListener('change', updateAll);
         
         // Date range filter listeners
