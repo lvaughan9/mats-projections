@@ -873,6 +873,10 @@
                             <input type="number" class="param-input" id="param-floor3-sqft" value="20000" min="0" max="100000" step="1000">
                         </div>
                         <div class="param-row">
+                            <span class="param-label">Floor 3 Available</span>
+                            <input type="date" class="param-input date-input" id="param-floor3-date" value="2027-06-01">
+                        </div>
+                        <div class="param-row">
                             <span class="param-label">Floor 3 Lead Time</span>
                             <div class="input-group">
                                 <input type="number" class="param-input" id="param-floor3-leadtime" value="9" min="1" max="24">
@@ -896,8 +900,20 @@
                             <input type="number" class="param-input" id="param-fellows-per-cpo" value="100" min="1" max="500">
                         </div>
                         <div class="param-row">
-                            <span class="param-label">Fellows/Ops Gen</span>
+                            <span class="param-label">Fellows/Ops (London)</span>
                             <input type="number" class="param-input" id="param-fellows-per-ops" value="20" min="1" max="200">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Fellows/Ops (Berk)</span>
+                            <input type="number" class="param-input" id="param-berkeley-fellows-per-ops" value="40" min="1" max="200">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Staff/Ops (Berk)</span>
+                            <input type="number" class="param-input" id="param-berkeley-staff-per-ops" value="10" min="1" max="100">
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Sqft/Ops (Berk)</span>
+                            <input type="number" class="param-input" id="param-berkeley-sqft-per-ops" value="25000" min="1000" max="100000">
                         </div>
                         <div class="param-row">
                             <span class="param-label">Fellows/PM</span>
@@ -996,7 +1012,7 @@
                         </div>
                         <div class="param-row">
                             <span class="param-label">8.2</span>
-                            <input type="number" class="param-input" id="param-8.2-actual" value="30" min="0" max="500">
+                            <input type="number" class="param-input" id="param-8.2-actual" value="10" min="0" max="500">
                         </div>
                     </div>
                     
@@ -1004,7 +1020,7 @@
                         <div class="param-section-title">Cohort 9 Actuals</div>
                         <div class="param-row">
                             <span class="param-label">9.1</span>
-                            <input type="number" class="param-input" id="param-9.1-actual" value="" placeholder="auto">
+                            <input type="number" class="param-input" id="param-9.1-actual" value="70" placeholder="auto">
                         </div>
                         <div class="param-row">
                             <span class="param-label">9.2</span>
@@ -1658,7 +1674,7 @@
                 ext1Rate: (getIntOrDefault('param-ext1-rate', 70)) / 100,
                 ext2Rate: (getIntOrDefault('param-ext2-rate', 50)) / 100,
                 cohort8_1_actual: getInt('param-8.1-actual', 50),
-                cohort8_2_actual: getInt('param-8.2-actual', 30),
+                cohort8_2_actual: getInt('param-8.2-actual', 10),
                 cohort9_1_actual: getInt('param-9.1-actual', null),
                 cohort9_2_actual: getInt('param-9.2-actual', null),
                 // Location percentages (London / Remote / Berkeley remainder)
@@ -1680,11 +1696,15 @@
                 floor1Sqft: getInt('param-floor1-sqft', 13500),
                 floor1Date: document.getElementById('param-floor1-date')?.value || '2026-08-01',
                 floor3Sqft: getInt('param-floor3-sqft', 20000),
+                floor3Date: document.getElementById('param-floor3-date')?.value || '2027-06-01',
                 floor3LeadTime: getInt('param-floor3-leadtime', 9),
                 officeVisitors: getInt('param-office-visitors', 10),
                 fellowsPerCM: get('param-fellows-per-cm', 35),
                 fellowsPerCPO: get('param-fellows-per-cpo', 100),
-                fellowsPerOps: get('param-fellows-per-ops', 20),
+                fellowsPerOps: get('param-fellows-per-ops', 20),  // London ops ratio
+                berkeleyFellowsPerOps: get('param-berkeley-fellows-per-ops', 40),
+                berkeleyStaffPerOps: get('param-berkeley-staff-per-ops', 10),
+                berkeleySqftPerOps: get('param-berkeley-sqft-per-ops', 25000),
                 fellowsPerPM: get('param-fellows-per-pm', 30),
                 fellowsPerCA: get('param-fellows-per-ca', 60),
                 fellowsPerRCE: get('param-fellows-per-rce', 50),
@@ -1811,7 +1831,13 @@
             const srmPerFellow = rmPerFellow / avgRMsPerSRM;
             const cmPerFellow = 1 / params.fellowsPerCM;
             const cpoPerFellow = 1 / params.fellowsPerCPO;
-            const opsPerFellow = 1 / params.fellowsPerOps;
+            // Blended ops: ~70% Berkeley (complex formula), ~30% London/Remote (simple ratio)
+            // For Berkeley: ops ≈ fellows/40 + staff/10 + sqft/25000
+            // Approximate Berkeley ops per fellow as: 1/40 + (staffPerFellow)/10 ≈ 0.025 + 0.01 = 0.035
+            // London ops per fellow: 1/fellowsPerOps
+            const londonOpsPerFellow = 1 / params.fellowsPerOps;
+            const berkeleyOpsPerFellow = 1 / params.berkeleyFellowsPerOps + 0.01; // Approximate staff component
+            const opsPerFellow = berkeleyOpsPerFellow * 0.7 + londonOpsPerFellow * 0.3;
             const pmPerFellow = 1 / params.fellowsPerPM;
             const caPerFellow = 1 / params.fellowsPerCA;
             const rcePerFellow = 1 / params.fellowsPerRCE;
@@ -2176,49 +2202,24 @@
                 const srmsCalc = totalSRMs;
                 const cmsCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerCM, cutoff)) : 0;
                 const cposCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerCPO, cutoff)) : 0;
-                const opsCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerOps, cutoff)) : 0;
                 const pmsCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerPM, cutoff)) : 0;
                 const casCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerCA, cutoff)) : 0;
                 const rcesCalc = totalFellows > 0 ? Math.max(1, customRound(totalFellows / params.fellowsPerRCE, cutoff)) : 0;
                 const recruitersCalc = (params.fellowsPerRecruiter > 0 && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerRecruiter, cutoff)) : 0;
                 const additionalCalc = (params.fellowsPerAdditional > 0 && totalFellows > 0) ? Math.max(1, customRound(totalFellows / params.fellowsPerAdditional, cutoff)) : 0;
                 
-                // Calculate FILTERED staff roles (based on filtered fellow counts)
-                const filteredCmsCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerCM, cutoff)) : 0;
-                const filteredCposCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerCPO, cutoff)) : 0;
-                const filteredOpsCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerOps, cutoff)) : 0;
-                const filteredPmsCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerPM, cutoff)) : 0;
-                const filteredCasCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerCA, cutoff)) : 0;
-                const filteredRcesCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerRCE, cutoff)) : 0;
-                const filteredRecruitersCalc = (params.fellowsPerRecruiter > 0 && filteredTotalFellows > 0) ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerRecruiter, cutoff)) : 0;
-                const filteredAdditionalCalc = (params.fellowsPerAdditional > 0 && filteredTotalFellows > 0) ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerAdditional, cutoff)) : 0;
-                
-                // Apply staff team filters to filtered values (for display/onboarding)
-                const rms = filters.rm ? filteredTotalRMs : 0;
-                const srms = filters.rm ? filteredTotalSRMs : 0;
-                const cms = filters.community ? filteredCmsCalc : 0;
-                const cpos = filters.community ? filteredCposCalc : 0;
-                const ops = filters.ops ? filteredOpsCalc : 0;
-                const pms = filters.program ? filteredPmsCalc : 0;
-                const cas = filters.compute ? filteredCasCalc : 0;
-                const rces = filters.compute ? filteredRcesCalc : 0;
-                const recruiters = filters.program ? filteredRecruitersCalc : 0;
-                const additional = filters.additional ? filteredAdditionalCalc : 0;
-                
-                // Calculate non-lead staff per location (use full calculated values)
+                // Calculate location percentages for staff distribution
                 const londonPct = totalFellows > 0 ? londonTotal / totalFellows : 0;
                 const remotePct = totalFellows > 0 ? remoteTotal / totalFellows : 0;
                 const berkeleyPct = totalFellows > 0 ? berkeleyTotal / totalFellows : 0;
                 
+                // Calculate non-ops staff per location first (needed for Berkeley ops calculation)
                 const londonCMs = Math.round(cmsCalc * londonPct);
                 const remoteCMs = Math.round(cmsCalc * remotePct);
                 const berkeleyCMs = cmsCalc - londonCMs - remoteCMs;
                 const londonCPOs = Math.round(cposCalc * londonPct);
                 const remoteCPOs = Math.round(cposCalc * remotePct);
                 const berkeleyCPOs = cposCalc - londonCPOs - remoteCPOs;
-                const londonOps = Math.round(opsCalc * londonPct);
-                const remoteOps = Math.round(opsCalc * remotePct);
-                const berkeleyOps = opsCalc - londonOps - remoteOps;
                 const londonPMs = Math.round(pmsCalc * londonPct);
                 const remotePMs = Math.round(pmsCalc * remotePct);
                 const berkeleyPMs = pmsCalc - londonPMs - remotePMs;
@@ -2234,6 +2235,86 @@
                 const londonAdditional = Math.round(additionalCalc * londonPct);
                 const remoteAdditional = Math.round(additionalCalc * remotePct);
                 const berkeleyAdditional = additionalCalc - londonAdditional - remoteAdditional;
+                
+                // OPS CALCULATION - Separate Berkeley and London
+                // London ops: traditional fellow ratio
+                const londonOpsCalc = londonTotal > 0 ? Math.max(1, customRound(londonTotal / params.fellowsPerOps, cutoff)) : 0;
+                
+                // Remote ops: traditional fellow ratio (same as London)
+                const remoteOpsCalc = remoteTotal > 0 ? Math.max(1, customRound(remoteTotal / params.fellowsPerOps, cutoff)) : 0;
+                
+                // Berkeley ops: additive formula
+                // 1. Fellow-to-Ops: 1 ops per berkeleyFellowsPerOps fellows
+                const berkeleyOpsFromFellows = berkeleyTotal > 0 ? customRound(berkeleyTotal / params.berkeleyFellowsPerOps, cutoff) : 0;
+                
+                // 2. Staff-to-Ops: 1 ops per berkeleyStaffPerOps non-ops Berkeley staff
+                const berkeleyNonOpsStaff = berkeleyStaff.rms + berkeleyStaff.srms + berkeleyCMs + berkeleyCPOs + 
+                    berkeleyPMs + berkeleyCAs + berkeleyRCEs + berkeleyRecruiters + berkeleyAdditional;
+                const berkeleyOpsFromStaff = berkeleyNonOpsStaff > 0 ? customRound(berkeleyNonOpsStaff / params.berkeleyStaffPerOps, cutoff) : 0;
+                
+                // 3. Office-to-Ops: 1 ops per berkeleySqftPerOps sq ft
+                // Calculate current Berkeley office space
+                const floor2Date = new Date(params.floor2Date);
+                const floor1Date = new Date(params.floor1Date);
+                const floor3Date = new Date(params.floor3Date);
+                let berkeleySqft = 0;
+                if (date >= floor2Date) berkeleySqft += params.floor2Sqft;
+                if (date >= floor1Date) berkeleySqft += params.floor1Sqft;
+                if (date >= floor3Date) berkeleySqft += params.floor3Sqft;
+                const berkeleyOpsFromSqft = berkeleySqft > 0 ? customRound(berkeleySqft / params.berkeleySqftPerOps, cutoff) : 0;
+                
+                // Total Berkeley ops (additive, minimum 1 if any fellows present)
+                const berkeleyOpsCalc = berkeleyTotal > 0 ? 
+                    Math.max(1, berkeleyOpsFromFellows + berkeleyOpsFromStaff + berkeleyOpsFromSqft) : 0;
+                
+                // Total ops
+                const opsCalc = londonOpsCalc + remoteOpsCalc + berkeleyOpsCalc;
+                
+                // Store location-specific ops for later use
+                const londonOps = londonOpsCalc;
+                const remoteOps = remoteOpsCalc;
+                const berkeleyOps = berkeleyOpsCalc;
+                
+                // Calculate FILTERED staff roles (based on filtered fellow counts)
+                const filteredCmsCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerCM, cutoff)) : 0;
+                const filteredCposCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerCPO, cutoff)) : 0;
+                const filteredPmsCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerPM, cutoff)) : 0;
+                const filteredCasCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerCA, cutoff)) : 0;
+                const filteredRcesCalc = filteredTotalFellows > 0 ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerRCE, cutoff)) : 0;
+                const filteredRecruitersCalc = (params.fellowsPerRecruiter > 0 && filteredTotalFellows > 0) ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerRecruiter, cutoff)) : 0;
+                const filteredAdditionalCalc = (params.fellowsPerAdditional > 0 && filteredTotalFellows > 0) ? Math.max(1, customRound(filteredTotalFellows / params.fellowsPerAdditional, cutoff)) : 0;
+                
+                // Filtered ops - use same location-based approach
+                const filteredLondonPct = filteredTotalFellows > 0 ? filteredLondonTotal / filteredTotalFellows : 0;
+                const filteredRemotePct = filteredTotalFellows > 0 ? filteredRemoteTotal / filteredTotalFellows : 0;
+                const filteredBerkeleyPct = filteredTotalFellows > 0 ? filteredBerkeleyTotal / filteredTotalFellows : 0;
+                
+                const filteredLondonOps = filteredLondonTotal > 0 ? Math.max(1, customRound(filteredLondonTotal / params.fellowsPerOps, cutoff)) : 0;
+                const filteredRemoteOps = filteredRemoteTotal > 0 ? Math.max(1, customRound(filteredRemoteTotal / params.fellowsPerOps, cutoff)) : 0;
+                
+                // Filtered Berkeley ops (additive)
+                const filteredBerkeleyOpsFromFellows = filteredBerkeleyTotal > 0 ? customRound(filteredBerkeleyTotal / params.berkeleyFellowsPerOps, cutoff) : 0;
+                const filteredBerkeleyNonOpsStaff = filteredMainStaff.rms + filteredMainStaff.srms + filteredExtStaff.rms + filteredExtStaff.srms +
+                    Math.round(filteredCmsCalc * filteredBerkeleyPct) + Math.round(filteredCposCalc * filteredBerkeleyPct) +
+                    Math.round(filteredPmsCalc * filteredBerkeleyPct) + Math.round(filteredCasCalc * filteredBerkeleyPct) +
+                    Math.round(filteredRcesCalc * filteredBerkeleyPct);
+                const filteredBerkeleyOpsFromStaff = filteredBerkeleyNonOpsStaff > 0 ? customRound(filteredBerkeleyNonOpsStaff / params.berkeleyStaffPerOps, cutoff) : 0;
+                const filteredBerkeleyOps = filteredBerkeleyTotal > 0 ? 
+                    Math.max(1, filteredBerkeleyOpsFromFellows + filteredBerkeleyOpsFromStaff + berkeleyOpsFromSqft) : 0;
+                
+                const filteredOpsCalc = filteredLondonOps + filteredRemoteOps + filteredBerkeleyOps;
+                
+                // Apply staff team filters to filtered values (for display/onboarding)
+                const rms = filters.rm ? filteredTotalRMs : 0;
+                const srms = filters.rm ? filteredTotalSRMs : 0;
+                const cms = filters.community ? filteredCmsCalc : 0;
+                const cpos = filters.community ? filteredCposCalc : 0;
+                const ops = filters.ops ? filteredOpsCalc : 0;
+                const pms = filters.program ? filteredPmsCalc : 0;
+                const cas = filters.compute ? filteredCasCalc : 0;
+                const rces = filters.compute ? filteredRcesCalc : 0;
+                const recruiters = filters.program ? filteredRecruitersCalc : 0;
+                const additional = filters.additional ? filteredAdditionalCalc : 0;
                 
                 // Remote RMs/SRMs (proportional to fellow distribution)
                 const remoteRMs = Math.round(totalRMs * remotePct);
@@ -3547,9 +3628,9 @@
             
             const cutoff = params.roundingCutoff;
             
-            // Helper to calculate ALL staff for a given fellow count
-            function calcAllStaffForFellows(fellows, isMain, filters, params) {
-                if (fellows === 0) return 0;
+            // Helper to calculate ALL staff for given fellow counts by location
+            function calcAllStaffForFellows(totalFellows, londonFellows, berkeleyFellows, remoteFellows, isMain, filters, params, date) {
+                if (totalFellows === 0) return 0;
                 
                 let total = 0;
                 
@@ -3559,68 +3640,94 @@
                     const rmsPerSRM = isMain ? params.mainRMsPerSRM : params.extRMsPerSRM;
                     const fellowsPerSRM = isMain ? params.mainFellowsPerSRM : params.extFellowsPerSRM;
                     
-                    let rms = customRound(fellows / fellowsPerRM, cutoff);
+                    let rms = customRound(totalFellows / fellowsPerRM, cutoff);
                     let srms = customRound(rms / rmsPerSRM, cutoff);
                     
                     if (fellowsPerSRM > 0) {
                         for (let i = 0; i < 10; i++) {
                             const fellowsHandledBySRMs = srms * fellowsPerSRM;
-                            const fellowsForRMs = Math.max(0, fellows - fellowsHandledBySRMs);
+                            const fellowsForRMs = Math.max(0, totalFellows - fellowsHandledBySRMs);
                             const newRMs = fellowsForRMs > 0 ? customRound(fellowsForRMs / fellowsPerRM, cutoff) : 0;
-                            const newSRMs = fellows > 0 ? Math.max(1, customRound(newRMs / rmsPerSRM, cutoff)) : 0;
+                            const newSRMs = totalFellows > 0 ? Math.max(1, customRound(newRMs / rmsPerSRM, cutoff)) : 0;
                             if (newRMs === rms && newSRMs === srms) break;
                             rms = newRMs;
                             srms = newSRMs;
                         }
                     }
-                    if (fellows > 0 && rms === 0) rms = 1;
-                    if (fellows > 0 && srms === 0) srms = 1;
+                    if (totalFellows > 0 && rms === 0) rms = 1;
+                    if (totalFellows > 0 && srms === 0) srms = 1;
                     total += rms + srms;
                 }
                 
                 // CMs and CPOs (Community)
                 if (filters.community) {
-                    const cms = customRound(fellows / params.fellowsPerCM, cutoff);
-                    const cpos = customRound(fellows / params.fellowsPerCPO, cutoff);
+                    const cms = customRound(totalFellows / params.fellowsPerCM, cutoff);
+                    const cpos = customRound(totalFellows / params.fellowsPerCPO, cutoff);
                     total += cms + cpos;
                 }
                 
-                // Ops
+                // Ops - Location-specific calculation
                 if (filters.ops) {
-                    const ops = customRound(fellows / params.fellowsPerOps, cutoff);
-                    total += ops;
+                    // London ops: traditional fellow ratio
+                    const londonOps = londonFellows > 0 ? customRound(londonFellows / params.fellowsPerOps, cutoff) : 0;
+                    
+                    // Remote ops: traditional fellow ratio
+                    const remoteOps = remoteFellows > 0 ? customRound(remoteFellows / params.fellowsPerOps, cutoff) : 0;
+                    
+                    // Berkeley ops: additive formula
+                    let berkeleyOps = 0;
+                    if (berkeleyFellows > 0) {
+                        const opsFromFellows = customRound(berkeleyFellows / params.berkeleyFellowsPerOps, cutoff);
+                        // Approximate staff for this cohort (non-ops)
+                        const approxStaff = total; // Staff calculated so far (without ops)
+                        const berkeleyStaffShare = totalFellows > 0 ? approxStaff * (berkeleyFellows / totalFellows) : 0;
+                        const opsFromStaff = customRound(berkeleyStaffShare / params.berkeleyStaffPerOps, cutoff);
+                        // Sqft contribution (use current office space)
+                        const floor2Date = new Date(params.floor2Date);
+                        const floor1Date = new Date(params.floor1Date);
+                        const floor3Date = new Date(params.floor3Date);
+                        let berkeleySqft = 0;
+                        if (date >= floor2Date) berkeleySqft += params.floor2Sqft;
+                        if (date >= floor1Date) berkeleySqft += params.floor1Sqft;
+                        if (date >= floor3Date) berkeleySqft += params.floor3Sqft;
+                        const opsFromSqft = customRound(berkeleySqft / params.berkeleySqftPerOps, cutoff);
+                        berkeleyOps = opsFromFellows + opsFromStaff + opsFromSqft;
+                    }
+                    
+                    total += londonOps + remoteOps + berkeleyOps;
                 }
                 
                 // PMs and Recruiters (Program)
                 if (filters.program) {
-                    const pms = customRound(fellows / params.fellowsPerPM, cutoff);
-                    const recruiters = params.fellowsPerRecruiter > 0 ? customRound(fellows / params.fellowsPerRecruiter, cutoff) : 0;
+                    const pms = customRound(totalFellows / params.fellowsPerPM, cutoff);
+                    const recruiters = params.fellowsPerRecruiter > 0 ? customRound(totalFellows / params.fellowsPerRecruiter, cutoff) : 0;
                     total += pms + recruiters;
                 }
                 
                 // CAs and RCEs (Compute)
                 if (filters.compute) {
-                    const cas = customRound(fellows / params.fellowsPerCA, cutoff);
-                    const rces = customRound(fellows / params.fellowsPerRCE, cutoff);
+                    const cas = customRound(totalFellows / params.fellowsPerCA, cutoff);
+                    const rces = customRound(totalFellows / params.fellowsPerRCE, cutoff);
                     total += cas + rces;
                 }
                 
                 // Additional
                 if (filters.additional && params.fellowsPerAdditional > 0) {
-                    const additional = customRound(fellows / params.fellowsPerAdditional, cutoff);
+                    const additional = customRound(totalFellows / params.fellowsPerAdditional, cutoff);
                     total += additional;
                 }
                 
                 // Leads (calculated from other staff - approximate)
                 if (filters.leads) {
-                    const rms = filters.rm ? customRound(fellows / (isMain ? params.mainFellowsPerRM : params.extFellowsPerRM), cutoff) : 0;
+                    const rms = filters.rm ? customRound(totalFellows / (isMain ? params.mainFellowsPerRM : params.extFellowsPerRM), cutoff) : 0;
                     const srms = filters.rm ? customRound(rms / (isMain ? params.mainRMsPerSRM : params.extRMsPerSRM), cutoff) : 0;
-                    const cms = filters.community ? customRound(fellows / params.fellowsPerCM, cutoff) : 0;
-                    const cpos = filters.community ? customRound(fellows / params.fellowsPerCPO, cutoff) : 0;
-                    const ops = filters.ops ? customRound(fellows / params.fellowsPerOps, cutoff) : 0;
-                    const pms = filters.program ? customRound(fellows / params.fellowsPerPM, cutoff) : 0;
-                    const cas = filters.compute ? customRound(fellows / params.fellowsPerCA, cutoff) : 0;
-                    const rces = filters.compute ? customRound(fellows / params.fellowsPerRCE, cutoff) : 0;
+                    const cms = filters.community ? customRound(totalFellows / params.fellowsPerCM, cutoff) : 0;
+                    const cpos = filters.community ? customRound(totalFellows / params.fellowsPerCPO, cutoff) : 0;
+                    // Approximate ops for leads calculation
+                    const ops = filters.ops ? customRound(totalFellows / params.fellowsPerOps, cutoff) : 0;
+                    const pms = filters.program ? customRound(totalFellows / params.fellowsPerPM, cutoff) : 0;
+                    const cas = filters.compute ? customRound(totalFellows / params.fellowsPerCA, cutoff) : 0;
+                    const rces = filters.compute ? customRound(totalFellows / params.fellowsPerRCE, cutoff) : 0;
                     
                     let leads = 0;
                     if (params.srmsPerLead > 0) leads += customRound(srms / params.srmsPerLead, cutoff);
@@ -3669,8 +3776,8 @@
                         const remoteCount = Math.round(count * remotePct);
                         const berkeleyCount = Math.max(0, count - londonCount - remoteCount);
                         
-                        // Calculate ALL staff for this cohort (based on total fellows in cohort)
-                        const cohortStaff = calcAllStaffForFellows(count, isMain, filters, params);
+                        // Calculate ALL staff for this cohort (based on fellows by location)
+                        const cohortStaff = calcAllStaffForFellows(count, londonCount, berkeleyCount, remoteCount, isMain, filters, params, date);
                         
                         // Attribute to locations proportionally
                         const londonStaff = count > 0 ? cohortStaff * (londonCount / count) : 0;
@@ -3706,7 +3813,7 @@
                         const remoteRes = Math.round(residencyCount * remotePct);
                         const berkeleyRes = Math.max(0, residencyCount - londonRes - remoteRes);
                         
-                        const resStaff = calcAllStaffForFellows(residencyCount, true, filters, params);
+                        const resStaff = calcAllStaffForFellows(residencyCount, londonRes, berkeleyRes, remoteRes, true, filters, params, date);
                         
                         const londonStaff = residencyCount > 0 ? resStaff * (londonRes / residencyCount) : 0;
                         const remoteStaff = residencyCount > 0 ? resStaff * (remoteRes / residencyCount) : 0;
@@ -3863,6 +3970,7 @@
             // Calculate floor availability dates
             const floor2Date = new Date(params.floor2Date);
             const floor1Date = new Date(params.floor1Date);
+            const floor3Date = new Date(params.floor3Date);
             
             // Calculate capacity at each point
             const floor12Capacity = Math.floor((params.floor2Sqft + params.floor1Sqft) / params.sqftPerPerson);
@@ -3916,11 +4024,15 @@
                     availableSqft += params.floor1Sqft;
                     floorsAvailable.push('1');
                 }
+                if (date >= floor3Date) {
+                    availableSqft += params.floor3Sqft;
+                    floorsAvailable.push('3');
+                }
                 
                 const capacity = Math.floor(availableSqft / params.sqftPerPerson);
                 const sqftNeeded = people * params.sqftPerPerson;
                 const utilization = capacity > 0 ? (people / capacity * 100) : 0;
-                const needsFloor3 = people > floor12Capacity;
+                const needsFloor3 = people > floor12Capacity && date < floor3Date;
                 
                 return {
                     period: m.period,
@@ -4053,7 +4165,7 @@
                     </div>
                     <div>
                         <strong style="color: #f59e0b;">Floor 3</strong>: ${params.floor3Sqft.toLocaleString()} sq ft (${floor3Cap} people)<br>
-                        <span style="font-size:0.8rem;color:var(--text-secondary);">Lead time: ${params.floor3LeadTime} months</span>
+                        <span style="font-size:0.8rem;color:var(--text-secondary);">Available: ${params.floor3Date} (Lead: ${params.floor3LeadTime}mo)</span>
                     </div>
                 </div>
             `;
@@ -4125,8 +4237,8 @@
             document.getElementById('param-ext1-rate').value = 70;
             document.getElementById('param-ext2-rate').value = 50;
             document.getElementById('param-8.1-actual').value = 50;
-            document.getElementById('param-8.2-actual').value = 30;
-            document.getElementById('param-9.1-actual').value = '';
+            document.getElementById('param-8.2-actual').value = 10;
+            document.getElementById('param-9.1-actual').value = 70;
             document.getElementById('param-9.2-actual').value = '';
             document.getElementById('param-london-main').value = 20;
             document.getElementById('param-remote-main').value = 10;
@@ -4146,11 +4258,15 @@
             document.getElementById('param-floor1-sqft').value = 13500;
             document.getElementById('param-floor1-date').value = '2026-08-01';
             document.getElementById('param-floor3-sqft').value = 20000;
+            document.getElementById('param-floor3-date').value = '2027-06-01';
             document.getElementById('param-floor3-leadtime').value = 9;
             document.getElementById('param-office-visitors').value = 10;
             document.getElementById('param-fellows-per-cm').value = 35;
             document.getElementById('param-fellows-per-cpo').value = 100;
             document.getElementById('param-fellows-per-ops').value = 20;
+            document.getElementById('param-berkeley-fellows-per-ops').value = 40;
+            document.getElementById('param-berkeley-staff-per-ops').value = 10;
+            document.getElementById('param-berkeley-sqft-per-ops').value = 25000;
             document.getElementById('param-fellows-per-pm').value = 30;
             document.getElementById('param-fellows-per-ca').value = 60;
             document.getElementById('param-fellows-per-rce').value = 50;
