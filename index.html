@@ -2257,6 +2257,7 @@
                 
                 // Attribute RMs/SRMs to locations based on fellow distribution
                 const londonPctOfTotal = totalFellows > 0 ? londonTotal / totalFellows : 0;
+                const remotePctOfTotal = totalFellows > 0 ? remoteTotal / totalFellows : 0;
                 const berkeleyPctOfTotal = totalFellows > 0 ? berkeleyTotal / totalFellows : 0;
                 
                 // Create location staff objects for compatibility with rest of code
@@ -2264,9 +2265,11 @@
                     rms: Math.round(totalRMs * londonPctOfTotal),
                     srms: Math.round(totalSRMs * londonPctOfTotal)
                 };
+                const remoteStaffRMs = Math.round(totalRMs * remotePctOfTotal);
+                const remoteStaffSRMs = Math.round(totalSRMs * remotePctOfTotal);
                 const berkeleyStaff = {
-                    rms: totalRMs - londonStaff.rms,
-                    srms: totalSRMs - londonStaff.srms
+                    rms: totalRMs - londonStaff.rms - remoteStaffRMs,
+                    srms: totalSRMs - londonStaff.srms - remoteStaffSRMs
                 };
                 
                 // Calculate all staff roles (always calculate full values for peaks)
@@ -2388,21 +2391,98 @@
                 
                 const filteredOpsCalc = filteredLondonOps + filteredRemoteOps + filteredBerkeleyOps;
                 
-                // Apply staff team filters to filtered values (for display/onboarding)
-                const rms = filters.rm ? filteredTotalRMs : 0;
-                const srms = filters.rm ? filteredTotalSRMs : 0;
-                const cms = filters.community ? filteredCmsCalc : 0;
-                const jts = filters.community ? filteredJtsCalc : 0;
-                const ops = filters.ops ? filteredOpsCalc : 0;
-                const pms = filters.program ? filteredPmsCalc : 0;
-                const cas = filters.compute ? filteredCasCalc : 0;
-                const rces = filters.compute ? filteredRcesCalc : 0;
-                const recruiters = filters.program ? filteredRecruitersCalc : 0;
-                const additional = filters.additional ? filteredAdditionalCalc : 0;
+                // Calculate location-specific filtered staff using filtered percentages
+                const filteredLondonPctForStaff = filteredTotalFellows > 0 ? filteredLondonTotal / filteredTotalFellows : 0;
+                const filteredRemotePctForStaff = filteredTotalFellows > 0 ? filteredRemoteTotal / filteredTotalFellows : 0;
+                const filteredBerkeleyPctForStaff = filteredTotalFellows > 0 ? filteredBerkeleyTotal / filteredTotalFellows : 0;
                 
-                // Remote RMs/SRMs (proportional to fellow distribution)
-                const remoteRMs = Math.round(totalRMs * remotePct);
-                const remoteSRMs = Math.round(totalSRMs * remotePct);
+                // Distribute filtered RMs/SRMs to locations
+                const filteredLondonRMs = Math.round(filteredTotalRMs * filteredLondonPctForStaff);
+                const filteredRemoteRMs = Math.round(filteredTotalRMs * filteredRemotePctForStaff);
+                const filteredBerkeleyRMs = filteredTotalRMs - filteredLondonRMs - filteredRemoteRMs;
+                const filteredLondonSRMs = Math.round(filteredTotalSRMs * filteredLondonPctForStaff);
+                const filteredRemoteSRMs = Math.round(filteredTotalSRMs * filteredRemotePctForStaff);
+                const filteredBerkeleySRMs = filteredTotalSRMs - filteredLondonSRMs - filteredRemoteSRMs;
+                
+                // Distribute other staff to locations
+                const filteredLondonCMs = Math.round(filteredCmsCalc * filteredLondonPctForStaff);
+                const filteredRemoteCMs = Math.round(filteredCmsCalc * filteredRemotePctForStaff);
+                const filteredBerkeleyCMs = filteredCmsCalc - filteredLondonCMs - filteredRemoteCMs;
+                const filteredLondonJTs = Math.round(filteredJtsCalc * filteredLondonPctForStaff);
+                const filteredRemoteJTs = Math.round(filteredJtsCalc * filteredRemotePctForStaff);
+                const filteredBerkeleyJTs = filteredJtsCalc - filteredLondonJTs - filteredRemoteJTs;
+                const filteredLondonPMs = Math.round(filteredPmsCalc * filteredLondonPctForStaff);
+                const filteredRemotePMs = Math.round(filteredPmsCalc * filteredRemotePctForStaff);
+                const filteredBerkeleyPMs = filteredPmsCalc - filteredLondonPMs - filteredRemotePMs;
+                const filteredLondonCAs = Math.round(filteredCasCalc * filteredLondonPctForStaff);
+                const filteredRemoteCAs = Math.round(filteredCasCalc * filteredRemotePctForStaff);
+                const filteredBerkeleyCAs = filteredCasCalc - filteredLondonCAs - filteredRemoteCAs;
+                const filteredLondonRCEs = Math.round(filteredRcesCalc * filteredLondonPctForStaff);
+                const filteredRemoteRCEs = Math.round(filteredRcesCalc * filteredRemotePctForStaff);
+                const filteredBerkeleyRCEs = filteredRcesCalc - filteredLondonRCEs - filteredRemoteRCEs;
+                const filteredLondonRecruiters = Math.round(filteredRecruitersCalc * filteredLondonPctForStaff);
+                const filteredRemoteRecruiters = Math.round(filteredRecruitersCalc * filteredRemotePctForStaff);
+                const filteredBerkeleyRecruiters = filteredRecruitersCalc - filteredLondonRecruiters - filteredRemoteRecruiters;
+                const filteredLondonAdditional = Math.round(filteredAdditionalCalc * filteredLondonPctForStaff);
+                const filteredRemoteAdditional = Math.round(filteredAdditionalCalc * filteredRemotePctForStaff);
+                const filteredBerkeleyAdditional = filteredAdditionalCalc - filteredLondonAdditional - filteredRemoteAdditional;
+                
+                // Apply staff team filters AND location filters for display/onboarding
+                // Only sum staff at checked locations
+                const rms = filters.rm ? (
+                    (filters.london ? filteredLondonRMs : 0) + 
+                    (filters.berkeley ? filteredBerkeleyRMs : 0) + 
+                    (filters.remote ? filteredRemoteRMs : 0)
+                ) : 0;
+                const srms = filters.rm ? (
+                    (filters.london ? filteredLondonSRMs : 0) + 
+                    (filters.berkeley ? filteredBerkeleySRMs : 0) + 
+                    (filters.remote ? filteredRemoteSRMs : 0)
+                ) : 0;
+                const cms = filters.community ? (
+                    (filters.london ? filteredLondonCMs : 0) + 
+                    (filters.berkeley ? filteredBerkeleyCMs : 0) + 
+                    (filters.remote ? filteredRemoteCMs : 0)
+                ) : 0;
+                const jts = filters.community ? (
+                    (filters.london ? filteredLondonJTs : 0) + 
+                    (filters.berkeley ? filteredBerkeleyJTs : 0) + 
+                    (filters.remote ? filteredRemoteJTs : 0)
+                ) : 0;
+                const ops = filters.ops ? (
+                    (filters.london ? filteredLondonOps : 0) + 
+                    (filters.berkeley ? filteredBerkeleyOps : 0) + 
+                    (filters.remote ? filteredRemoteOps : 0)
+                ) : 0;
+                const pms = filters.program ? (
+                    (filters.london ? filteredLondonPMs : 0) + 
+                    (filters.berkeley ? filteredBerkeleyPMs : 0) + 
+                    (filters.remote ? filteredRemotePMs : 0)
+                ) : 0;
+                const cas = filters.compute ? (
+                    (filters.london ? filteredLondonCAs : 0) + 
+                    (filters.berkeley ? filteredBerkeleyCAs : 0) + 
+                    (filters.remote ? filteredRemoteCAs : 0)
+                ) : 0;
+                const rces = filters.compute ? (
+                    (filters.london ? filteredLondonRCEs : 0) + 
+                    (filters.berkeley ? filteredBerkeleyRCEs : 0) + 
+                    (filters.remote ? filteredRemoteRCEs : 0)
+                ) : 0;
+                const recruiters = filters.program ? (
+                    (filters.london ? filteredLondonRecruiters : 0) + 
+                    (filters.berkeley ? filteredBerkeleyRecruiters : 0) + 
+                    (filters.remote ? filteredRemoteRecruiters : 0)
+                ) : 0;
+                const additional = filters.additional ? (
+                    (filters.london ? filteredLondonAdditional : 0) + 
+                    (filters.berkeley ? filteredBerkeleyAdditional : 0) + 
+                    (filters.remote ? filteredRemoteAdditional : 0)
+                ) : 0;
+                
+                // Remote RMs/SRMs (already calculated above as remoteStaffRMs/remoteStaffSRMs)
+                const remoteRMs = remoteStaffRMs;
+                const remoteSRMs = remoteStaffSRMs;
                 
                 // Calculate leads per team (each team has its own ratio) - use full calculated values
                 function calcLeadsForTeam(count, ratio) {
@@ -2440,12 +2520,27 @@
                 const leadsCalc = leadsBerkeleyCalc + leadsLondonCalc + leadsRemoteCalc;
                 
                 // Calculate FILTERED leads (based on filtered staff values for onboarding accuracy)
-                // Use filtered staff values: filteredTotalSRMs, filteredCmsCalc, etc.
-                const filteredLeadsFromSRMs = calcLeadsForTeam(filteredTotalSRMs, params.srmsPerLead);
-                const filteredLeadsFromCommunity = calcLeadsForTeam(filteredCmsCalc + filteredJtsCalc, params.communityPerLead);
-                const filteredLeadsFromOps = calcLeadsForTeam(filteredOpsCalc, params.opsPerLead);
-                const filteredLeadsFromPMs = calcLeadsForTeam(filteredPmsCalc, params.pmsPerLead);
-                const filteredLeadsFromCompute = calcLeadsForTeam(filteredCasCalc + filteredRcesCalc, params.computePerLead);
+                // Use location-filtered staff values
+                const locationFilteredSRMs = (filters.london ? filteredLondonSRMs : 0) + 
+                    (filters.berkeley ? filteredBerkeleySRMs : 0) + (filters.remote ? filteredRemoteSRMs : 0);
+                const locationFilteredCMs = (filters.london ? filteredLondonCMs : 0) + 
+                    (filters.berkeley ? filteredBerkeleyCMs : 0) + (filters.remote ? filteredRemoteCMs : 0);
+                const locationFilteredJTs = (filters.london ? filteredLondonJTs : 0) + 
+                    (filters.berkeley ? filteredBerkeleyJTs : 0) + (filters.remote ? filteredRemoteJTs : 0);
+                const locationFilteredOps = (filters.london ? filteredLondonOps : 0) + 
+                    (filters.berkeley ? filteredBerkeleyOps : 0) + (filters.remote ? filteredRemoteOps : 0);
+                const locationFilteredPMs = (filters.london ? filteredLondonPMs : 0) + 
+                    (filters.berkeley ? filteredBerkeleyPMs : 0) + (filters.remote ? filteredRemotePMs : 0);
+                const locationFilteredCAs = (filters.london ? filteredLondonCAs : 0) + 
+                    (filters.berkeley ? filteredBerkeleyCAs : 0) + (filters.remote ? filteredRemoteCAs : 0);
+                const locationFilteredRCEs = (filters.london ? filteredLondonRCEs : 0) + 
+                    (filters.berkeley ? filteredBerkeleyRCEs : 0) + (filters.remote ? filteredRemoteRCEs : 0);
+                
+                const filteredLeadsFromSRMs = calcLeadsForTeam(locationFilteredSRMs, params.srmsPerLead);
+                const filteredLeadsFromCommunity = calcLeadsForTeam(locationFilteredCMs + locationFilteredJTs, params.communityPerLead);
+                const filteredLeadsFromOps = calcLeadsForTeam(locationFilteredOps, params.opsPerLead);
+                const filteredLeadsFromPMs = calcLeadsForTeam(locationFilteredPMs, params.pmsPerLead);
+                const filteredLeadsFromCompute = calcLeadsForTeam(locationFilteredCAs + locationFilteredRCEs, params.computePerLead);
                 const filteredLeadsCalc = filteredLeadsFromSRMs + filteredLeadsFromCommunity + 
                     filteredLeadsFromOps + filteredLeadsFromPMs + filteredLeadsFromCompute;
                 
@@ -2478,9 +2573,13 @@
                     fellowsCalc: totalFellows, londonCalc: londonTotal, berkeleyCalc: berkeleyTotal, remoteCalc: remoteTotal,
                     rms, srms, cms, jts, ops, pms, cas, rces, recruiters, additional, leads, leadsBerkeley, leadsLondon, leadsRemote, totalStaff,
                     totalStaffCalc,
-                    londonRMs: londonStaff.rms, londonSRMs: londonStaff.srms,
-                    berkeleyRMs: berkeleyStaff.rms, berkeleySRMs: berkeleyStaff.srms,
-                    remoteRMs, remoteSRMs,
+                    // Use filtered location values for consistency with display
+                    londonRMs: filters.rm ? filteredLondonRMs : 0, 
+                    londonSRMs: filters.rm ? filteredLondonSRMs : 0,
+                    berkeleyRMs: filters.rm ? filteredBerkeleyRMs : 0, 
+                    berkeleySRMs: filters.rm ? filteredBerkeleySRMs : 0,
+                    remoteRMs: filters.rm ? filteredRemoteRMs : 0, 
+                    remoteSRMs: filters.rm ? filteredRemoteSRMs : 0,
                     londonStaffTotal, berkeleyStaffTotal, remoteStaffTotal,
                     staffBudget, overBudget,
                     cohorts: activeCohorts
@@ -2488,41 +2587,181 @@
             });
         }
         
-        // Apply "no layoffs" logic - staff only grows to cumulative max
-        function applyStaffRatchet(monthlyData, params) {
+        // Cap first month's staff at current staff levels (don't show unhired calculated needs)
+        function capFirstMonthAtCurrentStaff(monthlyData, params, filters) {
+            if (monthlyData.length === 0) return monthlyData;
+            
+            const firstMonth = monthlyData[0].month;
             const staffKeys = ['rms', 'srms', 'cms', 'jts', 'ops', 'pms', 'cas', 'rces', 'recruiters', 'additional', 'leads'];
-            const locationStaffKeys = ['londonRMs', 'londonSRMs', 'berkeleyRMs', 'berkeleySRMs', 'remoteRMs', 'remoteSRMs'];
-            const allKeys = [...staffKeys, ...locationStaffKeys, 'londonStaffTotal', 'berkeleyStaffTotal', 'remoteStaffTotal', 'totalStaff'];
             
-            // Initialize running max
-            const runningMax = {};
-            allKeys.forEach(k => runningMax[k] = 0);
+            // Calculate current staff totals (respecting filters)
+            const berkeleyLeads = filters.berkeley ? (params.currentBerkeleyLeads || 0) : 0;
+            const londonLeads = filters.london ? (params.currentLondonLeads || 0) : 0;
+            const berkeleyRMs = filters.berkeley ? (params.currentBerkeleyRMs || 0) : 0;
+            const londonRMs = filters.london ? (params.currentLondonRMs || 0) : 0;
+            const berkeleySRMs = filters.berkeley ? (params.currentBerkeleySRMs || 0) : 0;
+            const londonSRMs = filters.london ? (params.currentLondonSRMs || 0) : 0;
+            const berkeleyCMs = filters.berkeley ? (params.currentBerkeleyCMs || 0) : 0;
+            const londonCMs = filters.london ? (params.currentLondonCMs || 0) : 0;
+            const berkeleyJTs = filters.berkeley ? (params.currentBerkeleyJTs || 0) : 0;
+            const londonJTs = filters.london ? (params.currentLondonJTs || 0) : 0;
+            const berkeleyOps = filters.berkeley ? (params.currentBerkeleyOps || 0) : 0;
+            const londonOps = filters.london ? (params.currentLondonOps || 0) : 0;
+            const berkeleyPMs = filters.berkeley ? (params.currentBerkeleyPMs || 0) : 0;
+            const londonPMs = filters.london ? (params.currentLondonPMs || 0) : 0;
+            const berkeleyCompute = filters.berkeley ? (params.currentBerkeleyCompute || 0) : 0;
+            const londonCompute = filters.london ? (params.currentLondonCompute || 0) : 0;
+            const berkeleyRecruiters = filters.berkeley ? (params.currentBerkeleyRecruiters || 0) : 0;
+            const londonRecruiters = filters.london ? (params.currentLondonRecruiters || 0) : 0;
             
-            // Apply ratchet: staff can't go below running max
+            const currentStaff = {
+                leads: filters.leads ? (berkeleyLeads + londonLeads) : 0,
+                rms: filters.rm ? (berkeleyRMs + londonRMs) : 0,
+                srms: filters.rm ? (berkeleySRMs + londonSRMs) : 0,
+                cms: filters.community ? (berkeleyCMs + londonCMs) : 0,
+                jts: filters.community ? (berkeleyJTs + londonJTs) : 0,
+                ops: filters.ops ? (berkeleyOps + londonOps) : 0,
+                pms: filters.program ? (berkeleyPMs + londonPMs) : 0,
+                cas: filters.compute ? Math.floor((berkeleyCompute + londonCompute) / 2) : 0,
+                rces: filters.compute ? Math.ceil((berkeleyCompute + londonCompute) / 2) : 0,
+                recruiters: filters.program ? (berkeleyRecruiters + londonRecruiters) : 0,
+                additional: 0,
+                // Location-specific
+                londonRMs: filters.rm && filters.london ? londonRMs : 0,
+                londonSRMs: filters.rm && filters.london ? londonSRMs : 0,
+                berkeleyRMs: filters.rm && filters.berkeley ? berkeleyRMs : 0,
+                berkeleySRMs: filters.rm && filters.berkeley ? berkeleySRMs : 0,
+                remoteRMs: 0,
+                remoteSRMs: 0
+            };
+            
+            const allStaffKeys = [...staffKeys, 'londonRMs', 'londonSRMs', 'berkeleyRMs', 'berkeleySRMs', 'remoteRMs', 'remoteSRMs'];
+            
+            // Cap first month at current staff
             monthlyData.forEach(m => {
-                allKeys.forEach(k => {
-                    runningMax[k] = Math.max(runningMax[k], m[k] || 0);
-                    m[k] = runningMax[k];
-                });
+                if (m.month === firstMonth) {
+                    allStaffKeys.forEach(k => {
+                        m[k] = Math.min(m[k] || 0, currentStaff[k]);
+                    });
+                    // Recalculate totalStaff
+                    m.totalStaff = m.leads + m.rms + m.srms + m.cms + m.jts + m.ops + m.pms + m.cas + m.rces + m.recruiters + m.additional;
+                }
             });
             
             return monthlyData;
         }
         
-        function calculateOnboardingData(monthlyData, onboardingWeeks, params) {
+        // Apply "no layoffs" logic - staff only grows to cumulative max, starting from current staff
+        function applyStaffRatchet(monthlyData, params, filters) {
+            const staffKeys = ['rms', 'srms', 'cms', 'jts', 'ops', 'pms', 'cas', 'rces', 'recruiters', 'additional', 'leads'];
+            const locationStaffKeys = ['londonRMs', 'londonSRMs', 'berkeleyRMs', 'berkeleySRMs', 'remoteRMs', 'remoteSRMs'];
+            const allKeys = [...staffKeys, ...locationStaffKeys, 'londonStaffTotal', 'berkeleyStaffTotal', 'remoteStaffTotal', 'totalStaff'];
+            
+            // Initialize running max from current staff (respecting location filters)
+            const berkeleyLeads = filters.berkeley ? (params.currentBerkeleyLeads || 0) : 0;
+            const londonLeads = filters.london ? (params.currentLondonLeads || 0) : 0;
+            const berkeleyRMs = filters.berkeley ? (params.currentBerkeleyRMs || 0) : 0;
+            const londonRMs = filters.london ? (params.currentLondonRMs || 0) : 0;
+            const berkeleySRMs = filters.berkeley ? (params.currentBerkeleySRMs || 0) : 0;
+            const londonSRMs = filters.london ? (params.currentLondonSRMs || 0) : 0;
+            const berkeleyCMs = filters.berkeley ? (params.currentBerkeleyCMs || 0) : 0;
+            const londonCMs = filters.london ? (params.currentLondonCMs || 0) : 0;
+            const berkeleyJTs = filters.berkeley ? (params.currentBerkeleyJTs || 0) : 0;
+            const londonJTs = filters.london ? (params.currentLondonJTs || 0) : 0;
+            const berkeleyOps = filters.berkeley ? (params.currentBerkeleyOps || 0) : 0;
+            const londonOps = filters.london ? (params.currentLondonOps || 0) : 0;
+            const berkeleyPMs = filters.berkeley ? (params.currentBerkeleyPMs || 0) : 0;
+            const londonPMs = filters.london ? (params.currentLondonPMs || 0) : 0;
+            const berkeleyCompute = filters.berkeley ? (params.currentBerkeleyCompute || 0) : 0;
+            const londonCompute = filters.london ? (params.currentLondonCompute || 0) : 0;
+            const berkeleyRecruiters = filters.berkeley ? (params.currentBerkeleyRecruiters || 0) : 0;
+            const londonRecruiters = filters.london ? (params.currentLondonRecruiters || 0) : 0;
+            
+            const runningMax = {
+                leads: filters.leads ? (berkeleyLeads + londonLeads) : 0,
+                rms: filters.rm ? (berkeleyRMs + londonRMs) : 0,
+                srms: filters.rm ? (berkeleySRMs + londonSRMs) : 0,
+                cms: filters.community ? (berkeleyCMs + londonCMs) : 0,
+                jts: filters.community ? (berkeleyJTs + londonJTs) : 0,
+                ops: filters.ops ? (berkeleyOps + londonOps) : 0,
+                pms: filters.program ? (berkeleyPMs + londonPMs) : 0,
+                cas: filters.compute ? Math.floor((berkeleyCompute + londonCompute) / 2) : 0,
+                rces: filters.compute ? Math.ceil((berkeleyCompute + londonCompute) / 2) : 0,
+                recruiters: filters.program ? (berkeleyRecruiters + londonRecruiters) : 0,
+                additional: 0,
+                londonRMs: filters.rm && filters.london ? londonRMs : 0,
+                londonSRMs: filters.rm && filters.london ? londonSRMs : 0,
+                berkeleyRMs: filters.rm && filters.berkeley ? berkeleyRMs : 0,
+                berkeleySRMs: filters.rm && filters.berkeley ? berkeleySRMs : 0,
+                remoteRMs: 0,
+                remoteSRMs: 0,
+                londonStaffTotal: 0,
+                berkeleyStaffTotal: 0,
+                remoteStaffTotal: 0,
+                totalStaff: 0
+            };
+            
+            // Calculate initial total staff
+            runningMax.totalStaff = runningMax.leads + runningMax.rms + runningMax.srms + 
+                runningMax.cms + runningMax.jts + runningMax.ops + runningMax.pms + 
+                runningMax.cas + runningMax.rces + runningMax.recruiters + runningMax.additional;
+            
+            // Apply ratchet: staff grows from current staff baseline
+            // First month shows current staff only; subsequent months ratchet up
+            const firstMonth = monthlyData.length > 0 ? monthlyData[0].month : null;
+            
+            monthlyData.forEach(m => {
+                if (m.month === firstMonth) {
+                    // First month: show current staff (don't show calculated needs we haven't hired yet)
+                    allKeys.forEach(k => {
+                        m[k] = runningMax[k];
+                    });
+                } else {
+                    // Subsequent months: ratchet up as calculated needs grow
+                    allKeys.forEach(k => {
+                        runningMax[k] = Math.max(runningMax[k], m[k] || 0);
+                        m[k] = runningMax[k];
+                    });
+                }
+            });
+            
+            return monthlyData;
+        }
+        
+        function calculateOnboardingData(monthlyData, onboardingWeeks, params, filters) {
             const data = [];
             // Start with current staff counts as the baseline (high water mark)
+            // Filter by location based on filter settings
+            const berkeleyLeads = filters.berkeley ? (params.currentBerkeleyLeads || 0) : 0;
+            const londonLeads = filters.london ? (params.currentLondonLeads || 0) : 0;
+            const berkeleyRMs = filters.berkeley ? (params.currentBerkeleyRMs || 0) : 0;
+            const londonRMs = filters.london ? (params.currentLondonRMs || 0) : 0;
+            const berkeleySRMs = filters.berkeley ? (params.currentBerkeleySRMs || 0) : 0;
+            const londonSRMs = filters.london ? (params.currentLondonSRMs || 0) : 0;
+            const berkeleyCMs = filters.berkeley ? (params.currentBerkeleyCMs || 0) : 0;
+            const londonCMs = filters.london ? (params.currentLondonCMs || 0) : 0;
+            const berkeleyJTs = filters.berkeley ? (params.currentBerkeleyJTs || 0) : 0;
+            const londonJTs = filters.london ? (params.currentLondonJTs || 0) : 0;
+            const berkeleyOps = filters.berkeley ? (params.currentBerkeleyOps || 0) : 0;
+            const londonOps = filters.london ? (params.currentLondonOps || 0) : 0;
+            const berkeleyPMs = filters.berkeley ? (params.currentBerkeleyPMs || 0) : 0;
+            const londonPMs = filters.london ? (params.currentLondonPMs || 0) : 0;
+            const berkeleyCompute = filters.berkeley ? (params.currentBerkeleyCompute || 0) : 0;
+            const londonCompute = filters.london ? (params.currentLondonCompute || 0) : 0;
+            const berkeleyRecruiters = filters.berkeley ? (params.currentBerkeleyRecruiters || 0) : 0;
+            const londonRecruiters = filters.london ? (params.currentLondonRecruiters || 0) : 0;
+            
             let max = { 
-                leads: (params.currentBerkeleyLeads || 0) + (params.currentLondonLeads || 0),
-                rms: (params.currentBerkeleyRMs || 0) + (params.currentLondonRMs || 0), 
-                srms: (params.currentBerkeleySRMs || 0) + (params.currentLondonSRMs || 0), 
-                cms: (params.currentBerkeleyCMs || 0) + (params.currentLondonCMs || 0), 
-                jts: (params.currentBerkeleyJTs || 0) + (params.currentLondonJTs || 0), 
-                ops: (params.currentBerkeleyOps || 0) + (params.currentLondonOps || 0), 
-                pms: (params.currentBerkeleyPMs || 0) + (params.currentLondonPMs || 0), 
-                cas: Math.floor(((params.currentBerkeleyCompute || 0) + (params.currentLondonCompute || 0)) / 2), 
-                rces: Math.ceil(((params.currentBerkeleyCompute || 0) + (params.currentLondonCompute || 0)) / 2),
-                recruiters: (params.currentBerkeleyRecruiters || 0) + (params.currentLondonRecruiters || 0),
+                leads: filters.leads ? (berkeleyLeads + londonLeads) : 0,
+                rms: filters.rm ? (berkeleyRMs + londonRMs) : 0, 
+                srms: filters.rm ? (berkeleySRMs + londonSRMs) : 0, 
+                cms: filters.community ? (berkeleyCMs + londonCMs) : 0, 
+                jts: filters.community ? (berkeleyJTs + londonJTs) : 0, 
+                ops: filters.ops ? (berkeleyOps + londonOps) : 0, 
+                pms: filters.program ? (berkeleyPMs + londonPMs) : 0, 
+                cas: filters.compute ? Math.floor((berkeleyCompute + londonCompute) / 2) : 0, 
+                rces: filters.compute ? Math.ceil((berkeleyCompute + londonCompute) / 2) : 0,
+                recruiters: filters.program ? (berkeleyRecruiters + londonRecruiters) : 0,
                 additional: 0 
             };
             
@@ -2582,10 +2821,14 @@
             
             // Calculate data for ALL months (needed for continuity)
             let allMonthlyData = calculateMonthlyData(params, schedule, filters);
+            
+            // Always cap first month at current staff (don't show unhired calculated needs)
+            allMonthlyData = capFirstMonthAtCurrentStaff(allMonthlyData, params, filters);
+            
             if (filters.ratchet) {
-                allMonthlyData = applyStaffRatchet(allMonthlyData, params);
+                allMonthlyData = applyStaffRatchet(allMonthlyData, params, filters);
             }
-            const onboardingData = calculateOnboardingData(allMonthlyData, params.onboardingWeeks, params);
+            const onboardingData = calculateOnboardingData(allMonthlyData, params.onboardingWeeks, params, filters);
             
             // Get filtered months for display
             const filteredMonthsList = getFilteredMonths();
